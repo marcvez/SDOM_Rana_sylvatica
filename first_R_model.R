@@ -146,3 +146,58 @@ while (time <= 10){
 
 # While loop for the previous if sequence. Now we should try to 
 # change the performance state at each time_step
+
+
+
+time <- 0
+while (time <= 10){
+  Random_num <- Random_1(x)
+  # We fix a random number, on which the if loop is going to work
+  
+  Random_num
+  # Fixed random number
+  
+  if(Random_num < prob_1_unit[energy_reserve + 1]) {
+    energy_reserve <- energy_reserve + 1 - metabolic_rate
+    print("I've found 1 piece of food!")
+  } else if(Random_num > prob_1_unit[energy_reserve + 1] & Random_num <= (prob_1_unit[energy_reserve + 1] + prob_2_unit[energy_reserve + 1])) {
+    energy_reserve <- energy_reserve + 2 - metabolic_rate
+    print("I've found 2 pieces of food!! WOW!")
+  } else {
+    energy_reserve <- 0
+    print("I'm dead :(")
+  }
+  
+  time <- time + 1
+}
+
+# The same as before, but changing the state at every time step
+
+
+time <- 0
+while (time < 20){
+  Random_num <- Random_1(x)
+  # We fix a random number, on which the if loop is going to work
+  
+  Random_num
+  # Fixed random number
+  
+  if(Random_num < prob_1_unit[energy_reserve + 1]) {
+    energy_reserve <- energy_reserve + 1 - metabolic_rate
+    print("I've found 1 piece of food!")
+  } else if(Random_num > prob_1_unit[energy_reserve + 1] & Random_num <= (prob_1_unit[energy_reserve + 1] + prob_2_unit[energy_reserve + 1])) {
+    energy_reserve <- energy_reserve + 2 - metabolic_rate
+    print("I've found 2 pieces of food!! WOW!")
+  } else {
+    energy_reserve <- 0
+    print("I'm dead :(")
+    break
+  }
+  
+  time <- time + 1
+}
+
+# The same, but exiting the loop when the tadpole dies
+# There is too much mortality :S
+
+
