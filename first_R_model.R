@@ -111,13 +111,38 @@ Random_num
 # Fixed random number
 
 if(Random_num < prob_1_unit[1]) {
+  energy_reserve <- energy_reserve + 1 - metabolic_rate
   "I've found 1 piece of food!"
   } else if(Random_num > prob_1_unit[1] & Random_num <= (prob_1_unit[1] + prob_2_unit[1])) {
+  energy_reserve <- energy_reserve + 2 - metabolic_rate
   "I've found 2 pieces of food!! WOW!"
   } else {
+  energy_reserve <- 0
   "I'm dead :("
   }
 # 3 possible outputs. At the moment we are only working with 0 energy invested on performance. 
 
 
+time <- 0
+while (time <= 10){
+  Random_num <- Random_1(x)
+  # We fix a random number, on which the if loop is going to work
+  
+  Random_num
+  # Fixed random number
+  
+  if(Random_num < prob_1_unit[1]) {
+    energy_reserve <- energy_reserve + 1 - metabolic_rate
+    print("I've found 1 piece of food!")
+  } else if(Random_num > prob_1_unit[1] & Random_num <= (prob_1_unit[1] + prob_2_unit[1])) {
+    energy_reserve <- energy_reserve + 2 - metabolic_rate
+    print("I've found 2 pieces of food!! WOW!")
+  } else {
+    energy_reserve <- 0
+    print("I'm dead :(")
+  }
+  time <- time + 1
+}
 
+# While loop for the previous if sequence. Now we should try to 
+# change the performance state at each time_step
