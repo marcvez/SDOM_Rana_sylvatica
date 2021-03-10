@@ -156,5 +156,8 @@ axis(2, at=1:7, labels=seq(0,6,1))
 
 library(reshape2)
 library(ggplot2)
-ggplot(melt(ForageRule), aes(x=Var2, y=Var1, fill=value)) + geom_tile()
+ggplot(melt(ForageRule), aes(x=Var2, y=Var1, fill=value)) + geom_tile() +
+  scale_fill_viridis_d(name = "Action", labels = c("Rest", "Forage"), alpha = 0.5)
+  
+  
 
