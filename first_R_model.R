@@ -11,13 +11,13 @@ energy_reserve <- 0 # Where food units go before being invested
 metabolic_rate <- 1 
 # Amount of food units that every time step is used on self-maintenance
 
-prob_1_unit <- seq(from = 0.4, to = 0.2, length.out = 31) 
+prob_1_unit <- seq(from = 0.5, to = 0.2, length.out = 31) 
 # Probability of finding 1 unit of food
 
-prob_2_unit <-seq(from = 0.4, to = 0.75, length.out = 31)
+prob_2_unit <-seq(from = 0.4, to = 0.79, length.out = 31)
 # Probability of finding 2 unit of food
 
-prob_predation <- seq(from = 0.2, to = 0.05, length.out = 31)
+prob_predation <- seq(from = 0.1, to = 0.01, length.out = 31)
 # Probability of being predated
 
 energy_growth <- seq(from = 0, to = 30, length.out = 31)
@@ -54,7 +54,6 @@ names(fitness_values_df)[2] <- "Fitness"
 library(ggplot2)
 library(dplyr)
 library(viridis) # I can't make it colorblind-friendly, but I would like to
-
 
 # Probability graph
 
@@ -198,6 +197,8 @@ while (time < 20){
 }
 
 # The same, but exiting the loop when the tadpole dies
-# There is too much mortality :S
+# There is too much mortality :S --> Changed probabilities 
+# from 0.4, 0.4, 0.2 to 0.5, 0.4, 0.1 and 0.2, 0.75, 0.05 to 0.2, 0.79, 0.01
+
 
 
