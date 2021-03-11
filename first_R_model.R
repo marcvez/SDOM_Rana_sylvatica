@@ -25,7 +25,7 @@ energy_growth <- seq(from = 0, to = 30, length.out = 31)
 energy_performance <- seq(from = 0, to = 30, length.out = 31)
 
 matrix_food_predation <- cbind(energy_performance , prob_1_unit , prob_2_unit , prob_predation)
-# Matrix with the probabilities of each event for every performance value
+  # Matrix with the probabilities of each event for every performance value
 
 matrix_food_predation_sum <- cbind(energy_performance , prob_1_unit , prob_2_unit + prob_1_unit, prob_predation + prob_2_unit + prob_1_unit)
 # Matrix with the probabilities of each event for every performance value, packed
