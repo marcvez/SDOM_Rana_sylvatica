@@ -25,7 +25,7 @@ energy_growth <- seq(from = 0, to = 30, length.out = 31)
 energy_performance <- seq(from = 0, to = 30, length.out = 31)
 
 matrix_food_predation <- cbind(energy_performance , prob_1_unit , prob_2_unit , prob_predation)
-  # Matrix with the probabilities of each event for every performance value
+# Matrix with the probabilities of each event for every performance value
 
 matrix_food_predation_sum <- cbind(energy_performance , prob_1_unit , prob_2_unit + prob_1_unit, prob_predation + prob_2_unit + prob_1_unit)
 # Matrix with the probabilities of each event for every performance value, packed
@@ -159,10 +159,16 @@ while (time <= 10){
   # Fixed random number
   
   if(Random_num < prob_1_unit[energy_reserve + 1]) {
+    # It is energy_reserve + 1 because we are selecting row "0" + 1 (There is no row 0)
+    # and row 1 corresponds to energy 0.
+    
     energy_reserve <- energy_reserve + 1 - metabolic_rate
     print("I've found 1 piece of food!")
   } else if(Random_num > prob_1_unit[energy_reserve + 1] & Random_num <= (prob_1_unit[energy_reserve + 1] + prob_2_unit[energy_reserve + 1])) {
     energy_reserve <- energy_reserve + 2 - metabolic_rate
+    # Here the energy reserve incresases by 1, and we want to select row "1" + 1, corresponding
+    # to row 2, energy 1
+    
     print("I've found 2 pieces of food!! WOW!")
   } else {
     energy_reserve <- 0
