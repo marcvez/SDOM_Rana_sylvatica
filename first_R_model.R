@@ -79,11 +79,14 @@ Probability_plot_2 <- ggplot(data = matrix_food_predation_sum_df, aes(x = energy
   xlab('Energy invested in performance') +
   ylab('Probability') +
   scale_colour_discrete("Legend") +
-  geom_ribbon(aes(ymax = 1, ymin = prob_2_unit), fill = "blue", alpha = 0.2) +
-  geom_ribbon(aes(ymax = prob_2_unit, ymin = prob_1_unit), fill = "green", alpha = 0.2) +
-  geom_ribbon(aes(ymax = prob_1_unit, ymin = 0), fill="red", alpha = 0.2)
+  geom_ribbon(aes(ymax = 1, ymin = prob_2_unit), fill = "#440154FF", alpha = 0.2) +
+  geom_ribbon(aes(ymax = prob_2_unit, ymin = prob_1_unit), fill = "#21908CFF", alpha = 0.2) +
+  geom_ribbon(aes(ymax = prob_1_unit, ymin = 0), fill="#FDE725FF", alpha = 0.2)
 
 Probability_plot_2 # With stacked matrix
+
+
+viridis(3) # This line gives the color code in the viridis scale with 3 factors
 
 
 # Fitness graph
