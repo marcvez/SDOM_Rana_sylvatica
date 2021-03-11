@@ -89,6 +89,7 @@ Probability_plot_2 # With stacked matrix
 viridis(3) # This line gives the color code in the viridis scale with 3 factors
 
 
+
 # Fitness graph
 
 Fitness_plot <- ggplot(data = fitness_values_df, aes(x = energy_growth)) +
