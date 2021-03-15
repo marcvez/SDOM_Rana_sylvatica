@@ -53,7 +53,7 @@ names(fitness_values_df)[2] <- "Fitness"
 
 library(ggplot2)
 library(dplyr)
-library(viridis) # I can't make it colorblind-friendly, but I would like to
+library(viridis)
 
 
 
@@ -74,21 +74,20 @@ Probability_plot # Without stacked matrix
 
 Probability_plot_2 <- ggplot(data = matrix_food_predation_sum_df, aes(x = energy_performance, group = 1)) +
   geom_line(aes(y = prob_1_unit, color = "1 food unit")) +
-  geom_line(aes(y = prob_2_unit, color = "2 food units")) +
+  geom_line(aes(y = prob_2_unit, color = "2 food unit")) +
   geom_line(aes(y = prob_predation, color="Predation")) +
   xlab('Energy invested in performance') +
   ylab('Probability') +
-  scale_colour_discrete("Legend") +
-  geom_ribbon(aes(ymax = 1, ymin = prob_2_unit), fill = "#440154FF", alpha = 0.2) +
-  geom_ribbon(aes(ymax = prob_2_unit, ymin = prob_1_unit), fill = "#21908CFF", alpha = 0.2) +
-  geom_ribbon(aes(ymax = prob_1_unit, ymin = 0), fill="#FDE725FF", alpha = 0.2)
+  geom_ribbon(aes(ymax = 1, ymin = prob_2_unit), fill = "#440154FF", alpha = 0.5) +
+  geom_ribbon(aes(ymax = prob_2_unit, ymin = prob_1_unit), fill = "#21908CFF", alpha = 0.5) +
+  geom_ribbon(aes(ymax = prob_1_unit, ymin = 0), fill="#FDE725FF", alpha = 0.5) +
+  scale_color_manual(name = "Legend", values=c("#FDE725FF", "#21908CFF", "#440154FF"))
 
 Probability_plot_2 # With stacked matrix
 
-
 viridis(3) # This line gives the color code in the viridis scale with 3 factors
 
-
+viridis(option = "inferno", 3)
 
 # Fitness graph
 
@@ -210,13 +209,57 @@ while (time < 20){
 
 # The same, but exiting the loop when the tadpole dies
 # There is too much mortality :S --> Changed probabilities 
-# from 0.4, 0.4, 0.2 to 0.5, 0.4, 0.1 and 0.2, 0.75, 0.05 to 0.2, 0.79, 0.01
+# from: Start --> 0.4, 0.4, 0.2 to 0.5, 0.4, 0.1 
+# and End --> 0.2, 0.75, 0.05 to 0.2, 0.79, 0.01
 
 
 
+result <- data.frame(matrix(nrow = 20, ncol = 2))
+colnames(result) <- c("iteration", "energy_reserve")
 
-#This is a test
-#Hello :)
-#Does it work?
+for (i in 1:20) {
+  time <- 0
+  energy_reserve <- 0
+  while (time < 20){
+    Random_num <- Random_1(x)
+    # We fix a random number, on which the if loop is going to work
+    
+    Random_num
+    # Fixed random number
+    
+    if(Random_num < prob_1_unit[energy_reserve + 1]) {
+      energy_reserve <- energy_reserve + 1 - metabolic_rate
+      print("I've found 1 piece of food!")
+      result[i, 1] <- i
+      result[i, 2] <- energy_reserve
+      
+    } else if(Random_num > prob_1_unit[energy_reserve + 1] & Random_num <= (prob_1_unit[energy_reserve + 1] + prob_2_unit[energy_reserve + 1]) & energy_reserve == 30) {
+      energy_reserve <- energy_reserve + 1 - metabolic_rate
+      print("I've found 2 pieces of food, but my energy reserve can store up to 30 units")
+      result[i, 1] <- i
+      result[i, 2] <- energy_reserve
+      
+    } else if(Random_num > prob_1_unit[energy_reserve + 1] & Random_num <= (prob_1_unit[energy_reserve + 1] + prob_2_unit[energy_reserve + 1])) {
+      energy_reserve <- energy_reserve + 2 - metabolic_rate
+      print("I've found 2 pieces of food!! WOW!")
+      result[i, 1] <- i
+      result[i, 2] <- energy_reserve
+    
+      
+    } else {
+      energy_reserve <- 0
+      print("I'm dead :(")
+      result[i, 1] <- i
+      result[i, 2] <- energy_reserve
+      break
+    }
+    
+    time <- time + 1
+  }
+}
+result
+
+
+
 
 
