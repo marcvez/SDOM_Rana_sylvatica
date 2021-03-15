@@ -90,6 +90,7 @@ forage <- function(dmin, dmax, c, f, maxt, maxc) {
   ## This plots coloured squares in the correct position on a graph.
   
   colour <- c("white", "blue")
+  require(lattice)
   require(grid)
   mypanel <- function(x, y, z, ...) {
     panel.levelplot(x, y, z, ...)
@@ -100,8 +101,7 @@ forage <- function(dmin, dmax, c, f, maxt, maxc) {
                               x=list(at=1:maxt,labels=1:maxt),
                               y=list(at=1:(maxc+1),labels=0:maxc)),
                   colorkey=FALSE, col.regions=colour, aspect="fill",
-                  xlab="Time", ylab="Condition", panel=mypanel)) 
-
+                  xlab="Time", ylab="Condition", panel=mypanel))
   
   return(list(ForageRule=ForageRule))
   
@@ -124,7 +124,7 @@ maxc = 6 #maximum condition (i.e. number of different condition units)
 forage(dmin, dmax, c, f, maxt, maxc) #The plot doesn't work?
 
 # Calling this function I only get the matrix in the console, the grid 
-# appears but with no colors in it.
+# appears but with no colors in it.Where is the problem? 
 
 
 
@@ -133,7 +133,7 @@ forage(dmin, dmax, c, f, maxt, maxc) #The plot doesn't work?
 # To obtain the next grids, you must run the lines inside the "forage" function.
 # This is strange, and when you want to change the parameters, you have to 
 # run again the function and the lines inside it. After doing this, you can run 
-# the lines to obtain the graphs.It is wierd, and I don't really know how 
+# the lines to obtain the graphs.It is weird, and I don't really know how 
 # could I solve it in the way it was planned... :/
 
 # Grid 1
@@ -196,4 +196,27 @@ ggplot(melt(ForageRule), aes(x=Var2, y=Var1, fill=value)) + geom_tile() +
 #have considered are worse than this one
   
   
+
+
+library(reshape2)
+library(ggplot2)
+ggplot(melt(ForageRule), aes(x=Var2, y=Var1, fill=value)) + geom_tile() +
+  scale_fill_viridis_d(name = "Action", labels = c("Rest", "Forage"), alpha = 0.5) +
+  scale_y_discrete(name = "Fitness", breaks = seq(1,11,1), 
+                   labels = c("0","1","2","3","4","5","6","7","8","9","10"), limit = c(1,2,3,4,5,6,7,8,9,10,11)) +
+  scale_x_continuous(name="Time step", limits=c(0.5, 50.5))  +
+  geom_segment(aes(x = 0.5, y = 0.5, xend = 5.5, yend = 0.5)) +
+  geom_segment(aes(x = 0.5, y = 1.5, xend = 5.5, yend = 1.5)) +
+  geom_segment(aes(x = 0.5, y = 2.5, xend = 5.5, yend = 2.5)) +
+  geom_segment(aes(x = 0.5, y = 3.5, xend = 5.5, yend = 3.5)) +
+  geom_segment(aes(x = 0.5, y = 4.5, xend = 5.5, yend = 4.5)) +
+  geom_segment(aes(x = 0.5, y = 5.5, xend = 5.5, yend = 5.5)) +
+  geom_segment(aes(x = 0.5, y = 6.5, xend = 5.5, yend = 6.5)) +
+  geom_segment(aes(x = 0.5, y = 7.5, xend = 5.5, yend = 7.5)) +
+  geom_segment(aes(x = 0.5, y = 0.5, xend = 0.5, yend = 7.5)) +
+  geom_segment(aes(x = 1.5, y = 0.5, xend = 1.5, yend = 7.5)) +
+  geom_segment(aes(x = 2.5, y = 0.5, xend = 2.5, yend = 7.5)) +
+  geom_segment(aes(x = 3.5, y = 0.5, xend = 3.5, yend = 7.5)) +
+  geom_segment(aes(x = 4.5, y = 0.5, xend = 4.5, yend = 7.5)) +
+  geom_segment(aes(x = 5.5, y = 0.5, xend = 5.5, yend = 7.5))
 
