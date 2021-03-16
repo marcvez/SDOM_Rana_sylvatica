@@ -197,6 +197,14 @@ ggplot(melt(ForageRule), aes(x=Var2, y=Var1, fill=value)) + geom_tile() +
   
   
 
+dmax = 0.3 #probability of death per time unit if you're very heavy
+dmin = 0.1 #probability of death per time unit if you're very lean
+c = 0.4 #rate of consuming resources
+f = 0.8 # feeding efficiency
+maxt = 50 #maximum time (i.e. number of time units the day is divided into)
+maxc = 10 #maximum condition (i.e. number of different condition units)
+#The output is the ForageRule matrix, with 1 denoting foraging, and 0 denoting resting.
+
 
 library(reshape2)
 library(ggplot2)
