@@ -13,6 +13,7 @@ metabolic_rate <- 1
 
 prob_1_unit <- seq(from = 0.5, to = 0.2, length.out = 31) 
 # Probability of finding 1 unit of food
+prob_1_unit_2.0 <- prob_1_unit + prob_predation #For backwards iteration
 
 prob_2_unit <-seq(from = 0.4, to = 0.79, length.out = 31)
 # Probability of finding 2 unit of food
@@ -41,8 +42,9 @@ names(matrix_food_predation_sum_df)[4] <- "prob_predation"
 sigmoid = function(energy_growth) {
   10 / (1 + exp(0.5*(-energy_growth+15)))
 }
+round_fitness <- round(sigmoid(energy_growth), digits = 3)
 
-fitness_values <- cbind(energy_growth, sigmoid(energy_growth))
+fitness_values <- cbind(energy_growth, round_fitness)
 fitness_values_df <- as.data.frame(fitness_values)
 names(fitness_values_df)[2] <- "Fitness"
 # Sigmoid function + Data frame with all its values
@@ -100,6 +102,8 @@ Fitness_plot
 
 
 #-----------------Loop---------------------
+
+# Here we can see the evolution of the loop code
 
 x <- 1
 
@@ -217,9 +221,9 @@ while (time < 20){
 result <- data.frame(matrix(nrow = 20, ncol = 2))
 colnames(result) <- c("iteration", "energy_reserve")
 
-for (i in 1:20) {
+for (i in 1:100) {
   time <- 0
-  energy_reserve <- 0
+  energy_reserve <- 0 # Thais was important and I missed it!
   while (time < 20){
     Random_num <- Random_1(x)
     # We fix a random number, on which the if loop is going to work
@@ -238,6 +242,7 @@ for (i in 1:20) {
       print("I've found 2 pieces of food, but my energy reserve can store up to 30 units")
       result[i, 1] <- i
       result[i, 2] <- energy_reserve
+      #Here we solve the problem that I had when I used too many time steps. It cannot surpass 30 energy_reserve units.
       
     } else if(Random_num > prob_1_unit[energy_reserve + 1] & Random_num <= (prob_1_unit[energy_reserve + 1] + prob_2_unit[energy_reserve + 1])) {
       energy_reserve <- energy_reserve + 2 - metabolic_rate
@@ -259,7 +264,12 @@ for (i in 1:20) {
 }
 result
 
+sum(result$energy_reserve > 0) 
+# sum(result$energy_reserve == 30)
 
-
+Survival <- ggplot(data = result, aes(x = iteration, y = energy_reserve)) +
+  geom_point()
+Survival 
+# Loop with for function, saving the results in a matrix and in a plot
 
 
