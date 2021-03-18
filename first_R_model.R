@@ -40,7 +40,7 @@ names(matrix_food_predation_sum_df)[4] <- "prob_predation"
 # Data frame of the stacked probabilities
 
 sigmoid = function(energy_growth) {
-  10 / (1 + exp(0.5*(-energy_growth+15)))
+  1 / (1 + exp(0.3*(-energy_growth+15)))
 }
 round_fitness <- round(sigmoid(energy_growth), digits = 3)
 
