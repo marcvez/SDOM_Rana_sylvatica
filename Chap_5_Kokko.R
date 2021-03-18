@@ -194,8 +194,8 @@ ggplot(melt(ForageRule), aes(x=Var2, y=Var1, fill=value)) + geom_tile() +
 
 # This is not the optimum way to do this, but the other options I
 #have considered are worse than this one
-  
-  
+
+
 
 dmax = 0.3 #probability of death per time unit if you're very heavy
 dmin = 0.1 #probability of death per time unit if you're very lean
@@ -227,4 +227,3 @@ ggplot(melt(ForageRule), aes(x=Var2, y=Var1, fill=value)) + geom_tile() +
   geom_segment(aes(x = 3.5, y = 0.5, xend = 3.5, yend = 7.5)) +
   geom_segment(aes(x = 4.5, y = 0.5, xend = 4.5, yend = 7.5)) +
   geom_segment(aes(x = 5.5, y = 0.5, xend = 5.5, yend = 7.5))
-
