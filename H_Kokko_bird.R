@@ -224,7 +224,7 @@ for (d in Days:1) {
 
 # We can explore the decision matrix at different days, similar to Fig 5.2
 # Keeping in mind that our output shows a reverse order on the y-axis
-H[,,100] 
+H[,,] 
 
 
 #--- Plots! ----
@@ -394,3 +394,4 @@ plot(NA, type="n",
      ylab="Proportion alive", xlim=c(1, Days+1), ylim=c(0, 1))
 
 lines(alive$day, alive$p_alive)
+
