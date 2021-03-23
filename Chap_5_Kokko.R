@@ -227,3 +227,4 @@ ggplot(melt(ForageRule), aes(x=Var2, y=Var1, fill=value)) + geom_tile() +
   geom_segment(aes(x = 3.5, y = 0.5, xend = 3.5, yend = 7.5)) +
   geom_segment(aes(x = 4.5, y = 0.5, xend = 4.5, yend = 7.5)) +
   geom_segment(aes(x = 5.5, y = 0.5, xend = 5.5, yend = 7.5))
+
