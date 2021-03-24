@@ -15,59 +15,62 @@
 
 
 Survival <- c(0.7, 0.75, 0.8, 0.85, 0.9, 0.95)
-Condition_values <- c (0.4, 0.6, 0.75, 0.85, 0.90, 0.925, 0.9375, 0.945, 0.95)
-number_Survival <- length(Survival)
+Size <- c(0.4, 0.6, 0.75, 0.85, 0.90, 0.925, 0.9375, 0.945, 0.95)
+Condition <- c(0, 0, 0, 0, 1, 2, 3, 4, 5)
+max_Survival <- length(Survival)
+max_Size <- length(Size)
+max_Condition <- length(Condition)
 time_steps <- 6
-max_condition <- length(Condition_values)
 
-Fitness <- matrix(nrow=max_condition+1, ncol=number_Survival)
-Fitness[2:(max_condition+1), ] <- Condition_values %*% t(Survival)
+
+Fitness <- matrix(nrow = max_Size + 1, ncol = max_Survival)
+Fitness[2:(max_Size + 1), ] <- Size %*% t(Survival)
 Fitness[1, ] <- rep(0,6)
 
 
-ForageRule <- matrix(nrow=max_condition+1, ncol=number_Survival)
+ForageRule <- matrix(nrow = max_Size + 1, ncol = max_Survival)
 # Here, the ForageRule matrix is a 2 state variable matrix, and depends
 # on Survival and Size
 
-Reward <- matrix(nrow=max_condition+1, ncol=number_Survival)
-Reward[,] <- c(0, Condition_values)
+Reward <- matrix(nrow = max_Condition + 1, ncol = max_Survival)
+Reward[,] <- c(0, Condition)
 # The Reward matrix has to have the same dimensions as the ForageRule one. 
 # Each Size has the same Reward, so each row has the same Reward value
 
-RewardIfPerformance <- matrix(nrow=max_condition+1, ncol=number_Survival)
-RewardIfGrowth <- matrix(nrow=max_condition+1, ncol=number_Survival)
+RewardIfPerformance <- matrix(nrow = max_Size + 1, ncol = max_Survival)
+RewardIfGrowth <- matrix(nrow = max_Size + 1, ncol = max_Survival)
 
 t <- time_steps
 
 while (t >= 1) { 
 
-  for (j in 1:(number_Survival)) {
+  for (j in 1:(max_Survival)) {
     
-    for (i in 1:max_condition+1) {
+    for (i in 1:max_Size + 1) {
       
-      if(j == 6 & i < max_condition + 1){
+      if(j == 6 & i < max_Size + 1){
         
         RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i,j] 
-        RewardIfGrowth[i,j] <- Fitness[i+1, j] * Reward[i+1,j]   
+        RewardIfGrowth[i,j] <- Fitness[i + 1, j] * Reward[i + 1,j]   
         # This "if" condition is necessary so if you are on top performance, 
         # you stay with the same performance value (Survival)
         
-      } else if (j == 6 & i == max_condition + 1) {
+      } else if (j == 6 & i == max_Size + 1) {
         
         RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i,j]
         RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i,j]
         # The same but with max Condition and Survival
         
-      } else if (j < 6 & i == max_condition + 1) {
+      } else if (j < 6 & i == max_Size + 1) {
         
-        RewardIfPerformance[i,j] <- Fitness[i, j+1] * Reward[i,j+1] 
+        RewardIfPerformance[i,j] <- Fitness[i, j + 1] * Reward[i,j + 1] 
         RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i,j]
         # The same but for Condition
         
       } else {
         
-        RewardIfPerformance[i,j] <- Fitness[i, j+1] * Reward[i,j+1] 
-        RewardIfGrowth[i,j] <- Fitness[i+1, j] * Reward[i+1,j]
+        RewardIfPerformance[i,j] <- Fitness[i, j + 1] * Reward[i,j + 1] 
+        RewardIfGrowth[i,j] <- Fitness[i + 1, j] * Reward[i + 1,j]
         # The rest of cells are going to work like this. If you invest in 
         # performance (Survival), you change your Fitness value for the one that 
         # is on your right, that is calculated with a higher Survival value and 
@@ -81,8 +84,8 @@ while (t >= 1) {
   } # end j loop
 
  
- RewardIfPerformance[1,] <- 0
- RewardIfGrowth[1,] <- 0
+ RewardIfPerformance[1, ] <- 0
+ RewardIfGrowth[1, ] <- 0
  # Fitness and REward values if you are dead
  
  ForageRule[,] <- RewardIfPerformance[,] > RewardIfGrowth[,]
@@ -95,9 +98,9 @@ while (t >= 1) {
  # and it is going to be used on the next time step.
 
  ForageRule_rev <- apply(ForageRule, 2, rev)
- ForageRule_rev[ForageRule_rev=="FALSE"] <- "Growth"
- ForageRule_rev[ForageRule_rev=="TRUE"] <- "Performance"
- ForageRule_rev[max_condition+1,] <- "Dead"
+ ForageRule_rev[ForageRule_rev == "FALSE"] <- "Growth"
+ ForageRule_rev[ForageRule_rev == "TRUE"] <- "Performance"
+ ForageRule_rev[max_Size + 1, ] <- "Dead"
  # ForageRule matrix inverted, so the lowest Condition value is going to 
  # be displayed on the bottom layer
  
@@ -122,37 +125,37 @@ plot(Decision6, col=c('#440154FF', '#21908CFF', '#FDE725FF'),
      breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
      main="Decision at time step 6", axis.col=NULL, axis.row=NULL)
 axis(1, at = 1:6, labels = Survival)
-axis(2, at = 1:10, labels = c(0,Condition_values), las = 1)
+axis(2, at = 1:10, labels = c(0, Size), las = 1)
 
 plot(Decision5, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
      breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
      main="Decision at time step 5", axis.col=NULL, axis.row=NULL)
 axis(1, at = 1:6, labels = Survival)
-axis(2, at = 1:10, labels = c(0,Condition_values), las = 1)
+axis(2, at = 1:10, labels = c(0, Size), las = 1)
 
 plot(Decision4, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
      breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
      main="Decision at time step 4", axis.col=NULL, axis.row=NULL)
 axis(1, at = 1:6, labels = Survival)
-axis(2, at = 1:10, labels = c(0,Condition_values), las = 1)
+axis(2, at = 1:10, labels = c(0, Size), las = 1)
 
 plot(Decision3, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
      breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
      main="Decision at time step 3", axis.col=NULL, axis.row=NULL)
 axis(1, at = 1:6, labels = Survival)
-axis(2, at = 1:10, labels = c(0,Condition_values), las = 1)
+axis(2, at = 1:10, labels = c(0, Size), las = 1)
 
 plot(Decision2, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
      breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
      main="Decision at time step 2", axis.col=NULL, axis.row=NULL)
 axis(1, at = 1:6, labels = Survival)
-axis(2, at = 1:10, labels = c(0,Condition_values), las = 1)
+axis(2, at = 1:10, labels = c(0, Size), las = 1)
 
 plot(Decision1, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
      breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
      main="Decision at time step 1", axis.col=NULL, axis.row=NULL)
 axis(1, at = 1:6, labels = Survival)
-axis(2, at = 1:10, labels = c(0,Condition_values), las = 1)
+axis(2, at = 1:10, labels = c(0, Size), las = 1)
 
 }
 
