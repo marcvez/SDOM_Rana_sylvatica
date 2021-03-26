@@ -126,6 +126,9 @@ forage(dmin, dmax, c, f, maxt, maxc) #The plot doesn't work?
 # Calling this function I only get the matrix in the console, the grid 
 # appears but with no colors in it.Where is the problem? 
 
+ForageRule_result_table <- forage(dmin, dmax, c, f, maxt, maxc)$ForageRule
+plot(ForageRule_result_table[,],
+     col=c("white", "blue"))
 
 
 #---------------Plots-----------------------
