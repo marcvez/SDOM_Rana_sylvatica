@@ -65,34 +65,36 @@ Decisions <- function (prob_good_temp, time_steps) {
           
         if(j == max_Survival & i < max_Size + 1){
             
-            RewardIfPerformance<- Fitness[i, j, t+1] #No change in state since you already have max performance
+            RewardIfPerformance<- Fitness[i, j, t+1]*Survival[j] #No change in state since you already have max performance
+            
             
             size_if_growth<- i+growth
             RewardIfGrowth<- Fitness[min(max_Size, size_if_growth[1]), j ,t+1] * (1-prob_good_temp) + Fitness[min(max_Size, size_if_growth[2]), j ,t+1] * (prob_good_temp)
-             #make sure tadpole does not grow larger than max size
+            RewardIfGrowth<- RewardIfGrowth*Survival[j] #you only get fitness if you survive
             # This "if" condition is necessary so if you are on top performance, 
             # you stay with the same performance value (Survival)
             
           } else if (j == max_Survival & i == max_Size + 1) {
             
-            RewardIfPerformance <- Fitness[i, j, t+1] #No change in state since you already have max performance
+            RewardIfPerformance <- Fitness[i, j, t+1]*Survival[j] #No change in state since you already have max performance
             
-            RewardIfGrowth<- Fitness[i, j, t+1] #No change in state since you already have max size
+            RewardIfGrowth<- Fitness[i, j, t+1]*Survival[j] #No change in state since you already have max size
             # The same but with max Condition and Survival
             
           } else if (j < max_Survival & i == max_Size + 1) {
             
-            RewardIfPerformance <- Fitness[i, j+1, t+1] #performance increased since invested in
+            RewardIfPerformance <- Fitness[i, j+1, t+1]*Survival[j] #performance increased since invested in
             
-            RewardIfGrowth<- Fitness[i, j, t+1] #No change in state since you already have max size
+            RewardIfGrowth<- Fitness[i, j, t+1]*Survival[j] #No change in state since you already have max size
             # The same but for Condition
             
           } else {
             
-            RewardIfPerformance<- Fitness[i, j+1, t+1] #performance increased since invested in
+            RewardIfPerformance<- Fitness[i, j+1, t+1]*Survival[j] #performance increased since invested in
             
             size_if_growth<- i+growth
             RewardIfGrowth<- Fitness[min(max_Size, size_if_growth[1]), j ,t+1] * (1-prob_good_temp) + Fitness[min(max_Size, size_if_growth[2]), j ,t+1] * (prob_good_temp)
+            RewardIfGrowth<- RewardIfGrowth*Survival[j] #you only get fitness if you survive
             
             # The rest of cells are going to work like this. If you invest in 
             # performance (Survival), you change your Fitness value for the one that 
