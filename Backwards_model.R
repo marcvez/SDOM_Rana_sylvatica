@@ -16,9 +16,8 @@ library(plot.matrix)
 library(lattice)
 library(latticeExtra)
 
-# Idea 1: Multiply by factor
-
-# In this idea, if the Tº is good, you grow more than if the Tº is bad.
+# Idea 2: Jump one condition state if Tº is good.If Tº is bad, you don't receive 
+# any benefit from investing in growth
 
 Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_bad_temp, time_steps) {
   
@@ -78,24 +77,23 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
       
       for (i in 1:max_Size) {
         
-        if(j == max_Survival & i < max_Size){
+        if(j == max_Survival & i == max_Size){
           
           RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp + 
-            Fitness[i, j] * Reward[i,j] * prob_bad_temp
-            
-          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i + 1, j] * prob_good_temp * effect_good_temp +
-            Fitness[i, j] * Reward[i + 1, j] * prob_bad_temp * effect_bad_temp
-          # This "if" condition is necessary so if you are on top performance, 
-          # you stay with the same performance value (Survival)
-          
-        } else if (j == max_Survival & i == max_Size) {
-          
-          RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp +
             Fitness[i, j] * Reward[i,j] * prob_bad_temp
           
           RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp * effect_good_temp +
             Fitness[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
-          # The same but with max Condition and Survival
+          
+          
+        } else if (j == max_Survival & i == max_Size - 1) {
+          
+          RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp +
+            Fitness[i, j] * Reward[i,j] * prob_bad_temp
+          
+          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i + 1, j] * prob_good_temp * effect_good_temp +
+            Fitness[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
+         
           
         } else if (j < max_Survival & i == max_Size) {
           
@@ -104,73 +102,91 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
           
           RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp * effect_good_temp +
             Fitness[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
-          # The same but for Condition
           
-        } else {
+          
+        } else if (j < max_Survival & i == max_Size - 1) {
+          
+          RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j + 1] * prob_good_temp +
+            Fitness[i, j] * Reward[i, j + 1] * prob_bad_temp
+          
+          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i + 1, j] * prob_good_temp * effect_good_temp +
+            Fitness[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
+         
+          
+        } else if (j == max_Survival & i < max_Size - 1) {
+          
+          RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp +
+            Fitness[i, j] * Reward[i, j] * prob_bad_temp
+          
+          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i + 2, j] * prob_good_temp * effect_good_temp +
+            Fitness[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
+          
+          
+        }else {
           
           RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j + 1] * 
             prob_good_temp + Fitness[i, j] * Reward[i, j + 1] * prob_bad_temp
           
-          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i + 1, j] * prob_good_temp *
-            effect_good_temp + Fitness[i, j] * Reward[i + 1, j] * prob_bad_temp * effect_bad_temp
+          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i + 2, j] * prob_good_temp *
+            effect_good_temp + Fitness[i, j] * Reward[i , j] * prob_bad_temp * effect_bad_temp
           # The rest of cells are going to work like this. If you invest in 
           # performance (Survival), you change your Fitness value for the one that 
           # is on your right, that is calculated with a higher Survival value and 
           # the same size. If you invest in growth, then, you stay in the same Survival
           # column but you increase in Size, with its Rewards dependent on Size.
-        
+          
         } # end if/else loop
         
       } # end i loop
       
     } # end j loop
-  
-   
-   RewardIfPerformance[1, ] <- 0
-   RewardIfGrowth[1, ] <- 0
-   # Fitness and Reward values if you are dead
-   
-   ForageRule[,] <- RewardIfPerformance[,] > RewardIfGrowth[,]
-   # TRUE/False matrix depending on which decision is best
-   
-   Reward[,] <- ForageRule[,] * RewardIfPerformance[,] +
-     as.numeric(!ForageRule[,]) * RewardIfGrowth[,]
-   # This matrix stores the reward values obtained for the best decisions, 
-   # and it is going to be used on the next time step.
-   
-   #------ Irja ------
-   
-   # Fitness[i, j] <- max(RewardIfPerformance, RewardIfGrowth)
-   # This matrix stores the reward values obtained for the best decisions,
-   
-   #------ Irja ------
-  
-   ForageRule_rev <- apply(ForageRule, 2, rev)
-   ForageRule_rev[ForageRule_rev == "FALSE"] <- "Growth"
-   ForageRule_rev[ForageRule_rev == "TRUE"] <- "Performance"
-   ForageRule_rev[max_Size, ] <- "Dead"
-   # ForageRule matrix inverted, so the lowest Condition value is going to 
-   # be displayed on the bottom layer
-   
-   # assign(paste("Decision", t, sep = ""), (ForageRule_rev)) #Not necessary now
-   
-   # We generate an object called Decision "t", that is going to store the Decision
-   # matrix for each combination of states at each time step.
-   # This is useful if we want to see one specific graph, as we can search for 
-   # a matrix called "DecisionXX" in the environment. 
-   
-   plot(ForageRule_rev, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
-        breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
-        main = paste('Decision at time step ', t ), axis.col = NULL, axis.row = NULL)
-   axis(1, at = 1:max_Survival, labels = Survival)
-   axis(2, at = 1:(max_Size), labels = c(Size), las = 1)
-   # At the end of each loop, we plot a matrix with the time step on the title
-   
-   t <- t - 1
-   
+    
+    
+    RewardIfPerformance[1, ] <- 0
+    RewardIfGrowth[1, ] <- 0
+    # Fitness and Reward values if you are dead
+    
+    ForageRule[,] <- RewardIfPerformance[,] > RewardIfGrowth[,]
+    # TRUE/False matrix depending on which decision is best
+    
+    Reward[,] <- ForageRule[,] * RewardIfPerformance[,] +
+      as.numeric(!ForageRule[,]) * RewardIfGrowth[,]
+    # This matrix stores the reward values obtained for the best decisions, 
+    # and it is going to be used on the next time step.
+    
+    #------ Irja ------
+    
+    # Fitness[i, j] <- max(RewardIfPerformance, RewardIfGrowth)
+    # This matrix stores the reward values obtained for the best decisions,
+    
+    #------ Irja ------
+    
+    ForageRule_rev <- apply(ForageRule, 2, rev)
+    ForageRule_rev[ForageRule_rev == "FALSE"] <- "Growth"
+    ForageRule_rev[ForageRule_rev == "TRUE"] <- "Performance"
+    ForageRule_rev[max_Size, ] <- "Dead"
+    # ForageRule matrix inverted, so the lowest Condition value is going to 
+    # be displayed on the bottom layer
+    
+    # assign(paste("Decision", t, sep = ""), (ForageRule_rev)) #Not necessary now
+    
+    # We generate an object called Decision "t", that is going to store the Decision
+    # matrix for each combination of states at each time step.
+    # This is useful if we want to see one specific graph, as we can search for 
+    # a matrix called "DecisionXX" in the environment. 
+    
+    plot(ForageRule_rev, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
+         breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
+         main = paste('Decision at time step ', t ), axis.col = NULL, axis.row = NULL)
+    axis(1, at = 1:max_Survival, labels = Survival)
+    axis(2, at = 1:(max_Size), labels = c(Size), las = 1)
+    # At the end of each loop, we plot a matrix with the time step on the title
+    
+    t <- t - 1
+    
   } # end of while loop
   
-
+  
 } # end of function
 
 
@@ -179,8 +195,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
 
 prob_good_temp <- 0.5
 prob_bad_temp <- 1 - prob_good_temp
-effect_good_temp <- 1.2
-effect_bad_temp <- 0.8
+effect_good_temp <- 1
+effect_bad_temp <- 1
 
 time_steps <- 12
 
@@ -192,6 +208,3 @@ par(mar=c(5.1, 4.5, 4.1, 6.5))
 # Plot
 
 Decisions(prob_good_temp, prob_bad_temp, effect_good_temp, effect_bad_temp, time_steps)
-
-
-
