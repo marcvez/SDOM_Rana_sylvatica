@@ -66,7 +66,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
   
   
   
-  # Loop (ADD SURVIVAL AS IRJA!)
+  # Loop
   
   t <- time_steps
   
