@@ -12,6 +12,7 @@
 ##needed libraries
 library(plot.matrix)
 
+
 Decisions <- function (prob_good_temp, time_steps) {
   
   # Parameters
