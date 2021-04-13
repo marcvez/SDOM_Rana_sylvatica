@@ -1,6 +1,6 @@
 
 
-#---------------------Backwards model-----------------------
+#------------------------- Backwards model ---------------------------------
 
 # This script contains the backward simulation of the model. 
 # Different object values will be generated, which will contain different variables.
@@ -51,8 +51,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
   # receive for being in each Size at the final time step.
   
   
-  Fitness <- array(NA, dim = c((max_Size), max_Performance, time_steps + 1))
-  Fitness[,,time_steps + 1] <- Fitness_values
+  Fitness <<- array(NA, dim = c((max_Size), max_Performance, time_steps + 1))
+  Fitness[,,time_steps + 1] <<- Fitness_values
   # Array that stores the Fitness values for every time step. In every time step
   # you multiply your current condition by the expected Fitness value that would get
   # if you invest on this or that trait.
@@ -64,7 +64,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
   # and it's different for every combination of each trait.
   # We divide by the highest value to create a 0 to 1 Survival matrix.
   
-  ForageRule <- array(NA, dim = c((max_Size), max_Performance, time_steps))
+  ForageRule <<- array(NA, dim = c((max_Size), max_Performance, time_steps))
   # Here, the ForageRule array is a 2 state variable matrix with time as the 3rd dimension,
   # and depends has the same dimensions as Performance and Size. 
   # We are going to store the TRUE/FALsE results here,
@@ -173,22 +173,22 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
     RewardIfGrowth[1, , ] <- 0
     # Fitness values if you are dead.
     
-    ForageRule[,,t] <- RewardIfPerformance[,,t] > RewardIfGrowth[,,t]
+    ForageRule[,,t] <<- RewardIfPerformance[,,t] > RewardIfGrowth[,,t]
     # TRUE/False matrix depending on which decision is best, and the result
     # is stored.
     
     
     
-    Fitness[, , t] <- ForageRule[,,t] * RewardIfPerformance[,,t] +
+    Fitness[, , t] <<- ForageRule[,,t] * RewardIfPerformance[,,t] +
       as.numeric(!ForageRule[,,t]) * RewardIfGrowth[,,t]
     # This matrix stores the reward values obtained for the best decisions, 
     # and it is going to be used in the next time step.
     
     
-    ForageRule_rev <- apply(ForageRule[,,t], 2, rev)
-    ForageRule_rev[ForageRule_rev == "FALSE"] <- "Growth"
-    ForageRule_rev[ForageRule_rev == "TRUE"] <- "Performance"
-    ForageRule_rev[max_Size, ] <- "Dead"
+    ForageRule_rev <<- apply(ForageRule[,,t], 2, rev)
+    ForageRule_rev[ForageRule_rev == "FALSE"] <<- "Growth"
+    ForageRule_rev[ForageRule_rev == "TRUE"] <<- "Performance"
+    ForageRule_rev[max_Size, ] <<- "Dead"
     # ForageRule matrix inverted, so the lowest Fitness value is going to 
     # be displayed on the bottom layer.
     
@@ -204,9 +204,15 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
     
   } # end of while loop
   
+  # assign("Fitness", Fitness, envir = globalenv())
+  # assign("ForageRule_rev", ForageRule_rev, envir = globalenv())
+  # assign("ForageRule", ForageRule, envir=globalenv())
+  
+  # This line extracts Fitness and ForageRule arrays from inside the function to 
+  # the global environment, so we can use it in the Forward simulation.
+  # It can also be done using <<- 
   
 } # end of function
-
 
 
 # Initial Parameters
@@ -222,3 +228,5 @@ par(mar=c(5.1, 4.5, 4.1, 6.5))
 # Plot
 
 Decisions(prob_good_temp, prob_bad_temp, time_steps)
+
+
