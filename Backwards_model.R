@@ -57,6 +57,10 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
   # you multiply your current condition by the expected Fitness value that would get
   # if you invest on this or that trait.
   
+  # This arrow (<<-) extracts an object from inside the function to the global
+  # environment, so we can use it in another project. It has to be used in any 
+  # line where the object is updated.
+  
   Survival <- matrix(nrow = max_Size, ncol = max_Performance)
   Survival[ , ] <- Size %*% t(Performance)
   Survival <- Survival / max(Survival + 0.01) 
@@ -204,13 +208,6 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
     
   } # end of while loop
   
-  # assign("Fitness", Fitness, envir = globalenv())
-  # assign("ForageRule_rev", ForageRule_rev, envir = globalenv())
-  # assign("ForageRule", ForageRule, envir=globalenv())
-  
-  # This line extracts Fitness and ForageRule arrays from inside the function to 
-  # the global environment, so we can use it in the Forward simulation.
-  # It can also be done using <<- 
   
 } # end of function
 
