@@ -17,7 +17,7 @@ library(plot.matrix)
 # Idea 2: Jump one Fitness state if Tº is good.If Tº is bad, you don't receive 
 # any benefit from investing in growth
 
-Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_bad_temp, time_steps) {
+Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
   
   
   # Life history values (from here to "Loop" can be removed from inside the function)
@@ -92,8 +92,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
           RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp + 
             Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp * effect_good_temp +
-            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp * effect_bad_temp
+          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
+            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
           
         } else if (j == max_Performance & i == max_Size - 1) {
@@ -101,8 +101,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
           RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
             Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i + 1,j,t+1] * prob_good_temp * effect_good_temp +
-            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp * effect_bad_temp
+          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i + 1,j,t+1] * prob_good_temp +
+            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
           
         } else if (j < max_Performance & i == max_Size) {
@@ -110,8 +110,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
           RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
             Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp * effect_good_temp +
-            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp * effect_bad_temp
+          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
+            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
           
         } else if (j < max_Performance & i == max_Size - 1) {
@@ -119,8 +119,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
           RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
             Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i+1,j,t+1] * prob_good_temp * effect_good_temp +
-            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp * effect_bad_temp
+          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i+1,j,t+1] * prob_good_temp +
+            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
           
         } else if (j == max_Performance & i < max_Size - 1) {
@@ -128,8 +128,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
           RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
             Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp * effect_good_temp +
-            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp * effect_bad_temp
+          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp +
+            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
           
         }else {
@@ -137,8 +137,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
           RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j+1,t+1] * 
             prob_good_temp + Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp *
-            effect_good_temp + Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp * effect_bad_temp
+          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp +
+            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           # The rest of cells are going to work like this. If you invest in 
           # performance (Performance), you change your Survival value for the one that 
           # is on your right, that is calculated with a higher Performance value and 
@@ -199,12 +199,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
 
 
 # Parameters
-
 prob_good_temp <- 0.5
 prob_bad_temp <- 1 - prob_good_temp
-effect_good_temp <- 1
-effect_bad_temp <- 1
-
 time_steps <- 12
 
 # par(mfrow=c(1,1))
@@ -214,4 +210,4 @@ par(mar=c(5.1, 4.5, 4.1, 6.5))
 
 # Plot
 
-Decisions(prob_good_temp, prob_bad_temp, effect_good_temp, effect_bad_temp, time_steps)
+Decisions(prob_good_temp, prob_bad_temp, time_steps)
