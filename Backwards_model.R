@@ -7,10 +7,10 @@
 # of energy invested in growth, and the x-axis contains the units of energy 
 # invested in performance. The content of each cell will be the Survival value 
 # of that combination of traits. 
-# The function should see how Survival increases with respect to the previous 
+# The function should see how Fitness increases with respect to the previous 
 # state by deciding whether to invest in growth (by moving down one cell 
 # in the matrix) or in performance (by moving one cell to the right). It will then 
-# calculate the Survival increase of the two decisions and choose the best option.
+# calculate the Fitness increase of the two decisions and choose the best option.
 
 library(plot.matrix)
 
@@ -32,13 +32,19 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
   # is relevant for the final Survival (The bigger, the better)
   
   
-  Fitness <- c(0, seq(1, 5.5, 0.1))
-  max_Fitness <- length(Fitness)
-  Fitness[Fitness < 4] <- 0
-  Fitness[Fitness >=4 & Fitness < 5] <- seq(2, 3.8, 2/(length(Fitness[Fitness >=4 & Fitness < 5])))
-  Fitness[Fitness >= 5] <- c(4, 4.1, 4.15, 4.15, 4.15, 4.15)
+  Fitness_values <- c(0, seq(1, 5.5, 0.1))
+  max_Fitness <- length(Fitness_values)
+  Fitness_values[Fitness_values < 4] <- 0
+  Fitness_values[Fitness_values >=4 & Fitness_values < 5] <- seq(2, 3.8, 2/(length(Fitness_values[Fitness_values >=4 & Fitness_values < 5])))
+  Fitness_values[Fitness_values >= 5] <- c(4, 4.1, 4.15, 4.15, 4.15, 4.15)
   # Sizes under 4 cm don't receive Survival benefits.This is the benefit that you
   # receive for being in each Size at the final time step.
+  
+  
+  Fitness <- array(NA, dim = c((max_Size), max_Performance, time_steps + 1))
+  Fitness[,,time_steps + 1] <- Fitness_values
+  # Fitness[,,12]
+  
   
   
   Survival <- matrix(nrow = max_Size, ncol = max_Performance)
@@ -48,21 +54,26 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
   # (performance), and it's different for every combination of each value.
   
   
-  ForageRule <- matrix(nrow = max_Size, ncol = max_Performance)
+  ForageRule <- array(NA, dim = c((max_Size), max_Performance, time_steps))
+  # ForageRule <- matrix(nrow = max_Size, ncol = max_Performance)
+  
   # Here, the ForageRule matrix is a 2 state variable matrix, and depends
   # on Performance and Size. We are going to store the TRUE/FALsE results here,
   # and see if it's better to invest in Performance or in Size.
   
-  Reward <- matrix(nrow = max_Size, ncol = max_Performance)
-  Reward[,] <- Fitness
+  
+  
+  # Reward <- matrix(nrow = max_Size, ncol = max_Performance)
+  # Reward[,] <- Fitness
+  
   # The Reward matrix has to have the same dimensions as the ForageRule one. 
   # Each Size has the same Reward, so each row has the same Reward value. As you
   # only receive Survival from Size, you only increase the reward you get by 
   # increasing your Size. 
   
   
-  RewardIfPerformance <- matrix(nrow = max_Size, ncol = max_Performance)
-  RewardIfGrowth <- matrix(nrow = max_Size, ncol = max_Performance)
+  RewardIfPerformance <-  array(NA, dim = c((max_Size), max_Performance, time_steps))
+  RewardIfGrowth <-  array(NA, dim = c((max_Size), max_Performance, time_steps))
   
   
   
@@ -72,62 +83,62 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
   
   while (t >= 1) { 
     
-    for (j in 1:(max_Performance)) {
+    for (j in 1:max_Performance) {
       
       for (i in 1:max_Size) {
         
         if(j == max_Performance & i == max_Size){
           
-          RewardIfPerformance[i,j] <- Survival[i, j] * Reward[i, j] * prob_good_temp + 
-            Survival[i, j] * Reward[i,j] * prob_bad_temp
+          RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp + 
+            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j] <- Survival[i, j] * Reward[i, j] * prob_good_temp * effect_good_temp +
-            Survival[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
+          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp * effect_good_temp +
+            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp * effect_bad_temp
           
           
         } else if (j == max_Performance & i == max_Size - 1) {
           
-          RewardIfPerformance[i,j] <- Survival[i, j] * Reward[i, j] * prob_good_temp +
-            Survival[i, j] * Reward[i,j] * prob_bad_temp
+          RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
+            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j] <- Survival[i, j] * Reward[i + 1, j] * prob_good_temp * effect_good_temp +
-            Survival[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
+          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i + 1,j,t+1] * prob_good_temp * effect_good_temp +
+            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp * effect_bad_temp
          
           
         } else if (j < max_Performance & i == max_Size) {
           
-          RewardIfPerformance[i,j] <- Survival[i, j] * Reward[i, j + 1] * prob_good_temp +
-            Survival[i, j] * Reward[i, j + 1] * prob_bad_temp
+          RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
+            Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j] <- Survival[i, j] * Reward[i, j] * prob_good_temp * effect_good_temp +
-            Survival[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
+          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp * effect_good_temp +
+            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp * effect_bad_temp
           
           
         } else if (j < max_Performance & i == max_Size - 1) {
           
-          RewardIfPerformance[i,j] <- Survival[i, j] * Reward[i, j + 1] * prob_good_temp +
-            Survival[i, j] * Reward[i, j + 1] * prob_bad_temp
+          RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
+            Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j] <- Survival[i, j] * Reward[i + 1, j] * prob_good_temp * effect_good_temp +
-            Survival[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
+          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i+1,j,t+1] * prob_good_temp * effect_good_temp +
+            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp * effect_bad_temp
          
           
         } else if (j == max_Performance & i < max_Size - 1) {
           
-          RewardIfPerformance[i,j] <- Survival[i, j] * Reward[i, j] * prob_good_temp +
-            Survival[i, j] * Reward[i, j] * prob_bad_temp
+          RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
+            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j] <- Survival[i, j] * Reward[i + 2, j] * prob_good_temp * effect_good_temp +
-            Survival[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
+          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp * effect_good_temp +
+            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp * effect_bad_temp
           
           
         }else {
           
-          RewardIfPerformance[i,j] <- Survival[i, j] * Reward[i, j + 1] * 
-            prob_good_temp + Survival[i, j] * Reward[i, j + 1] * prob_bad_temp
+          RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j+1,t+1] * 
+            prob_good_temp + Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j] <- Survival[i, j] * Reward[i + 2, j] * prob_good_temp *
-            effect_good_temp + Survival[i, j] * Reward[i , j] * prob_bad_temp * effect_bad_temp
+          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp *
+            effect_good_temp + Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp * effect_bad_temp
           # The rest of cells are going to work like this. If you invest in 
           # performance (Performance), you change your Survival value for the one that 
           # is on your right, that is calculated with a higher Performance value and 
@@ -141,26 +152,23 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
     } # end j loop
     
     
-    RewardIfPerformance[1, ] <- 0
-    RewardIfGrowth[1, ] <- 0
+    RewardIfPerformance[1, , ] <- 0
+    RewardIfGrowth[1, , ] <- 0
     # Survival and Reward values if you are dead
     
-    ForageRule[,] <- RewardIfPerformance[,] > RewardIfGrowth[,]
+    ForageRule[,,t] <- RewardIfPerformance[,,t] > RewardIfGrowth[,,t]
     # TRUE/False matrix depending on which decision is best
     
-    Reward[,] <- ForageRule[,] * RewardIfPerformance[,] +
-      as.numeric(!ForageRule[,]) * RewardIfGrowth[,]
+    
+    
+    Fitness[, , t] <- ForageRule[,,t] * RewardIfPerformance[,,t] +
+      as.numeric(!ForageRule[,,t]) * RewardIfGrowth[,,t]
     # This matrix stores the reward values obtained for the best decisions, 
     # and it is going to be used on the next time step.
     
-    #------ Irja ------
     
-    # Survival[i, j] <- max(RewardIfPerformance, RewardIfGrowth)
-    # This matrix stores the reward values obtained for the best decisions,
     
-    #------ Irja ------
-    
-    ForageRule_rev <- apply(ForageRule, 2, rev)
+    ForageRule_rev <- apply(ForageRule[,,t], 2, rev)
     ForageRule_rev[ForageRule_rev == "FALSE"] <- "Growth"
     ForageRule_rev[ForageRule_rev == "TRUE"] <- "Performance"
     ForageRule_rev[max_Size, ] <- "Dead"
