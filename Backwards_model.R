@@ -7,8 +7,8 @@
 # Performance -> How fast you move
 # Size -> Your size
 # Fitness -> Terminal fitness values
-# Survival -> Combination of performance and size, which are traits that 
-# determine your probability of survival.
+# Condition -> Combination of performance and size, which are traits that 
+# determine your probability of Condition.
 
 # From this point, the model creates a loop in which at each time step the 
 # organism can decide whether to invest in Performance or Growth. 
@@ -57,12 +57,25 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
   # you multiply your current condition by the expected Fitness value that would get
   # if you invest on this or that trait.
   
-  Survival <- matrix(nrow = max_Size, ncol = max_Performance)
-  Survival[ , ] <- Size %*% t(Performance)
-  Survival <- Survival / max(Survival + 0.01) 
-  # Survival is the result of the interaction between Size and Performance 
+  Condition <- matrix(nrow = max_Size, ncol = max_Performance)
+  Condition[ , ] <- Size %*% t(Performance)
+  Condition <- Condition / max(Condition + 0.01) 
+  # Condition is the result of the interaction between Size and Performance 
   # and it's different for every combination of each trait.
-  # We divide by the highest value to create a 0 to 1 Survival matrix.
+  # We divide by the highest value to create a 0 to 1 Condition matrix.
+  
+  Survival <- matrix(nrow = max_Size, ncol = max_Performance)
+  Survival[,1] <- c(0, seq(0.8, 0.9, 0.1/(max_Size - 2)))
+  
+  for (j in 2:max_Performance) {
+    
+    Survival[, j] <- Survival[, j - 1] + (0.1/(max_Performance - 1))
+    
+  }
+  Survival[1,] <- 0
+  # Survival matrix, based on every Condition value.
+  
+  
   
   ForageRule <- array(NA, dim = c((max_Size), max_Performance, time_steps))
   # Here, the ForageRule array is a 2 state variable matrix with time as the 3rd dimension,
@@ -90,22 +103,22 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
         
         if(j == max_Performance & i == max_Size){
           
-          RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp + 
-            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
+          RewardIfPerformance[i,j,t] <- Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp + 
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
-            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
+          RewardIfGrowth[i,j,t] <- Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
           # Fitness values that would result if the tadpole is in the best condition.
           
           
         } else if (j == max_Performance & i == max_Size - 1) {
           
-          RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
-            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
+          RewardIfPerformance[i,j,t] <- Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i + 1,j,t+1] * prob_good_temp +
-            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
+          RewardIfGrowth[i,j,t] <- Condition[i, j] * Survival[i, j] * Fitness[i + 1,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
           # Fitness values that would result if the tadpole has the best performance,
           # but it could improve in size. It can only grow 1 size, as it has almost 
@@ -114,11 +127,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
           
         } else if (j < max_Performance & i == max_Size) {
           
-          RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
-            Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp
+          RewardIfPerformance[i,j,t] <- Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
-            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
+          RewardIfGrowth[i,j,t] <- Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
           # Fitness values that would result if the tadpole has the maximum size,
           # but it could improve in performance. 
@@ -126,11 +139,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
           
         } else if (j < max_Performance & i == max_Size - 1) {
           
-          RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
-            Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp
+          RewardIfPerformance[i,j,t] <- Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i+1,j,t+1] * prob_good_temp +
-            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
+          RewardIfGrowth[i,j,t] <- Condition[i, j] * Survival[i, j] * Fitness[i+1,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
           # Fitness values that would result if the tadpole is almost in the maximum size,
           # but it could improve in performance. It can only grow 1 size, as it has almost 
@@ -139,11 +152,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
           
         } else if (j == max_Performance & i < max_Size - 1) {
           
-          RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
-            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
+          RewardIfPerformance[i,j,t] <- Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp +
-            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
+          RewardIfGrowth[i,j,t] <- Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
           # Fitness values that would result if the tadpole has the best performance,
           # but it could improve in size. 
@@ -151,14 +164,14 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
           
         }else {
           
-          RewardIfPerformance[i,j,t] <- Survival[i, j] * Fitness[i,j+1,t+1] * 
-            prob_good_temp + Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp
+          RewardIfPerformance[i,j,t] <- Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * 
+            prob_good_temp + Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp
           
-          RewardIfGrowth[i,j,t] <- Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp +
-            Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
+          RewardIfGrowth[i,j,t] <- Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp
           
           # The rest of the cells will operate as follows: You multiply your 
-          # current condition (Survival) by the expected fitness and by the 
+          # current condition (Condition) by the expected fitness and by the 
           # probability that the water temperature is good or bad. 
           
           
@@ -192,6 +205,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
   assign("Size", Size, envir=globalenv())
   assign("max_Performance", max_Performance, envir=globalenv())
   assign("Performance", Performance, envir=globalenv())
+  assign("Survival", Survival, envir=globalenv())
   
   # This line extracts Fitness, ForageRule and other objects from inside the function to 
   # the global environment, so we can use it in the plot function or the Forward simulation.
@@ -211,7 +225,7 @@ Plot <- function(time,steps){
     ForageRule_rev[max_Size, ] <- "Dead"
     
     plot(ForageRule_rev, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
-         breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
+         breaks=c("Dead", "Growth", "Performance"), xlab = "Condition", ylab = "Size",
          main = paste('Decision at time step ', t ), axis.col = NULL, axis.row = NULL)
     axis(1, at = 1:max_Performance, labels = Performance)
     axis(2, at = 1:(max_Size), labels = c(Size), las = 1)
@@ -232,7 +246,7 @@ Plot <- function(time,steps){
 # Initial Parameters
 prob_good_temp <- 0.5 # Probability of having a good Temperature
 prob_bad_temp <- 1 - prob_good_temp # Probability of having a bad Temperature
-time_steps <- 12 # How many days does the metamorphosis last?
+time_steps <- 60 # How many days does the metamorphosis last?
 
 # par(mfrow=c(1,1))
 par(mfrow=c(3,4))
