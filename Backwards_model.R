@@ -182,47 +182,57 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
     # This matrix stores the reward values obtained for the best decisions, 
     # and it is going to be used in the next time step.
   
-    # Plot
-    
-    for (time in c(1, 12)) { # We plot some selected time steps.
-      # Deleting the for loop we plot the same as before (Changing "time" to "t")
-      # To plot all time steps: c(1:time_steps)
-      # To plot some time steps: c(number1, number2, number3, ...)
-      
-      ForageRule_rev <- apply(ForageRule[,,time], 2, rev) # At time step "time"
-      ForageRule_rev[ForageRule_rev == "FALSE"] <- "Growth"
-      ForageRule_rev[ForageRule_rev == "TRUE"] <- "Performance"
-      ForageRule_rev[max_Size, ] <- "Dead"
-      # ForageRule matrix inverted, so the lowest Condition value is going to 
-      # be displayed on the bottom layer
-      
-      plot(ForageRule_rev, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
-           breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
-           main = paste('Decision at time step ', time ), axis.col = NULL, axis.row = NULL)
-      axis(1, at = 1:max_Performance, labels = Performance)
-      axis(2, at = 1:(max_Size), labels = c(Size), las = 1)
-      
-    } # End of for loop
-    
     t <- t - 1
     
   } # end of while loop
   
   assign("Fitness", Fitness, envir = globalenv())
-  assign("ForageRule_rev", ForageRule_rev, envir = globalenv())
   assign("ForageRule", ForageRule, envir=globalenv())
+  assign("max_Size", max_Size, envir=globalenv())
+  assign("Size", Size, envir=globalenv())
+  assign("max_Performance", max_Performance, envir=globalenv())
+  assign("Performance", Performance, envir=globalenv())
   
-  # This line extracts Fitness and ForageRule arrays from inside the function to 
-  # the global environment, so we can use it in the Forward simulation.
+  # This line extracts Fitness, ForageRule and other objects from inside the function to 
+  # the global environment, so we can use it in the plot function or the Forward simulation.
   
   
-} # end of function
+} # end of Decision function
+
+Plot <- function(time,steps){
+  
+  t <- time_steps
+  
+  while (t >= 1) {
+    
+    ForageRule_rev <- apply(ForageRule[,,t], 2, rev) # At time step "t"
+    ForageRule_rev[ForageRule_rev == "FALSE"] <- "Growth"
+    ForageRule_rev[ForageRule_rev == "TRUE"] <- "Performance"
+    ForageRule_rev[max_Size, ] <- "Dead"
+    
+    plot(ForageRule_rev, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
+         breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
+         main = paste('Decision at time step ', t ), axis.col = NULL, axis.row = NULL)
+    axis(1, at = 1:max_Performance, labels = Performance)
+    axis(2, at = 1:(max_Size), labels = c(Size), las = 1)
+    
+    #This function takes the time step you are in from the ForageRule array and 
+    #creates an matrix where it changes the names from TRUE/FALSE to Dead, 
+    #Performance or Growth. A plot is made of this new matrix. 
+    #This is done for each time step. Ideally it would be an array too, but I 
+    #can't get it to keep the array structure after changing the names.
+    
+    t <- t - 1 
+    
+  } # End of while loop
+  
+} # End of Plot loop
 
 
 # Initial Parameters
-prob_good_temp <- 0.5
-prob_bad_temp <- 1 - prob_good_temp
-time_steps <- 12
+prob_good_temp <- 0.5 # Probability of having a good Temperature
+prob_bad_temp <- 1 - prob_good_temp # Probability of having a bad Temperature
+time_steps <- 12 # How many days does the metamorphosis last?
 
 # par(mfrow=c(1,1))
 par(mfrow=c(3,4))
@@ -232,5 +242,7 @@ par(mar=c(5.1, 4.5, 4.1, 6.5))
 # Plot
 
 Decisions(prob_good_temp, prob_bad_temp, time_steps)
+  
 
+Plot(time_steps)
 
