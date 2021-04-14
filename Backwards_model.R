@@ -31,9 +31,9 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
   
   # Life history values (from here to "Loop" can be removed from inside the function).
   
-  Performance <- seq(0.7, 0.975, 0.025)
+  Performance <- seq(5, 7, 0.2)
   max_Performance <- length(Performance)
-  # Performance values (How fast you move)
+  # Performance values (How fast you move cm/s)
   
   Size <- c(0, seq(1, 5.5, 0.1))
   max_Size <- length(Size)
@@ -73,7 +73,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
     
   }
   Survival[1,] <- 0
-  # Survival matrix, based on every Condition value.
+  # Survival matrix, based on every Condition value. From 0 to 1.
   
   
   
@@ -225,7 +225,7 @@ Plot <- function(time,steps){
     ForageRule_rev[max_Size, ] <- "Dead"
     
     plot(ForageRule_rev, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
-         breaks=c("Dead", "Growth", "Performance"), xlab = "Condition", ylab = "Size",
+         breaks=c("Dead", "Growth", "Performance"), xlab = "Burst speed (cm/s)", ylab = "Size (cm)",
          main = paste('Decision at time step ', t ), axis.col = NULL, axis.row = NULL)
     axis(1, at = 1:max_Performance, labels = Performance)
     axis(2, at = 1:(max_Size), labels = c(Size), las = 1)
@@ -246,7 +246,7 @@ Plot <- function(time,steps){
 # Initial Parameters
 prob_good_temp <- 0.5 # Probability of having a good Temperature
 prob_bad_temp <- 1 - prob_good_temp # Probability of having a bad Temperature
-time_steps <- 60 # How many days does the metamorphosis last?
+time_steps <- 12 # How many days does the metamorphosis last?
 
 # par(mfrow=c(1,1))
 par(mfrow=c(3,4))
@@ -259,4 +259,3 @@ Decisions(prob_good_temp, prob_bad_temp, time_steps)
   
 
 Plot(time_steps)
-
