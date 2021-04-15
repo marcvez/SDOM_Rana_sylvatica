@@ -65,16 +65,15 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
   # We divide by the highest value to create a 0 to 1 Condition matrix.
   
   Survival <- matrix(nrow = max_Size, ncol = max_Performance)
-  Survival[,1] <- c(0, seq(0.8, 0.9, 0.1/(max_Size - 2)))
+  Survival[,1] <- c(0, seq(0.9, 0.95, 0.05/(max_Size - 2)))
   
   for (j in 2:max_Performance) {
     
-    Survival[, j] <- Survival[, j - 1] + (0.1/(max_Performance - 1))
+    Survival[, j] <- Survival[, j - 1] + (0.05/(max_Performance - 1))
     
   }
   Survival[1,] <- 0
   # Survival matrix, based on every Condition value. From 0 to 1.
-  
   
   
   ForageRule <- array(NA, dim = c((max_Size), max_Performance, time_steps))
@@ -246,7 +245,7 @@ Plot <- function(time,steps){
 # Initial Parameters
 prob_good_temp <- 0.5 # Probability of having a good Temperature
 prob_bad_temp <- 1 - prob_good_temp # Probability of having a bad Temperature
-time_steps <- 12 # How many days does the metamorphosis last?
+time_steps <- 60 # How many days does the metamorphosis last?
 
 # par(mfrow=c(1,1))
 par(mfrow=c(3,4))
