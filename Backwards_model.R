@@ -212,7 +212,10 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps) {
   
 } # end of Decision function
 
-Plot <- function(time,steps){
+Backwards_Plot <- function(){
+  
+  par(mfrow=c(3,4))
+  par(mar=c(5.1, 4.5, 4.1, 6.5))
   
   t <- time_steps
   
@@ -242,14 +245,14 @@ Plot <- function(time,steps){
 } # End of Plot loop
 
 
+
+
 # Initial Parameters
 prob_good_temp <- 0.5 # Probability of having a good Temperature
 prob_bad_temp <- 1 - prob_good_temp # Probability of having a bad Temperature
 time_steps <- 60 # How many days does the metamorphosis last?
 
-# par(mfrow=c(1,1))
-par(mfrow=c(3,4))
-par(mar=c(5.1, 4.5, 4.1, 6.5))
+
 
 
 # Plot
@@ -257,4 +260,4 @@ par(mar=c(5.1, 4.5, 4.1, 6.5))
 Decisions(prob_good_temp, prob_bad_temp, time_steps)
   
 
-Plot(time_steps)
+Backwards_Plot()
