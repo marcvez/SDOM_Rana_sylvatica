@@ -18,7 +18,8 @@ Forward <- function(N) {
   rownames(Population) <- c(1:N) # Tadpole number xx
   colnames(Population) <- c((1:time_steps), "Size", "Performance", "Fitness") # Time step xx
   # This matrix is going to store the state of each tadpole during the whole
-  # period. It is going to be read by the "Alive" matrix, to determine how many 
+  # period, being 1 the value of being alive and 0, being dead.. 
+  # It is going to be read by the "Alive" matrix, to determine how many 
   # individuals are still alive at each time step. The last columns store the Size,
   # Performance and fitness that tadpoles have at the last time step.
   
@@ -37,6 +38,7 @@ Forward <- function(N) {
   # This array stores the Size, Performance and Expected Fitness values of each tadpole at each time step.
   
   Performance_forw <- Performance
+  # This line exists because it was the only way I've found to not mess up the Performance array
   
   for (n in 1:N) {
     
@@ -61,7 +63,10 @@ Forward <- function(N) {
       if (Prob_Survive < Survival[i, j]) {
         # If you survive...
         
-        # This is how it's going to Work: If at this time step and combination of Size and Performance, on your ForageRule array it says that you should invest in performance (TRUE), you add 1 to this state (j). If it says that you should invest in growth (FALSE), you add one to the growth state (i).
+        # This is how it's going to Work: If at this time step and combination of
+        # Size and Performance, on your ForageRule array it says that you should 
+        # invest in performance (TRUE), you add 1 to this state (j). If it says 
+        # that you should invest in growth (FALSE), you add one to the growth state (i).
         # Then you write 1 on the Population matrix, in the correct time step and tadpole ID.
         
         if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance) {
@@ -163,6 +168,7 @@ Forward <- function(N) {
     
   } # for loop
   
+  print("How many tadpoles are still alive?")
   print(Alive[time_steps, 2])
   
   assign("Alive", Alive, envir = globalenv())
@@ -232,6 +238,11 @@ Forward(N)
 Survival_plot()
 
 Investment_plot()
+
+
+
+
+# Heatmap Survival (?)
 
 ggplot(Survival, aes(NA, NA, fill = Survival)) + 
   geom_tile()
