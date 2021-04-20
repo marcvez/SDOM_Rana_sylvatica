@@ -31,7 +31,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
   
   # Life history values (from here to "Loop" can be removed from inside the function).
   
-  Performance <- seq(5.0, 7.0, 0.2)
+  Performance <- seq(5.0, 7.0, 0.15)
   max_Performance <- length(Performance)
   # Performance values (How fast you move cm/s)
   
@@ -109,10 +109,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
         if(j == max_Performance & i == max_Size){
           
           RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp + 
-            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
           
           RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
-            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
           
           # Fitness values that would result if the tadpole is in the best condition.
           
@@ -120,10 +122,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
         } else if (j == max_Performance & i == max_Size - 1) {
           
           RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
-            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
           
           RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i + 1,j,t+1] * prob_good_temp +
-            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
           
           # Fitness values that would result if the tadpole has the best performance,
           # but it could improve in size. It can only grow 1 size, as it has almost 
@@ -133,10 +137,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
         } else if (j < max_Performance & i == max_Size) {
           
           RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
-            Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp) * prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
           
           RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
-            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
           
           # Fitness values that would result if the tadpole has the maximum size,
           # but it could improve in performance. 
@@ -145,10 +151,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
         } else if (j < max_Performance & i == max_Size - 1) {
           
           RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
-            Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp) * prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
           
           RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+1,j,t+1] * prob_good_temp +
-            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
           
           # Fitness values that would result if the tadpole is almost in the maximum size,
           # but it could improve in performance. It can only grow 1 size, as it has almost 
@@ -158,10 +166,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
         } else if (j == max_Performance & i < max_Size - 1) {
           
           RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
-            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
           
           RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp +
-            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
           
           # Fitness values that would result if the tadpole has the best performance,
           # but it could improve in size. 
@@ -170,10 +180,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
         } else {
           
           RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * 
-            prob_good_temp + Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp) * prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            prob_good_temp + Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
           
           RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp +
-            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
           
           # The rest of the cells will operate as follows: You multiply your 
           # current condition (Condition) by the expected fitness and by the 
@@ -256,8 +268,8 @@ Backwards_Plot <- function(){
 # Initial Parameters
 prob_good_temp <- 0.5 # Probability of having a good Temperature
 prob_bad_temp <- 1 - prob_good_temp # Probability of having a bad Temperature
-time_steps <- 60 # How many days does the metamorphosis last?
-end_season_percentage <- 0.3
+time_steps <- 55 # How many days does the metamorphosis last?
+end_season_percentage <- 0.4
 end_season_intensity <- 1
 
 
