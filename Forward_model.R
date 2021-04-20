@@ -60,6 +60,8 @@ Forward <- function(N) {
       Prob_Survive <- runif(1)
       # Random value that determines if you live or you die.
       
+      Temperature <- runif(1)
+      
       if (Prob_Survive < Survival[i, j]) {
         # If you survive...
         
@@ -69,13 +71,15 @@ Forward <- function(N) {
         # that you should invest in growth (FALSE), you add one to the growth state (i).
         # Then you write 1 on the Population matrix, in the correct time step and tadpole ID.
         
-        if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance) {
+        # Bad Tº
+        
+        if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance & Temperature > prob_good_temp) {
           
           j <- j
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j == max_Performance) {
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j == max_Performance & Temperature > prob_good_temp) {
           
           i <- i
           
@@ -84,13 +88,13 @@ Forward <- function(N) {
         } # MAx Performance and MAX Size -> You stay the same
         
         
-        else if (ForageRule[i, j, t] == TRUE & i < max_Size & j == max_Performance & i > 1) {
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size & j == max_Performance & i > 1 & Temperature > prob_good_temp) {
           
           j <- j
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i < max_Size & j == max_Performance & i > 1) {
+        } else if (ForageRule[i, j, t] == FALSE & i < max_Size & j == max_Performance & i > 1 & Temperature > prob_good_temp) {
           
           i <- i + 1
           
@@ -99,13 +103,13 @@ Forward <- function(N) {
         } # MAX Performance but Size < Max -> You can grow, but not increase your Performance
         
         
-        else if (ForageRule[i, j, t] == TRUE & i == max_Size & j < max_Performance) {
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size & j < max_Performance & Temperature > prob_good_temp) {
           
           j <- j + 1
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j < max_Performance) {
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j < max_Performance & Temperature > prob_good_temp) {
           
           i <- i
           
@@ -114,13 +118,13 @@ Forward <- function(N) {
         } # MAX Size but Performance < Max -> You can't grow, but you can improve Performance
         
         
-        else if (ForageRule[i, j, t] == TRUE & i < max_Size & j < max_Performance & i > 1) {
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size & j < max_Performance & i > 1 & Temperature > prob_good_temp) {
           
           j <- j + 1
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i < max_Size & j < max_Performance & i > 1) {
+        } else if (ForageRule[i, j, t] == FALSE & i < max_Size & j < max_Performance & i > 1 & Temperature > prob_good_temp) {
           
           i <- i + 1
           
@@ -128,6 +132,84 @@ Forward <- function(N) {
           
         } # Normal situation, you can always Grow or improve Performance
         
+        
+        
+        # Good Tº
+        
+        
+         else if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance & Temperature < prob_good_temp) {
+          
+          j <- j
+          
+          Population[n, t] <- 1
+          
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j == max_Performance & Temperature < prob_good_temp) {
+          
+          i <- i
+          
+          Population[n, t] <- 1
+          
+        } # MAx Performance and MAX Size -> You stay the same
+        
+        
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j == max_Performance & i > 1 & Temperature < prob_good_temp) {
+          
+          j <- j
+          
+          Population[n, t] <- 1
+          
+        } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j == max_Performance & i > 1 & Temperature < prob_good_temp) {
+          
+          i <- i + 2
+          
+          Population[n, t] <- 1
+          
+        } # MAX Performance but Size < Max -> You can grow, but not increase your Performance
+        
+        
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j == max_Performance & i > 1 & Temperature < prob_good_temp) {
+          
+          j <- j
+          
+          Population[n, t] <- 1
+          
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & Temperature < prob_good_temp) {
+          
+          i <- i + 1
+          
+          Population[n, t] <- 1
+          
+        } # MAX Performance but Size < Max -> You can grow, but not increase your Performance
+        
+        
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size & j < max_Performance & Temperature < prob_good_temp) {
+          
+          j <- j + 1
+          
+          Population[n, t] <- 1
+          
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j < max_Performance & Temperature < prob_good_temp) {
+          
+          i <- i
+          
+          Population[n, t] <- 1
+          
+        } # MAX Size but Performance < Max -> You can't grow, but you can improve Performance
+        
+        
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1& j < max_Performance & i > 1 & Temperature < prob_good_temp) {
+          
+          j <- j + 1
+          
+          Population[n, t] <- 1
+          
+        } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j < max_Performance & i > 1 & Temperature < prob_good_temp) {
+          
+          i <- i + 2
+          
+          Population[n, t] <- 1
+          
+        } # Normal situation, you can always Grow or improve Performance
         
         
       } else {
@@ -227,7 +309,7 @@ Investment_plot <- function() {
 
 # Initial parameters
 
-N <- 100
+N <- 1000
 # Number of Tadpoles
 
 
