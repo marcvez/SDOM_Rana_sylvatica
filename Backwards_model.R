@@ -110,11 +110,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
           
           RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp + 
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
-            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t] 
           
           RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
-            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           # Fitness values that would result if the tadpole is in the best condition.
           
@@ -123,11 +123,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
           
           RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
-            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i + 1,j,t+1] * prob_good_temp +
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
-            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           # Fitness values that would result if the tadpole has the best performance,
           # but it could improve in size. It can only grow 1 size, as it has almost 
@@ -138,11 +138,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
           
           RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
             Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp) * 
-            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
-            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           # Fitness values that would result if the tadpole has the maximum size,
           # but it could improve in performance. 
@@ -152,11 +152,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
           
           RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
             Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp) * 
-            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+1,j,t+1] * prob_good_temp +
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
-            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           # Fitness values that would result if the tadpole is almost in the maximum size,
           # but it could improve in performance. It can only grow 1 size, as it has almost 
@@ -167,11 +167,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
           
           RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
-            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp +
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
-            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           # Fitness values that would result if the tadpole has the best performance,
           # but it could improve in size. 
@@ -181,11 +181,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
           
           RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * 
             prob_good_temp + Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp) * 
-            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp +
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
-            prob_no_end_season[t] + Fitness[i, j, t + 1] * prob_end_season[t]
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           # The rest of the cells will operate as follows: You multiply your 
           # current condition (Condition) by the expected fitness and by the 
