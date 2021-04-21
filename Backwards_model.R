@@ -266,11 +266,13 @@ Backwards_Plot <- function(){
 
 
 # Initial Parameters
-prob_good_temp <- 0.5 # Probability of having a good Temperature
+prob_good_temp <- 0.7 # Probability of having a good Temperature
 prob_bad_temp <- 1 - prob_good_temp # Probability of having a bad Temperature
-time_steps <- 50 # How many days does the metamorphosis last?
-end_season_percentage <- 0.4
-end_season_intensity <- 1
+time_steps <- 50 # How many days does the metamorphosis last (normal conditions)?
+end_season_percentage <- 0.5 # How many days (% of the normal growing season), 
+# beginning from the back, are susceptible to be the end of season (due stochasticity)?
+end_season_intensity <- 1 # Increasing probability of ending the season in that 
+# particular time step since the days start to be susceptible of being the end of season.
 
 
 
