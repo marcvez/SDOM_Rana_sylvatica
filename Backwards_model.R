@@ -72,11 +72,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
   # We divide by the highest value to create a 0 to 1 Condition matrix.
   
   Survival <- matrix(nrow = max_Size, ncol = max_Performance)
-  Survival[,1] <- c(0, seq(0.9, 0.95, 0.05/(max_Size - 2)))
+  Survival[,1] <- c(0, seq(0.976, 0.988, 0.012/(max_Size - 2)))
   
   for (j in 2:max_Performance) {
     
-    Survival[, j] <- Survival[, j - 1] + (0.05/(max_Performance - 1))
+    Survival[, j] <- Survival[, j - 1] + (0.012/(max_Performance - 1))
     
   }
   Survival[1,] <- 0
@@ -268,7 +268,7 @@ Backwards_Plot <- function(){
 # Initial Parameters
 prob_good_temp <- 0.5 # Probability of having a good Temperature
 prob_bad_temp <- 1 - prob_good_temp # Probability of having a bad Temperature
-time_steps <- 55 # How many days does the metamorphosis last?
+time_steps <- 50 # How many days does the metamorphosis last?
 end_season_percentage <- 0.4
 end_season_intensity <- 1
 
