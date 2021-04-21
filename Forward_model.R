@@ -258,8 +258,9 @@ Forward <- function(N) {
       # We write the final Size, Performance and Fitness of each Tadpole at the end 
       # of the Population matrix.
         
-      t <- t + 1 
       
+      
+      t <- t + 1
       
     } # while loop
     
@@ -325,7 +326,7 @@ Investment_plot <- function() {
 
 # Initial parameters
 
-N <- 100
+N <- 10
 # Number of Tadpoles
 
 
