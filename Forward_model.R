@@ -179,7 +179,22 @@ Forward <- function(N) {
           
           Population[n, t] <- 1
           
-        } # MAX Performance but Size < Max -> You can grow, but not increase your Performance
+        } # MAX Performance but Size = Max - 1 -> You can grow(only 1), but not increase your Performance
+        
+        
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j < max_Performance & i > 1 & Temperature < prob_good_temp) {
+          
+          j <- j + 1
+          
+          Population[n, t] <- 1
+          
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & Temperature < prob_good_temp) {
+          
+          i <- i + 1
+          
+          Population[n, t] <- 1
+          
+        } # Performance < Max and Size = Max - 1 -> You can grow (only 1), and increase your Performance
         
         
         else if (ForageRule[i, j, t] == TRUE & i == max_Size & j < max_Performance & Temperature < prob_good_temp) {
@@ -197,7 +212,7 @@ Forward <- function(N) {
         } # MAX Size but Performance < Max -> You can't grow, but you can improve Performance
         
         
-        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1& j < max_Performance & i > 1 & Temperature < prob_good_temp) {
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j < max_Performance & i > 1 & Temperature < prob_good_temp) {
           
           j <- j + 1
           
@@ -226,10 +241,10 @@ Forward <- function(N) {
         
       } # if/else loop (dead/alive)
       
+      
       Alive[t + 1, 2] <- sum(Population[, t])
       # Store the number of tadpoles that are alive at each time step.
       # There is a time step 0, and it's the initial population.
-      
       
       Tadpole_state[n, 1, t + 1] <- Size[i]
       Tadpole_state[n, 2, t + 1] <- Performance_forw[j]
@@ -242,8 +257,9 @@ Forward <- function(N) {
       Population[n, time_steps + 3] <- Fitness[i, j, t]
       # We write the final Size, Performance and Fitness of each Tadpole at the end 
       # of the Population matrix.
-      
+        
       t <- t + 1 
+      
       
     } # while loop
     
@@ -309,7 +325,7 @@ Investment_plot <- function() {
 
 # Initial parameters
 
-N <- 1000
+N <- 100
 # Number of Tadpoles
 
 
