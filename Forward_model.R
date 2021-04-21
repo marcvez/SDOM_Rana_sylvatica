@@ -269,12 +269,25 @@ Forward <- function(N) {
         
         
         t <- t + 1
-        Inner_time <- Inner_time + 2
+        
+        prob_jump <- runif(1)
+        
+        if(prob_jump < prob_good_temp) { 
+          
+          Inner_time <- Inner_time + 2
+          
+        } else {
+          
+          Inner_time <- Inner_time + 1
+          
+        } # if/else prob jump
+        
+        
         Inner_time <- min(Inner_time, time_steps)
           
       }
       
-      else if (Inner_time == time_steps) {
+      else if (Inner_time == time_steps) { # These frogs don't die, for the moment
         
         Population[n, t] <- Population[n, t - 1]
         
@@ -297,9 +310,8 @@ Forward <- function(N) {
         
         t <- t + 1
       
-      }
+      } # if Inner_time == time_steps
       
-        
       else {
         # On the contrary, if you are dead,
         
@@ -350,8 +362,8 @@ Forward <- function(N) {
   
 }
 
-
 # Survival plot
+
 
 Survival_plot <- function() {
   
@@ -366,8 +378,8 @@ Survival_plot <- function() {
   
 }
 
-
 # Investment and fitness plot
+
 
 Investment_plot <- function() {
   
@@ -401,7 +413,9 @@ Investment_plot <- function() {
 
 # Initial parameters
 
-N <- 10
+
+
+N <- 1000
 # Number of Tadpoles
 
 
@@ -412,19 +426,4 @@ Forward(N)
 Survival_plot()
 
 Investment_plot()
-
-
-
-
-# Heatmap Survival (?)
-
-ggplot(Survival, aes(NA, NA, fill = Survival)) + 
-  geom_tile()
-
-install.packages("pheatmap")
-
-library(pheatmap)
-par(mar = c(2, 2, 2, 2))
-pheatmap(Survival[2:max_Size,], cluster_rows = FALSE, cluster_cols = FALSE)
-
 
