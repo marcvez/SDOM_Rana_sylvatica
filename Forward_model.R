@@ -9,6 +9,7 @@
 # food it finds) and this is spent on growing or moving faster. 
 
 library(ggplot2)
+library(Hmisc)
 
 # Forward simulation
 
@@ -364,8 +365,8 @@ Forward <- function(N) {
   
 }
 
-# Survival plot
 
+# Survival plot
 
 Survival_plot <- function() {
   
@@ -380,8 +381,8 @@ Survival_plot <- function() {
   
 }
 
-# Investment and fitness plot
 
+# Investment and fitness plot
 
 Investment_plot <- function() {
   
@@ -413,11 +414,94 @@ Investment_plot <- function() {
   
 }
 
+
+# Plot that displays the final values of the tadpoles' traits
+# Vertical lines intercept those tadpoles that have all 3 traits maximized
+
+Final_traits_plot <- function(){
+  
+  Final_Fitness <- (Tadpole_state[, 3, time_steps + 1])
+  
+  Final_Size <- (Tadpole_state[, 1, time_steps + 1])
+  
+  Final_Performance <- (Tadpole_state[, 2, time_steps + 1])
+  
+  Final_results <- cbind(Final_Size, Final_Performance, Final_Fitness)
+  
+  Max_Condition <- as.vector(which(Final_results[, 1] == max(Size) & Final_results[, 2] == max(Performance) & Final_results[, 3] == max(Final_results[, 3])))
+  
+  par(mfrow=c(1,1))
+  
+  plot(Final_results[, 2], pch = 19, col = '#440154FF', xlim = c(0, N + 16), 
+       main = "Size, Burst speed and Fitness at the end of metamorphosis", 
+       ylab = "Size (cm), Burst speed (cm/s) and Fitness", xlab = "Tadpole")
+  points(Final_results[, 1], pch = 19, col = "#21908CFF")
+  points(Final_results[, 3], pch = 19, col = '#FDE725FF',)
+  abline(h = max(Size), lty = 2)
+  abline(h = max(Performance), lty = 2)
+  abline(h = max(Fitness_values), lty = 2)
+  abline(v = c(Max_Condition), lty = 2)
+  legend("bottomright", legend=c("Performance", "Size", "Fitness"),
+         pch = c(19, 19, 19), col = c('#440154FF', '#21908CFF', '#FDE725FF'), lty=2, cex=0.8)
+  
+  assign("Final_results", Final_results, envir = globalenv())
+  assign("Max_Condition", Max_Condition, envir = globalenv())
+  
+  
+}
+
+
+# Density plots of the final values of the traits
+
+Density_plot <- function(){
+  
+  par(mfrow=c(3,2))
+  par(mar=c(5.1, 4.5, 3, 4.5))
+  
+  plot(density(Final_results[,1], bw = 0.01, from = -0.1, to = max(Size) + 0.1), main = "Final Size (cm)")
+  rug(Final_results[,1], col='red')
+  
+  plot(density(Final_results[,1], bw = 0.01, from = 4, to = max(Size) + 0.1), main = "Final Size (cm) (Alive)")
+  rug(Final_results[,1], col='red')
+  
+  plot(density(Final_results[,2], bw = 0.01, from = -0.1, to = max(Performance) + 0.1), main = "Final Burst Speed (cm/s)")
+  rug(Final_results[,2], col='red')
+  
+  plot(density(Final_results[,2], bw = 0.01, from = 5, to = max(Performance) + 0.1), main = "Final Burst Speed (cm/s) (Alive)")
+  rug(Final_results[,2], col='red')
+  
+  plot(density(Final_results[,3], bw = 0.01, from = -0.1, to = max(Fitness_values) + 0.1), main = "Final Fitness")
+  rug(Final_results[,3], col='red')
+  
+  plot(density(Final_results[,3], bw = 0.01, from = 3, to = max(Fitness_values) + 0.1), main = "Final Fitness (Alive)")
+  rug(Final_results[,3], col='red')
+  
+}
+
+
+# Histogram showing the number of tadpoles in each Fitness value
+
+Histogram_plot <- function(){
+  
+  par(mfrow=c(1,1))
+  hist(Tadpole_state[, 3, time_steps + 1], 
+       main="Fitness Histogram", 
+       xlab="Fitness values", 
+       xlim=c(0,max(Fitness_values)),
+       las=1, 
+       breaks=1000)
+  minor.tick(nx=10, ny=10)
+  
+  
+  abline(h = length(Max_Condition), lty = 2)
+  
+}
+
 # Initial parameters
 
 
 
-N <- 1000
+N <- 100
 # Number of Tadpoles
 
 
@@ -429,65 +513,30 @@ Survival_plot()
 
 Investment_plot()
 
+Final_traits_plot()
 
-#Tadpole_state[, 3, time_steps + 1]
+Density_plot()
 
-#Population[ , time_steps + 3]
-
-par(mfrow=c(3,1))
-par(mar=c(5.1, 4.5, 3, 4.5))
-
-Final_Fitness <- (Tadpole_state[, 3, time_steps + 1])
-
-Final_Size <- (Tadpole_state[, 1, time_steps + 1])
-
-Final_Performance <- (Tadpole_state[, 2, time_steps + 1])
-
-
-plot(density(Final_Size, bw = 0.01, from = -0.1, to = max(Size) + 0.1), main = "Final Size (cm)")
-rug(Final_Size, col='red')
-
-plot(density(Final_Performance, bw = 0.01, from = -0.1, to = max(Performance) + 0.1), main = "Final Burst Speed (cm)")
-rug(Final_Performance, col='red')
-
-plot(density(Final_Fitness, bw = 0.01, from = -0.1, to = max(Fitness_values) + 0.1), main = "Final Fitness")
-rug(Final_Fitness, col='red')
-
-# No hauria de ser aixi! Hauria de ser de probabilitat, no de densitat!
-
-
-plot(density(Final_Size, bw = 0.01, from = 4, to = max(Size) + 0.1), main = "Final Size (cm)")
-rug(Final_Size, col='red')
-
-plot(density(Final_Performance, bw = 0.01, from = 5, to = max(Performance) + 0.1), main = "Final Burst Speed (cm)")
-rug(Final_Performance, col='red')
-
-plot(density(Final_Fitness, bw = 0.01, from = 3, to = max(Fitness_values) + 0.1), main = "Final Fitness")
-rug(Final_Fitness, col='red')
-
-# hist(Tadpole_state[, 3, time_steps + 1])
-
-
-
-hist(Tadpole_state[, 3, time_steps + 1], 
-     main="Histogram for Air Passengers", 
-     xlab="Passengers", 
-     xlim=c(4,max(Fitness_values)),
-     las=1, 
-     breaks=10000)
-Fitness_values   
-
-format(round(Final_Fitness, 4), nsmall = 3)
+Histogram_plot()
+# Horizontal line represents the number of tadpoles with all 3 traits maximized
 
 
 
 
-# Libraries
+
+
+
+
+
+# Hacer un mapa 3D (heat map) donde la intensidad sea la fitness, y los ejes x e y los valores de performance y talla.
+# Faltaria el numero de renacuajos en cada uno de esos puntos (4D?)
+# Heat map con colores suelen ser de 2D, y el color representa veces que se ha llegado a la misma combinación de valores.
+
+
+
 library(ggplot2)
 library(dplyr)
 library(hrbrthemes)
-install.packages("hrbrthemes")
-
 
 Final_Fitness <- as.data.frame(Final_Fitness)
 
