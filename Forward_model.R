@@ -431,6 +431,7 @@ Final_traits_plot <- function(){
   Max_Condition <- as.vector(which(Final_results[, 1] == max(Size) & Final_results[, 2] == max(Performance) & Final_results[, 3] == max(Final_results[, 3])))
   
   par(mfrow=c(1,1))
+  par(mar=c(5.1, 4.5, 3, 4.5))
   
   plot(Final_results[, 2], pch = 19, col = '#440154FF', xlim = c(0, N + 16), 
        main = "Size, Burst speed and Fitness at the end of metamorphosis", 
@@ -441,7 +442,7 @@ Final_traits_plot <- function(){
   abline(h = max(Performance), lty = 2)
   abline(h = max(Fitness_values), lty = 2)
   abline(v = c(Max_Condition), lty = 2)
-  legend("bottomright", legend=c("Performance", "Size", "Fitness"),
+  legend("bottomright", legend=c("Burst speed", "Size", "Fitness"),
          pch = c(19, 19, 19), col = c('#440154FF', '#21908CFF', '#FDE725FF'), lty=2, cex=0.8)
   
   assign("Final_results", Final_results, envir = globalenv())
@@ -501,7 +502,7 @@ Histogram_plot <- function(){
 
 
 
-N <- 100
+N <- 1000
 # Number of Tadpoles
 
 
