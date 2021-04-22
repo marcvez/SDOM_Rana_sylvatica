@@ -287,9 +287,11 @@ Forward <- function(N) {
           
       }
       
-      else if (Inner_time == time_steps) { # These frogs don't die, for the moment
+      # Inner_time == time_steps
+      
+      else if (Inner_time == time_steps & Prob_Survive < Survival[i, j]) { # These frogs don't die, for the moment
         
-        Population[n, t] <- Population[n, t - 1]
+        Population[n, t] <- 1
         
         Alive[t + 1, 2] <- sum(Population[, t])
         # Store the number of tadpoles that are alive at each time step.
@@ -297,7 +299,7 @@ Forward <- function(N) {
         
         Tadpole_state[n, 1, t + 1] <- Size[i]
         Tadpole_state[n, 2, t + 1] <- Performance_forw[j]
-        Tadpole_state[n, 3, t + 1] <- Tadpole_state[n, 3, t]
+        Tadpole_state[n, 3, t + 1] <- Fitness[i, j, t]
         # We store the Size and Performance of each tadpole at each time Step
         
         
@@ -427,3 +429,72 @@ Survival_plot()
 
 Investment_plot()
 
+
+#Tadpole_state[, 3, time_steps + 1]
+
+#Population[ , time_steps + 3]
+
+par(mfrow=c(3,1))
+par(mar=c(5.1, 4.5, 3, 4.5))
+
+Final_Fitness <- (Tadpole_state[, 3, time_steps + 1])
+
+Final_Size <- (Tadpole_state[, 1, time_steps + 1])
+
+Final_Performance <- (Tadpole_state[, 2, time_steps + 1])
+
+
+plot(density(Final_Size, bw = 0.01, from = -0.1, to = max(Size) + 0.1), main = "Final Size (cm)")
+rug(Final_Size, col='red')
+
+plot(density(Final_Performance, bw = 0.01, from = -0.1, to = max(Performance) + 0.1), main = "Final Burst Speed (cm)")
+rug(Final_Performance, col='red')
+
+plot(density(Final_Fitness, bw = 0.01, from = -0.1, to = max(Fitness_values) + 0.1), main = "Final Fitness")
+rug(Final_Fitness, col='red')
+
+# No hauria de ser aixi! Hauria de ser de probabilitat, no de densitat!
+
+
+plot(density(Final_Size, bw = 0.01, from = 4, to = max(Size) + 0.1), main = "Final Size (cm)")
+rug(Final_Size, col='red')
+
+plot(density(Final_Performance, bw = 0.01, from = 5, to = max(Performance) + 0.1), main = "Final Burst Speed (cm)")
+rug(Final_Performance, col='red')
+
+plot(density(Final_Fitness, bw = 0.01, from = 3, to = max(Fitness_values) + 0.1), main = "Final Fitness")
+rug(Final_Fitness, col='red')
+
+# hist(Tadpole_state[, 3, time_steps + 1])
+
+
+
+hist(Tadpole_state[, 3, time_steps + 1], 
+     main="Histogram for Air Passengers", 
+     xlab="Passengers", 
+     xlim=c(4,max(Fitness_values)),
+     las=1, 
+     breaks=10000)
+Fitness_values   
+
+format(round(Final_Fitness, 4), nsmall = 3)
+
+
+
+
+# Libraries
+library(ggplot2)
+library(dplyr)
+library(hrbrthemes)
+install.packages("hrbrthemes")
+
+
+Final_Fitness <- as.data.frame(Final_Fitness)
+
+# Make the histogram
+Final_Fitness %>%
+  filter( Final_Fitness<max(Final_Fitness)) %>%
+  ggplot( aes(x=Final_Fitness)) +
+  geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.8) +
+  ggtitle("Night price distribution of Airbnb appartements") +
+  theme_ipsum()
