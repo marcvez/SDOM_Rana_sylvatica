@@ -230,6 +230,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
   
 } # end of Decision function
 
+
 Backwards_Plot <- function(){
   
   par(mfrow=c(3,4))
@@ -261,8 +262,6 @@ Backwards_Plot <- function(){
   } # End of while loop
   
 } # End of Plot loop
-
-
 
 
 # Initial Parameters
