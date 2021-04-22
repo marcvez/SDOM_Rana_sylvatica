@@ -26,7 +26,7 @@
 library(plot.matrix)
 
 
-Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_percentage, end_season_intensity) {
+Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_percentage, end_season_intensity, death_rate_day) {
   
   
   # Life history values (from here to "Loop" can be removed from inside the function).
@@ -72,11 +72,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
   # We divide by the highest value to create a 0 to 1 Condition matrix.
   
   Survival <- matrix(nrow = max_Size, ncol = max_Performance)
-  Survival[,1] <- c(0, seq(0.976, 0.988, 0.012/(max_Size - 2)))
+  Survival[,1] <- c(0, seq(1 - 2*death_rate_day, 1 - death_rate_day, death_rate_day/(max_Size - 2)))
   
   for (j in 2:max_Performance) {
     
-    Survival[, j] <- Survival[, j - 1] + (0.012/(max_Performance - 1))
+    Survival[, j] <- Survival[, j - 1] + (death_rate_day/(max_Performance - 1))
     
   }
   Survival[1,] <- 0
@@ -223,6 +223,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
   assign("max_Performance", max_Performance, envir=globalenv())
   assign("Performance", Performance, envir=globalenv())
   assign("Survival", Survival, envir=globalenv())
+  assign("Fitness_values", Fitness_values, envir=globalenv())
   
   # This line extracts Fitness, ForageRule and other objects from inside the function to 
   # the global environment, so we can use it in the plot function or the Forward simulation.
@@ -272,12 +273,13 @@ end_season_percentage <- 0.4 # How many days (% of the normal growing season),
 # beginning from the back, are susceptible to be the end of season (due stochasticity)?
 end_season_intensity <- 1 # Increasing probability of ending the season in that 
 # particular time step since the days start to be susceptible of being the end of season.
+death_rate_day <- 0.012 # Death rate per day (from 0 to 1)
 
 
 
 # Plot
 
-Decisions(prob_good_temp, prob_bad_temp, time_steps, end_season_percentage, end_season_intensity)
+Decisions(prob_good_temp, prob_bad_temp, time_steps, end_season_percentage, end_season_intensity, death_rate_day)
   
 
 Backwards_Plot()
