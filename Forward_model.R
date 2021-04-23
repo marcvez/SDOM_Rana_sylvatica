@@ -502,7 +502,7 @@ Histogram_plot <- function(){
 
 
 
-N <- 1000
+N <- 100
 # Number of Tadpoles
 
 
@@ -526,6 +526,34 @@ Histogram_plot()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Ideas (in Spanish, don't pay attention to this)
+
+# Cambiar valores de fitness!! Ya no hay la misma fitness para tallas grandes, sino que siempre augmenta.
+# Esto podria modificar backwards simulation y que casi no se invierta en performance... (HECHO)
+
+# Tambien, los valores que tengo puestos como performance son los valores max de 
+# performance observados en estos renacuajos, pero para llegar a estos, han tenido 
+# que pasar por velocidades inferiores! Deberia augmentar el numero de breaks de 
+# performance o cambiar los valores y empezar antes, sin cambiar el numero de breaks. 
+# Eso deberia modificar tambien la backeards simulation. (HECHO)
+
+#Revisar dos puntos anteriores
 
 
 
