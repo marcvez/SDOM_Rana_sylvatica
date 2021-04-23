@@ -31,7 +31,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
   
   # Life history values (from here to "Loop" can be removed from inside the function).
   
-  Performance <- seq(5.0, 7.0, 0.15)
+  Performance <- seq(3.0, 7.0, 0.24) #0.25 okay
   max_Performance <- length(Performance)
   # Performance values (How fast you move cm/s)
   
@@ -41,12 +41,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
   # trait that is relevant for the final Fitness (The bigger, the better)
   # Size 0 is equal to being dead.
   
-  
+ 
   Fitness_values <- c(0, seq(1, 5.5, 0.1))
   max_Fitness <- length(Fitness_values)
   Fitness_values[Fitness_values < 4] <- 0
   Fitness_values[Fitness_values >=4 & Fitness_values < 5] <- seq(2, 3.8, 2/(length(Fitness_values[Fitness_values >=4 & Fitness_values < 5])))
-  Fitness_values[Fitness_values >= 5] <- c(4, 4.1, 4.15, 4.15, 4.15, 4.15)
+  Fitness_values[Fitness_values >= 5] <- c(4, 4.1, 4.15, 4.2, 4.25, 4.3)
   # Sizes under 4 cm don't receive Fitness benefits. This is the benefit that you
   # receive for being in each Size at the final time step.
   
