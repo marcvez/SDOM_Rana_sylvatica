@@ -1,334 +1,196 @@
 
 
-#---------------------Backwards model-----------------------
+#------------------------- Backwards model ---------------------------------
 
-# In this model you either invest in either or you die, it's a simpler model. 
-# To do this, we will use a matrix where the y-axis contains the different units 
-# of energy invested in growth, and the x-axis contains the units of energy 
-# invested in performance. The content of each cell will be the fitness value 
-# of that combination of traits. 
-# The function should see how fitness increases with respect to the previous 
-# state by deciding whether to invest in growth (by moving down one cell 
-# in the matrix) or in performance (by moving one cell to the right). It will then 
-# calculate the fitness increase of the two decisions and choose the best option.
+# This script contains the backward simulation of the model. 
+# Different object values will be generated, which will contain different variables.
+# Performance -> How fast you move
+# Size -> Your size
+# Fitness -> Terminal fitness values
+# Condition -> Combination of performance and size, which are traits that 
+# determine your probability of Condition.
+
+# From this point, the model creates a loop in which at each time step the 
+# organism can decide whether to invest in Performance or Growth. 
+# It compares which of the two options is better and stores the decision in an array (ForageRule). 
+# The fitness values obtained from each of the decisions are also stored (array Fitness).
+
+# Finally, a plot of each time step is made and it is seen which decision is the 
+# optimal one starting from the last time step, where the terminal fitness of each size is known. 
+
+# In this script, temperature plays an important role, because if the temperature 
+# is bad, investing in growth does not bring benefits and you stay the same, 
+# while if you invest in moving better, it does not matter what temperature you are at.
+# A good temperature brings benefits to both decisions. 
 
 library(plot.matrix)
-library(lattice)
-library(latticeExtra)
 
-# Idea 1: Multiply by factor
 
-Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_bad_temp, time_steps) {
+Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_percentage, end_season_intensity, death_rate_day) {
   
   
-  # Life history values (from here to "Loop" can be removed from inside the function)
+  # Life history values (from here to "Loop" can be removed from inside the function).
   
-  Survival <- seq(0.7, 0.975, 0.025)
-  max_Survival <- length(Survival)
-  # Survival values, depends on performance (You have to invest in performance to increase this trait)
+  Performance <- seq(3.0, 7.0, 0.24) #0.25 okay
+  max_Performance <- length(Performance)
+  # Performance values (How fast you move cm/s)
   
   Size <- c(0, seq(1, 5.5, 0.1))
   max_Size <- length(Size)
-  # Size values, you have to invest in growth to increase this trait. Also, this is the only trait that
-  # is relevant for the final fitness (The bigger, the better)
+  # Size values. All the values that tadpoles can archive. Also, this is the only 
+  # trait that is relevant for the final Fitness (The bigger, the better)
+  # Size 0 is equal to being dead.
   
-  
-  Condition <- c(0, seq(1, 5.5, 0.1))
-  max_Condition <- length(Condition)
-  Condition[Condition < 4] <- 0
-  Condition[Condition >=4 & Condition < 5] <- seq(2, 3.8, 2/(length(Condition[Condition >=4 & Condition < 5])))
-  Condition[Condition >= 5] <- c(4, 4.1, 4.15, 4.15, 4.15, 4.15)
-  # Sizes under 4 cm don't receive Fitness benefits.This is the benefit that you
+ 
+  Fitness_values <- c(0, seq(1, 5.5, 0.1))
+  max_Fitness <- length(Fitness_values)
+  Fitness_values[Fitness_values < 4] <- 0
+  Fitness_values[Fitness_values >=4 & Fitness_values < 5] <- seq(2, 3.8, 2/(length(Fitness_values[Fitness_values >=4 & Fitness_values < 5])))
+  Fitness_values[Fitness_values >= 5] <- c(4, 4.1, 4.15, 4.2, 4.25, 4.3)
+  # Sizes under 4 cm don't receive Fitness benefits. This is the benefit that you
   # receive for being in each Size at the final time step.
   
+  Fitness <- array(NA, dim = c((max_Size), max_Performance, time_steps + 1))
+  Fitness[,,time_steps + 1] <- Fitness_values
+  # Array that stores the Fitness values for every time step. In every time step
+  # you multiply your current condition by the expected Fitness value that would get
+  # if you invest on this or that trait.
   
-  Fitness <- matrix(nrow = max_Size, ncol = max_Survival)
-  Fitness[ , ] <- Size %*% t(Survival)
-  # The fitness is the result of the interaction between size and survival 
-  # (performance), and it's different for every combination of each value.
+  prob_end_season <- c(rep(0, round(time_steps - (end_season_percentage * time_steps))), seq(0, end_season_intensity, (end_season_intensity/ (round(end_season_percentage * time_steps) - 1))))
+  prob_no_end_season <- 1 - prob_end_season
+  # end_season_percentage is the percentage of days in the standard metamorphosis period that are 
+  # likely to be the end of the season due to stochastic causes. 
+  # end_season_intensity is the intensity of the event occurring (at the end of the standard 
+  # metamorphosis period, the probability of season ending due to sporadic causes is 30%).
+  # At the moment, it is a linear function, but I would like it to be exponential.
+  
+  Condition <- matrix(nrow = max_Size, ncol = max_Performance)
+  Condition[ , ] <- Size %*% t(Performance)
+  Condition <- Condition / max(Condition) 
+  # Condition is the result of the interaction between Size and Performance 
+  # and it's different for every combination of each trait.
+  # We divide by the highest value to create a 0 to 1 Condition matrix.
+  
+  Survival <- matrix(nrow = max_Size, ncol = max_Performance)
+  Survival[,1] <- c(0, seq(1 - 2*death_rate_day, 1 - death_rate_day, death_rate_day/(max_Size - 2)))
+  
+  for (j in 2:max_Performance) {
+    
+    Survival[, j] <- Survival[, j - 1] + (death_rate_day/(max_Performance - 1))
+    
+  }
+  Survival[1,] <- 0
+  # Survival matrix, based on every Condition value. From 0 to 1.
   
   
-  ForageRule <- matrix(nrow = max_Size, ncol = max_Survival)
-  # Here, the ForageRule matrix is a 2 state variable matrix, and depends
-  # on Survival and Size. We are going to store the TRUE/FALsE results here,
+  ForageRule <- array(NA, dim = c((max_Size), max_Performance, time_steps))
+  # Here, the ForageRule array is a 2 state variable matrix with time as the 3rd dimension,
+  # and depends has the same dimensions as Performance and Size. 
+  # We are going to store the TRUE/FALsE results here,
   # and see if it's better to invest in Performance or in Size.
   
-  Reward <- matrix(nrow = max_Condition, ncol = max_Survival)
-  Reward[,] <- Condition
-  # The Reward matrix has to have the same dimensions as the ForageRule one. 
-  # Each Size has the same Reward, so each row has the same Reward value. As you
-  # only receive Fitness from Size, you only increase the reward you get by 
-  # increasing your Size. 
   
+  RewardIfPerformance <-  array(NA, dim = c((max_Size), max_Performance, time_steps))
+  RewardIfGrowth <-  array(NA, dim = c((max_Size), max_Performance, time_steps))
+  # Arrays that are going to store the fitness values of each decision at 
+  # every time step and state.
   
-  RewardIfPerformance <- matrix(nrow = max_Size, ncol = max_Survival)
-  RewardIfGrowth <- matrix(nrow = max_Size, ncol = max_Survival)
-  
-  
-  
+
   # Loop
   
   t <- time_steps
   
   while (t >= 1) { 
     
-    for (j in 1:(max_Survival)) {
+    for (j in 1:max_Performance) {
       
       for (i in 1:max_Size) {
         
-        if(j == max_Survival & i < max_Size){
+        if(j == max_Performance & i == max_Size){
           
-          RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp + 
-            Fitness[i, j] * Reward[i,j] * prob_bad_temp
-            
-          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i + 1, j] * prob_good_temp * effect_good_temp +
-            Fitness[i, j] * Reward[i + 1, j] * prob_bad_temp * effect_bad_temp
-          # This "if" condition is necessary so if you are on top performance, 
-          # you stay with the same performance value (Survival)
+          RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp + 
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t] 
           
-        } else if (j == max_Survival & i == max_Size) {
+          RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
-          RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp +
-            Fitness[i, j] * Reward[i,j] * prob_bad_temp
+          # Fitness values that would result if the tadpole is in the best condition.
           
-          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp * effect_good_temp +
-            Fitness[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
-          # The same but with max Condition and Survival
           
-        } else if (j < max_Survival & i == max_Size) {
+        } else if (j == max_Performance & i == max_Size - 1) {
           
-          RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j + 1] * prob_good_temp +
-            Fitness[i, j] * Reward[i, j + 1] * prob_bad_temp
+          RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
-          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp * effect_good_temp +
-            Fitness[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
-          # The same but for Condition
+          RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i + 1,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
+          
+          # Fitness values that would result if the tadpole has the best performance,
+          # but it could improve in size. It can only grow 1 size, as it has almost 
+          # reached the maximum size.
+          
+          
+        } else if (j < max_Performance & i == max_Size) {
+          
+          RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
+          
+          RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
+          
+          # Fitness values that would result if the tadpole has the maximum size,
+          # but it could improve in performance. 
+          
+          
+        } else if (j < max_Performance & i == max_Size - 1) {
+          
+          RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
+          
+          RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+1,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
+          
+          # Fitness values that would result if the tadpole is almost in the maximum size,
+          # but it could improve in performance. It can only grow 1 size, as it has almost 
+          # reached the maximum size.
+          
+          
+        } else if (j == max_Performance & i < max_Size - 1) {
+          
+          RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
+          
+          RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
+          
+          # Fitness values that would result if the tadpole has the best performance,
+          # but it could improve in size. 
+          
           
         } else {
           
-          RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j + 1] * 
-            prob_good_temp + Fitness[i, j] * Reward[i, j + 1] * prob_bad_temp
+          RewardIfPerformance[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * 
+            prob_good_temp + Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
-          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i + 1, j] * prob_good_temp *
-            effect_good_temp + Fitness[i, j] * Reward[i + 1, j] * prob_bad_temp * effect_bad_temp
-          # The rest of cells are going to work like this. If you invest in 
-          # performance (Survival), you change your Fitness value for the one that 
-          # is on your right, that is calculated with a higher Survival value and 
-          # the same size. If you invest in growth, then, you stay in the same Survival
-          # column but you increase in Size, with its Rewards dependent on Size.
-        
-        } # end if/else loop
-        
-      } # end i loop
-      
-    } # end j loop
-  
-   
-   RewardIfPerformance[1, ] <- 0
-   RewardIfGrowth[1, ] <- 0
-   # Fitness and Reward values if you are dead
-   
-   ForageRule[,] <- RewardIfPerformance[,] > RewardIfGrowth[,]
-   # TRUE/False matrix depending on which decision is best
-   
-   Reward[,] <- ForageRule[,] * RewardIfPerformance[,] +
-     as.numeric(!ForageRule[,]) * RewardIfGrowth[,]
-   # This matrix stores the reward values obtained for the best decisions, 
-   # and it is going to be used on the next time step.
-   
-   #------ Irja ------
-   
-   # Fitness[i, j] <- max(RewardIfPerformance, RewardIfGrowth)
-   # This matrix stores the reward values obtained for the best decisions,
-   
-   #------ Irja ------
-  
-   ForageRule_rev <- apply(ForageRule, 2, rev)
-   ForageRule_rev[ForageRule_rev == "FALSE"] <- "Growth"
-   ForageRule_rev[ForageRule_rev == "TRUE"] <- "Performance"
-   ForageRule_rev[max_Size, ] <- "Dead"
-   # ForageRule matrix inverted, so the lowest Condition value is going to 
-   # be displayed on the bottom layer
-   
-   # assign(paste("Decision", t, sep = ""), (ForageRule_rev)) #Not necessary now
-   
-   # We generate an object called Decision "t", that is going to store the Decision
-   # matrix for each combination of states at each time step.
-   # This is useful if we want to see one specific graph, as we can search for 
-   # a matrix called "DecisionXX" in the environment. 
-   
-   plot(ForageRule_rev, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
-        breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
-        main = paste('Decision at time step ', t ), axis.col = NULL, axis.row = NULL)
-   axis(1, at = 1:max_Survival, labels = Survival)
-   axis(2, at = 1:(max_Size), labels = c(Size), las = 1)
-   # At the end of each loop, we plot a matrix with the time step on the title
-   
-   t <- t - 1
-   
-  } # end of while loop
-  
-
-} # end of function
-
-
-
-# Parameters
-
-prob_good_temp <- 0.5
-prob_bad_temp <- 1 - prob_good_temp
-effect_good_temp <- 1.2
-effect_bad_temp <- 0.8
-
-time_steps <- 12
-
-# par(mfrow=c(1,1))
-par(mfrow=c(3,4))
-par(mar=c(5.1, 4.5, 4.1, 6.5))
-
-
-# Plot
-
-Decisions(prob_good_temp, prob_bad_temp, effect_good_temp, effect_bad_temp, time_steps)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Idea 2: Jump one condition state if Tº is good.
-
-Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_bad_temp, time_steps) {
-  
-  
-  # Life history values (from here to "Loop" can be removed from inside the function)
-  
-  Survival <- seq(0.7, 0.975, 0.025)
-  max_Survival <- length(Survival)
-  # Survival values, depends on performance (You have to invest in performance to increase this trait)
-  
-  Size <- c(0, seq(1, 5.5, 0.1))
-  max_Size <- length(Size)
-  # Size values, you have to invest in growth to increase this trait. Also, this is the only trait that
-  # is relevant for the final fitness (The bigger, the better)
-  
-  
-  Condition <- c(0, seq(1, 5.5, 0.1))
-  max_Condition <- length(Condition)
-  Condition[Condition < 4] <- 0
-  Condition[Condition >=4 & Condition < 5] <- seq(2, 3.8, 2/(length(Condition[Condition >=4 & Condition < 5])))
-  Condition[Condition >= 5] <- c(4, 4.1, 4.15, 4.15, 4.15, 4.15)
-  # Sizes under 4 cm don't receive Fitness benefits.This is the benefit that you
-  # receive for being in each Size at the final time step.
-  
-  
-  Fitness <- matrix(nrow = max_Size, ncol = max_Survival)
-  Fitness[ , ] <- Size %*% t(Survival)
-  # The fitness is the result of the interaction between size and survival 
-  # (performance), and it's different for every combination of each value.
-  
-  
-  ForageRule <- matrix(nrow = max_Size, ncol = max_Survival)
-  # Here, the ForageRule matrix is a 2 state variable matrix, and depends
-  # on Survival and Size. We are going to store the TRUE/FALsE results here,
-  # and see if it's better to invest in Performance or in Size.
-  
-  Reward <- matrix(nrow = max_Condition, ncol = max_Survival)
-  Reward[,] <- Condition
-  # The Reward matrix has to have the same dimensions as the ForageRule one. 
-  # Each Size has the same Reward, so each row has the same Reward value. As you
-  # only receive Fitness from Size, you only increase the reward you get by 
-  # increasing your Size. 
-  
-  
-  RewardIfPerformance <- matrix(nrow = max_Size, ncol = max_Survival)
-  RewardIfGrowth <- matrix(nrow = max_Size, ncol = max_Survival)
-  
-  
-  
-  # Loop
-  
-  t <- time_steps
-  
-  while (t >= 1) { 
-    
-    for (j in 1:(max_Survival)) {
-      
-      for (i in 1:max_Size) {
-        
-        if(j == max_Survival & i == max_Size){
+          RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
+            prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
-          RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp + 
-            Fitness[i, j] * Reward[i,j] * prob_bad_temp
+          # The rest of the cells will operate as follows: You multiply your 
+          # current condition (Condition) by the expected fitness and by the 
+          # probability that the water temperature is good or bad. 
           
-          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp * effect_good_temp +
-            Fitness[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
-          
-          
-        } else if (j == max_Survival & i == max_Size - 1) {
-          
-          RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp +
-            Fitness[i, j] * Reward[i,j] * prob_bad_temp
-          
-          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i + 1, j] * prob_good_temp * effect_good_temp +
-            Fitness[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
-         
-          
-        } else if (j < max_Survival & i == max_Size) {
-          
-          RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j + 1] * prob_good_temp +
-            Fitness[i, j] * Reward[i, j + 1] * prob_bad_temp
-          
-          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp * effect_good_temp +
-            Fitness[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
-          
-          
-        } else if (j < max_Survival & i == max_Size - 1) {
-          
-          RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j + 1] * prob_good_temp +
-            Fitness[i, j] * Reward[i, j + 1] * prob_bad_temp
-          
-          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i + 1, j] * prob_good_temp * effect_good_temp +
-            Fitness[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
-         
-          
-        } else if (j == max_Survival & i < max_Size - 1) {
-          
-          RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j] * prob_good_temp +
-            Fitness[i, j] * Reward[i, j] * prob_bad_temp
-          
-          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i + 2, j] * prob_good_temp * effect_good_temp +
-            Fitness[i, j] * Reward[i, j] * prob_bad_temp * effect_bad_temp
-          
-          
-        }else {
-          
-          RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j + 1] * 
-            prob_good_temp + Fitness[i, j] * Reward[i, j + 1] * prob_bad_temp
-          
-          RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i + 2, j] * prob_good_temp *
-            effect_good_temp + Fitness[i, j] * Reward[i , j] * prob_bad_temp * effect_bad_temp
-          # The rest of cells are going to work like this. If you invest in 
-          # performance (Survival), you change your Fitness value for the one that 
-          # is on your right, that is calculated with a higher Survival value and 
-          # the same size. If you invest in growth, then, you stay in the same Survival
-          # column but you increase in Size, with its Rewards dependent on Size.
           
         } # end if/else loop
         
@@ -337,393 +199,94 @@ Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_b
     } # end j loop
     
     
-    RewardIfPerformance[1, ] <- 0
-    RewardIfGrowth[1, ] <- 0
-    # Fitness and Reward values if you are dead
+    RewardIfPerformance[1, , ] <- 0
+    RewardIfGrowth[1, , ] <- 0
+    # Fitness values if you are dead.
     
-    ForageRule[,] <- RewardIfPerformance[,] > RewardIfGrowth[,]
-    # TRUE/False matrix depending on which decision is best
+    ForageRule[,,t] <- RewardIfPerformance[,,t] > RewardIfGrowth[,,t]
+    # TRUE/False matrix depending on which decision is best, and the result
+    # is stored.
     
-    Reward[,] <- ForageRule[,] * RewardIfPerformance[,] +
-      as.numeric(!ForageRule[,]) * RewardIfGrowth[,]
+    Fitness[, , t] <- ForageRule[,,t] * RewardIfPerformance[,,t] +
+      as.numeric(!ForageRule[,,t]) * RewardIfGrowth[,,t]
     # This matrix stores the reward values obtained for the best decisions, 
-    # and it is going to be used on the next time step.
-    
-    #------ Irja ------
-    
-    # Fitness[i, j] <- max(RewardIfPerformance, RewardIfGrowth)
-    # This matrix stores the reward values obtained for the best decisions,
-    
-    #------ Irja ------
-    
-    ForageRule_rev <- apply(ForageRule, 2, rev)
-    ForageRule_rev[ForageRule_rev == "FALSE"] <- "Growth"
-    ForageRule_rev[ForageRule_rev == "TRUE"] <- "Performance"
-    ForageRule_rev[max_Size, ] <- "Dead"
-    # ForageRule matrix inverted, so the lowest Condition value is going to 
-    # be displayed on the bottom layer
-    
-    # assign(paste("Decision", t, sep = ""), (ForageRule_rev)) #Not necessary now
-    
-    # We generate an object called Decision "t", that is going to store the Decision
-    # matrix for each combination of states at each time step.
-    # This is useful if we want to see one specific graph, as we can search for 
-    # a matrix called "DecisionXX" in the environment. 
-    
-    plot(ForageRule_rev, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
-         breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
-         main = paste('Decision at time step ', t ), axis.col = NULL, axis.row = NULL)
-    axis(1, at = 1:max_Survival, labels = Survival)
-    axis(2, at = 1:(max_Size), labels = c(Size), las = 1)
-    # At the end of each loop, we plot a matrix with the time step on the title
-    
+    # and it is going to be used in the next time step.
+  
     t <- t - 1
     
   } # end of while loop
   
+  assign("Fitness", Fitness, envir = globalenv())
+  assign("ForageRule", ForageRule, envir=globalenv())
+  assign("max_Size", max_Size, envir=globalenv())
+  assign("Size", Size, envir=globalenv())
+  assign("max_Performance", max_Performance, envir=globalenv())
+  assign("Performance", Performance, envir=globalenv())
+  assign("Survival", Survival, envir=globalenv())
+  assign("Fitness_values", Fitness_values, envir=globalenv())
   
-} # end of function
-
-
-
-# Parameters
-
-prob_good_temp <- 0.5
-prob_bad_temp <- 1 - prob_good_temp
-effect_good_temp <- 1
-effect_bad_temp <- 1
-
-time_steps <- 12
-
-# par(mfrow=c(1,1))
-par(mfrow=c(3,4))
-par(mar=c(5.1, 4.5, 4.1, 6.5))
-
-
-# Plot
-
-Decisions(prob_good_temp, prob_bad_temp, effect_good_temp, effect_bad_temp, time_steps)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Idea 3: Random Tº value at the beginning of each time step
-
-
-Decisions <- function (prob_good_temp, prob_bad_temp, effect_good_temp, effect_bad_temp, time_steps) {
+  # This line extracts Fitness, ForageRule and other objects from inside the function to 
+  # the global environment, so we can use it in the plot function or the Forward simulation.
   
   
-  # Life history values (from here to "Loop" can be removed from inside the function)
+} # end of Decision function
+
+
+Backwards_Plot <- function(){
   
-  Survival <- seq(0.7, 0.975, 0.025)
-  max_Survival <- length(Survival)
-  # Survival values, depends on performance (You have to invest in performance to increase this trait)
-  
-  Size <- c(0, seq(1, 5.5, 0.1))
-  max_Size <- length(Size)
-  # Size values, you have to invest in growth to increase this trait. Also, this is the only trait that
-  # is relevant for the final fitness (The bigger, the better)
-  
-  
-  Condition <- c(0, seq(1, 5.5, 0.1))
-  max_Condition <- length(Condition)
-  Condition[Condition < 4] <- 0
-  Condition[Condition >=4 & Condition < 5] <- seq(2, 3.8, 2/(length(Condition[Condition >=4 & Condition < 5])))
-  Condition[Condition >= 5] <- c(4, 4.1, 4.15, 4.15, 4.15, 4.15)
-  # Sizes under 4 cm don't receive Fitness benefits.This is the benefit that you
-  # receive for being in each Size at the final time step.
-  
-  
-  Fitness <- matrix(nrow = max_Size, ncol = max_Survival)
-  Fitness[ , ] <- Size %*% t(Survival)
-  # The fitness is the result of the interaction between size and survival 
-  # (performance), and it's different for every combination of each value.
-  
-  
-  ForageRule <- matrix(nrow = max_Size, ncol = max_Survival)
-  # Here, the ForageRule matrix is a 2 state variable matrix, and depends
-  # on Survival and Size. We are going to store the TRUE/FALsE results here,
-  # and see if it's better to invest in Performance or in Size.
-  
-  Reward <- matrix(nrow = max_Condition, ncol = max_Survival)
-  Reward[,] <- Condition
-  # The Reward matrix has to have the same dimensions as the ForageRule one. 
-  # Each Size has the same Reward, so each row has the same Reward value. As you
-  # only receive Fitness from Size, you only increase the reward you get by 
-  # increasing your Size. 
-  
-  
-  RewardIfPerformance <- matrix(nrow = max_Size, ncol = max_Survival)
-  RewardIfGrowth <- matrix(nrow = max_Size, ncol = max_Survival)
-  
-  
-  
-  # Loop
+  par(mfrow=c(3,4))
+  par(mar=c(5.1, 4.5, 4.1, 6.5))
   
   t <- time_steps
   
-  while (t >= 1) { 
+  while (t >= 1) {
     
-    x <- 1
-    
-    Random_1 <- function(x){
-      runif(x)
-    }
-    # Function that generates a random number from 0 to 1 every time it is called
-    
-    Random_num <- Random_1(x)
-    # We fix a random number, on which the if loop is going to work
-    
-    Random_num
-    # Fixed random number
-    
-    if(Random_num < prob_good_temp) {
-      
-      for (j in 1:(max_Survival)) {
-        
-        for (i in 1:max_Size) {
-          
-          if(j == max_Survival & i < max_Size){
-            
-            RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j] 
-            
-            RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i + 1, j] 
-            
-            
-          } else if (j == max_Survival & i == max_Size) {
-            
-            RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j] 
-            
-            RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i, j] 
-          
-            
-          } else if (j < max_Survival & i == max_Size) {
-            
-            RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j + 1] 
-            
-            RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i, j] 
-            
-            
-          } else {
-            
-            RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j + 1] 
-            
-            RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i + 1, j] 
-            # The rest of cells are going to work like this. If you invest in 
-            # performance (Survival), you change your Fitness value for the one that 
-            # is on your right, that is calculated with a higher Survival value and 
-            # the same size. If you invest in growth, then, you stay in the same Survival
-            # column but you increase in Size, with its Rewards dependent on Size.
-            
-          } # end if/else loop
-          
-        } # end i loop
-        
-      } # end j loop
-      
-    } else {
-      
-      for (j in 1:(max_Survival)) {
-        
-        for (i in 1:max_Size) {
-          
-          if(j == max_Survival & i < max_Size){
-            
-            RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j] 
-            
-            RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i, j] 
-            
-            
-          } else if (j == max_Survival & i == max_Size) {
-            
-            RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j] 
-            
-            RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i, j] 
-            
-            
-          } else if (j < max_Survival & i == max_Size) {
-            
-            RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j + 1] 
-            
-            RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i, j] 
-            
-            
-          } else {
-            
-            RewardIfPerformance[i,j] <- Fitness[i, j] * Reward[i, j + 1] 
-            
-            RewardIfGrowth[i,j] <- Fitness[i, j] * Reward[i, j] 
-            # The rest of cells are going to work like this. If you invest in 
-            # performance (Survival), you change your Fitness value for the one that 
-            # is on your right, that is calculated with a higher Survival value and 
-            # the same size. If you invest in growth, then, you stay in the same Survival
-            # column but you increase in Size, with its Rewards dependent on Size.
-            
-          } # end if/else loop
-          
-        } # end i loop
-        
-      } # end j loop
-      
-    } # end if/else loop (Temperature)
-      
-    RewardIfPerformance[1, ] <- 0
-    RewardIfGrowth[1, ] <- 0
-    # Fitness and Reward values if you are dead
-    
-    ForageRule[,] <- RewardIfPerformance[,] > RewardIfGrowth[,]
-    # TRUE/False matrix depending on which decision is best
-    
-    Reward[,] <- ForageRule[,] * RewardIfPerformance[,] +
-      as.numeric(!ForageRule[,]) * RewardIfGrowth[,]
-    # This matrix stores the reward values obtained for the best decisions, 
-    # and it is going to be used on the next time step.
-    
-    #------ Irja ------
-    
-    # Fitness[i, j] <- max(RewardIfPerformance, RewardIfGrowth)
-    # This matrix stores the reward values obtained for the best decisions,
-    
-    #------ Irja ------
-    
-    ForageRule_rev <- apply(ForageRule, 2, rev)
+    ForageRule_rev <- apply(ForageRule[,,t], 2, rev) # At time step "t"
     ForageRule_rev[ForageRule_rev == "FALSE"] <- "Growth"
     ForageRule_rev[ForageRule_rev == "TRUE"] <- "Performance"
     ForageRule_rev[max_Size, ] <- "Dead"
-    # ForageRule matrix inverted, so the lowest Condition value is going to 
-    # be displayed on the bottom layer
-    
-    # assign(paste("Decision", t, sep = ""), (ForageRule_rev)) #Not necessary now
-    
-    # We generate an object called Decision "t", that is going to store the Decision
-    # matrix for each combination of states at each time step.
-    # This is useful if we want to see one specific graph, as we can search for 
-    # a matrix called "DecisionXX" in the environment. 
     
     plot(ForageRule_rev, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
-         breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
+         breaks=c("Dead", "Growth", "Performance"), xlab = "Burst speed (mm/s)", ylab = "Size (cm)",
          main = paste('Decision at time step ', t ), axis.col = NULL, axis.row = NULL)
-    axis(1, at = 1:max_Survival, labels = Survival)
+    axis(1, at = 1:max_Performance, labels = Performance*10)
     axis(2, at = 1:(max_Size), labels = c(Size), las = 1)
-    # At the end of each loop, we plot a matrix with the time step on the title
     
-    t <- t - 1
+    #This function takes the time step you are in from the ForageRule array and 
+    #creates an matrix where it changes the names from TRUE/FALSE to Dead, 
+    #Performance or Growth. A plot is made of this new matrix. 
+    #This is done for each time step. Ideally it would be an array too, but I 
+    #can't get it to keep the array structure after changing the names.
     
-  } # end of while loop
+    t <- t - 1 
+    
+  } # End of while loop
   
-  
-} # end of function
+} # End of Plot loop
 
-    
-# Parameters
-  
-prob_good_temp <- 0.5
-prob_bad_temp <- 1 - prob_good_temp
-effect_good_temp <- 1
-effect_bad_temp <- 1
 
-time_steps <- 12
-  
-# par(mfrow=c(1,1))
-par(mfrow=c(3,4))
-par(mar=c(5.1, 4.5, 4.1, 6.5))
-  
-  
+# Initial Parameters
+prob_good_temp <- 0.5 # Probability of having a good Temperature
+prob_bad_temp <- 1 - prob_good_temp # Probability of having a bad Temperature
+time_steps <- 50 # How many days does the metamorphosis last (normal conditions)?
+end_season_percentage <- 0.4 # How many days (% of the normal growing season), 
+# beginning from the back, are susceptible to be the end of season (due stochasticity)?
+end_season_intensity <- 1 # Increasing probability of ending the season in that 
+# particular time step since the days start to be susceptible of being the end of season.
+death_rate_day <- 0.012 # Death rate per day (from 0 to 1)
+
+
+
 # Plot
+
+Decisions(prob_good_temp, prob_bad_temp, time_steps, end_season_percentage, end_season_intensity, death_rate_day)
   
-Decisions(prob_good_temp, prob_bad_temp, effect_good_temp, effect_bad_temp, time_steps)
 
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
+Backwards_Plot()
 
 
 
 
-
-
-
-#--------------- Not necessary now --------------------------
-  
-par(mfrow=c(1,1))
-par(mfrow=c(2,3))
-par(mar=c(5.1, 4.5, 4.1, 6.5))
-
-library('plot.matrix')
-
-Plots <- function(x){
-
-plot(Decision20, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
-     breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
-     main="Decision at time step 6", axis.col=NULL, axis.row=NULL)
-axis(1, at = 1:max_Survival, labels = Survival)
-axis(2, at = 1:(max_Size + 1), labels = c(0, Size), las = 1)
-
-plot(Decision18, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
-     breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
-     main="Decision at time step 5", axis.col=NULL, axis.row=NULL)
-axis(1, at = 1:max_Survival, labels = Survival)
-axis(2, at = 1:(max_Size + 1), labels = c(0, Size), las = 1)
-
-plot(Decision15, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
-     breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
-     main="Decision at time step 4", axis.col=NULL, axis.row=NULL)
-axis(1, at = 1:max_Survival, labels = Survival)
-axis(2, at = 1:(max_Size + 1), labels = c(0, Size), las = 1)
-
-plot(Decision10, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
-     breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
-     main="Decision at time step 3", axis.col=NULL, axis.row=NULL)
-axis(1, at = 1:max_Survival, labels = Survival)
-axis(2, at = 1:(max_Size + 1), labels = c(0, Size), las = 1)
-
-plot(Decision5, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
-     breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
-     main="Decision at time step 2", axis.col=NULL, axis.row=NULL)
-axis(1, at = 1:max_Survival, labels = Survival)
-axis(2, at = 1:(max_Size + 1), labels = c(0, Size), las = 1)
-
-plot(Decision1, col=c('#440154FF', '#21908CFF', '#FDE725FF'), 
-     breaks=c("Dead", "Growth", "Performance"), xlab = "Survival", ylab = "Size",
-     main="Decision at time step 1", axis.col=NULL, axis.row=NULL)
-axis(1, at = 1:max_Survival, labels = Survival)
-axis(2, at = 1:(max_Size + 1), labels = c(0, Size), las = 1)
-
-}
-
-Plots(1)
 
 
 
