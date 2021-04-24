@@ -43,8 +43,8 @@ Forward <- function(N) {
   
   for (n in 1:N) {
     
-    i <- sample(2:4,1)
-    j <- sample(1:3,1)
+    i <- 2# sample(2:4,1)
+    j <- 1# sample(1:3,1)
     t <- 1
     Inner_time <- 1
     # Initial condition, after hatching (This could be a little bit stochastic)
@@ -290,7 +290,7 @@ Forward <- function(N) {
       
       # Inner_time == time_steps
       
-      else if (Inner_time == time_steps & Prob_Survive < Survival[i, j]) { # These frogs don't die, for the moment
+      else if (Inner_time == time_steps & Prob_Survive < Survival[i, j]) { 
         
         Population[n, t] <- 1
         
@@ -428,19 +428,20 @@ Final_traits_plot <- function(){
   
   Final_results <- cbind(Final_Size, Final_Performance, Final_Fitness)
   
-  Max_Condition <- as.vector(which(Final_results[, 1] == max(Size) & Final_results[, 2] == max(Performance) & Final_results[, 3] == max(Final_results[, 3])))
+  Max_Condition <- as.vector(which(Final_results[, 3] == max(Final_results[, 3])))
   
   par(mfrow=c(1,1))
   par(mar=c(5.1, 4.5, 3, 4.5))
   
-  plot(Final_results[, 2], pch = 19, col = '#440154FF', xlim = c(0, N + 16), 
+  plot(Final_results[, 2], pch = 19, col = '#440154FF', xlim = c(0, N), 
+       ylim = c(0,max(Performance)),
        main = "Size, Burst speed and Fitness at the end of metamorphosis", 
        ylab = "Size (cm), Burst speed (cm/s) and Fitness", xlab = "Tadpole")
   points(Final_results[, 1], pch = 19, col = "#21908CFF")
   points(Final_results[, 3], pch = 19, col = '#FDE725FF',)
   abline(h = max(Size), lty = 2)
   abline(h = max(Performance), lty = 2)
-  abline(h = max(Fitness_values), lty = 2)
+  abline(h = max(Final_results[, 3]), lty = 2)
   abline(v = c(Max_Condition), lty = 2)
   legend("bottomright", legend=c("Burst speed", "Size", "Fitness"),
          pch = c(19, 19, 19), col = c('#440154FF', '#21908CFF', '#FDE725FF'), lty=2, cex=0.8)
@@ -462,7 +463,7 @@ Density_plot <- function(){
   plot(density(Final_results[,1], bw = 0.01, from = -0.1, to = max(Size) + 0.1), main = "Final Size (cm)")
   rug(Final_results[,1], col='red')
   
-  plot(density(Final_results[,1], bw = 0.01, from = 4, to = max(Size) + 0.1), main = "Final Size (cm) (Alive)")
+  plot(density(Final_results[,1], bw = 0.01, from = 4 - 0.1, to = max(Size) + 0.1), main = "Final Size (cm) (Alive)")
   rug(Final_results[,1], col='red')
   
   plot(density(Final_results[,2], bw = 0.01, from = -0.1, to = max(Performance) + 0.1), main = "Final Burst Speed (cm/s)")
@@ -474,7 +475,7 @@ Density_plot <- function(){
   plot(density(Final_results[,3], bw = 0.01, from = -0.1, to = max(Fitness_values) + 0.1), main = "Final Fitness")
   rug(Final_results[,3], col='red')
   
-  plot(density(Final_results[,3], bw = 0.01, from = 3, to = max(Fitness_values) + 0.1), main = "Final Fitness (Alive)")
+  plot(density(Final_results[,3], bw = 0.01, from = 2 - 0.1, to = max(Fitness_values) + 0.1), main = "Final Fitness (Alive)")
   rug(Final_results[,3], col='red')
   
 }
@@ -502,7 +503,7 @@ Histogram_plot <- function(){
 
 
 
-N <- 100
+N <- 1000
 # Number of Tadpoles
 
 
@@ -541,7 +542,6 @@ Histogram_plot()
 
 
 
-
 # Ideas (in Spanish, don't pay attention to this)
 
 # Cambiar valores de fitness!! Ya no hay la misma fitness para tallas grandes, sino que siempre augmenta.
@@ -554,6 +554,10 @@ Histogram_plot()
 # Eso deberia modificar tambien la backeards simulation. (HECHO)
 
 #Revisar dos puntos anteriores
+
+# Añadir mas tallas por arriba de 70 burst speed (no mucho más) y hacer que en el plot
+# de los puntitos la ralla de fitness máxima corte por la fitness máxima conseguida en
+# la población, no la posible
 
 
 
@@ -576,3 +580,17 @@ Final_Fitness %>%
   geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.8) +
   ggtitle("Night price distribution of Airbnb appartements") +
   theme_ipsum()
+
+
+
+
+install.packages("hexbin")
+library(hexbin)
+
+Population <- as.data.frame(Population)
+
+# Bin size control + color palette
+ggplot(Population, aes(x=Size, y=Performance) ) +
+  geom_hex(bins = 50) +
+  scale_fill_continuous(type = "viridis") +
+  theme_bw()
