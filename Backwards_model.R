@@ -31,7 +31,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
   
   # Life history values (from here to "Loop" can be removed from inside the function).
   
-  Performance <- seq(3.0, 7.0, 0.24) #0.25 okay
+  Performance <- seq(1.0, 7.25, 0.24) #0.25 okay
   max_Performance <- length(Performance)
   # Performance values (How fast you move cm/s)
   
@@ -45,8 +45,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
   Fitness_values <- c(0, seq(1, 5.5, 0.1))
   max_Fitness <- length(Fitness_values)
   Fitness_values[Fitness_values < 4] <- 0
-  Fitness_values[Fitness_values >=4 & Fitness_values < 5] <- seq(2, 3.8, 2/(length(Fitness_values[Fitness_values >=4 & Fitness_values < 5])))
-  Fitness_values[Fitness_values >= 5] <- c(4, 4.1, 4.15, 4.2, 4.25, 4.3)
+  Fitness_values[Fitness_values >=4] <- seq(2, 4, 2/(length(Fitness_values[Fitness_values >= 4]) - 1))
+  Fitness_values
+
+  # Fitness_values[Fitness_values >=4 & Fitness_values < 5] <- seq(2, 3.8, 2/(length(Fitness_values[Fitness_values >=4 & Fitness_values < 5])))
+  # Fitness_values[Fitness_values >= 5] <- c(4, 4.1, 4.15, 4.2, 4.25, 4.3)
   # Sizes under 4 cm don't receive Fitness benefits. This is the benefit that you
   # receive for being in each Size at the final time step.
   
@@ -268,7 +271,7 @@ Backwards_Plot <- function(){
 # Initial Parameters
 prob_good_temp <- 0.5 # Probability of having a good Temperature
 prob_bad_temp <- 1 - prob_good_temp # Probability of having a bad Temperature
-time_steps <- 50 # How many days does the metamorphosis last (normal conditions)?
+time_steps <- 60 # How many days does the metamorphosis last (normal conditions)?
 end_season_percentage <- 0.4 # How many days (% of the normal growing season), 
 # beginning from the back, are susceptible to be the end of season (due stochasticity)?
 end_season_intensity <- 1 # Increasing probability of ending the season in that 
