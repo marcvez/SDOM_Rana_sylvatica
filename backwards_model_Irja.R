@@ -156,3 +156,4 @@ par(mar=c(5.1, 4.5, 4.1, 6.5))
 # Plot
 
 Decisions(prob_good_temp, prob_bad_temp, effect_good_temp, effect_bad_temp, time_steps)
+
