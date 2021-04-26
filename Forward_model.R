@@ -460,22 +460,22 @@ Density_plot <- function(){
   par(mfrow=c(3,2))
   par(mar=c(5.1, 4.5, 3, 4.5))
   
-  plot(density(Final_results[,1], bw = 0.01, from = -0.1, to = max(Size) + 0.1), main = "Final Size (cm)")
+  plot(density(Final_results[,1], bw = 0.1, from = -0.5, to = max(Size) + 0.1), main = "Final Size (cm)")
   rug(Final_results[,1], col='red')
   
-  plot(density(Final_results[,1], bw = 0.01, from = 4 - 0.1, to = max(Size) + 0.1), main = "Final Size (cm) (Alive)")
+  plot(density(Final_results[,1], bw = 0.1, from = 4 - 0.5, to = max(Size) + 0.1), main = "Final Size (cm) (Alive)")
   rug(Final_results[,1], col='red')
   
-  plot(density(Final_results[,2], bw = 0.01, from = -0.1, to = max(Performance) + 0.1), main = "Final Burst Speed (cm/s)")
+  plot(density(Final_results[,2], bw = 0.1, from = -0.5, to = max(Performance) + 0.1), main = "Final Burst Speed (cm/s)")
   rug(Final_results[,2], col='red')
   
-  plot(density(Final_results[,2], bw = 0.01, from = 5, to = max(Performance) + 0.1), main = "Final Burst Speed (cm/s) (Alive)")
+  plot(density(Final_results[,2], bw = 0.1, from = 5, to = max(Performance) + 0.5), main = "Final Burst Speed (cm/s) (Alive)")
   rug(Final_results[,2], col='red')
   
-  plot(density(Final_results[,3], bw = 0.01, from = -0.1, to = max(Fitness_values) + 0.1), main = "Final Fitness")
+  plot(density(Final_results[,3], bw = 0.1, from = -0.5, to = max(Fitness_values) + 0.1), main = "Final Fitness")
   rug(Final_results[,3], col='red')
   
-  plot(density(Final_results[,3], bw = 0.01, from = 2 - 0.1, to = max(Fitness_values) + 0.1), main = "Final Fitness (Alive)")
+  plot(density(Final_results[,3], bw = 0.1, from = 2 - 0.5, to = max(Fitness_values) + 0.1), main = "Final Fitness (Alive)")
   rug(Final_results[,3], col='red')
   
 }
@@ -531,7 +531,7 @@ Histogram_plot()
 
 
 
-
+Fitness[, 1, time_steps + 1]
 
 
 
@@ -553,7 +553,7 @@ Histogram_plot()
 # performance o cambiar los valores y empezar antes, sin cambiar el numero de breaks. 
 # Eso deberia modificar tambien la backeards simulation. (HECHO)
 
-#Revisar dos puntos anteriores
+# Revisar dos puntos anteriores
 
 # Añadir mas tallas por arriba de 70 burst speed (no mucho más) y hacer que en el plot
 # de los puntitos la ralla de fitness máxima corte por la fitness máxima conseguida en
