@@ -26,8 +26,9 @@
 library(plot.matrix)
 
 
-Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_percentage, end_season_intensity, death_rate_day) {
+Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day) {
   
+  time_steps <- days + ((prob_bad_temp - 0.5)*30)
   
   # Life history values (from here to "Loop" can be removed from inside the function).
   
@@ -41,13 +42,13 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
   # trait that is relevant for the final Fitness (The bigger, the better)
   # Size 0 is equal to being dead.
   
- 
+  
   Fitness_values <- Size
   max_Fitness <- length(Fitness_values)
   Fitness_values[Fitness_values < 4] <- 0
   Fitness_values[Fitness_values >=4] <- seq(2, 4, 2/(length(Fitness_values[Fitness_values >= 4]) - 1))
   Fitness_values
-
+  
   # Fitness_values[Fitness_values >=4 & Fitness_values < 5] <- seq(2, 3.8, 2/(length(Fitness_values[Fitness_values >=4 & Fitness_values < 5])))
   # Fitness_values[Fitness_values >= 5] <- c(4, 4.1, 4.15, 4.2, 4.25, 4.3)
   # Sizes under 4 cm don't receive Fitness benefits. This is the benefit that you
@@ -98,7 +99,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
   # Arrays that are going to store the fitness values of each decision at 
   # every time step and state.
   
-
+  
   # Loop
   
   t <- time_steps
@@ -182,8 +183,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
             prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
-          RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+1] * (1-prob_good_temp) * prob_good_temp +
-            Condition[i, j] * Survival[i, j] * Fitness[i+1,j,t+1] * prob_good_temp * prob_good_temp +
+          RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+1,j,t+1] * (1-prob_good_temp) * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp * prob_good_temp +
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
             prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
@@ -198,8 +199,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
             Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp) * 
             prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
-          RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+1] * (1-prob_good_temp) * prob_good_temp +
-            Condition[i, j] * Survival[i, j] * Fitness[i+1,j,t+1] * prob_good_temp * prob_good_temp +
+          RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+1,j,t+1] * (1-prob_good_temp) * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+1] * prob_good_temp * prob_good_temp +
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
             prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
@@ -280,8 +281,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
             prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
-          RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+1] * (1-prob_good_temp) * prob_good_temp +
-            Condition[i, j] * Survival[i, j] * Fitness[i+1,j,t+2] * prob_good_temp * prob_good_temp +
+          RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+1,j,t+1] * (1-prob_good_temp) * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+2] * prob_good_temp * prob_good_temp +
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
             prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
@@ -296,8 +297,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
             Condition[i, j] * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp) * 
             prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
-          RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+1] * (1-prob_good_temp) * prob_good_temp +
-            Condition[i, j] * Survival[i, j] * Fitness[i+1,j,t+2] * prob_good_temp * prob_good_temp +
+          RewardIfGrowth[i,j,t] <- (Condition[i, j] * Survival[i, j] * Fitness[i+1,j,t+1] * (1-prob_good_temp) * prob_good_temp +
+            Condition[i, j] * Survival[i, j] * Fitness[i+2,j,t+2] * prob_good_temp * prob_good_temp +
             Condition[i, j] * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp) * 
             prob_no_end_season[t] + Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
@@ -325,11 +326,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, time_steps, end_season_per
       as.numeric(!ForageRule[,,t]) * RewardIfGrowth[,,t]
     # This matrix stores the reward values obtained for the best decisions, 
     # and it is going to be used in the next time step.
-  
+    
     t <- t - 1
     
   } # end of while loop
   
+  assign("time_steps", time_steps, envir = globalenv())
   assign("Fitness", Fitness, envir = globalenv())
   assign("ForageRule", ForageRule, envir=globalenv())
   assign("max_Size", max_Size, envir=globalenv())
@@ -380,9 +382,9 @@ Backwards_Plot <- function(){
 
 
 # Initial Parameters
-prob_good_temp <- 0.3 # Probability of having a good Temperature
+prob_good_temp <- 0.5 # Probability of having a good Temperature
 prob_bad_temp <- 1 - prob_good_temp # Probability of having a bad Temperature
-time_steps <- 60 - (10 * prob_good_temp) # How many days does the metamorphosis last (normal conditions)?
+days <- 60 # How many days does the metamorphosis last (normal conditions)?
 end_season_percentage <- 0.4 # How many days (% of the normal growing season), 
 # beginning from the back, are susceptible to be the end of season (due stochasticity)?
 end_season_intensity <- 1 # Increasing probability of ending the season in that 
@@ -393,7 +395,7 @@ death_rate_day <- 0.012 # Death rate per day (from 0 to 1)
 
 # Plot
 
-Decisions(prob_good_temp, prob_bad_temp, time_steps, end_season_percentage, end_season_intensity, death_rate_day)
-  
+Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day)
+
 
 Backwards_Plot()
