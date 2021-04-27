@@ -79,65 +79,65 @@ Forward <- function(N) {
         
         
         # Bad Tº
+        
+        if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance) {
           
-          if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance) {
-            
-            j <- j
-            
-            Population[n, t] <- 1
-            
-          } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j == max_Performance) {
-            
-            i <- i
-            
-            Population[n, t] <- 1
-            
-          } # MAx Performance and MAX Size -> You stay the same
+          j <- j
           
+          Population[n, t] <- 1
           
-          else if (ForageRule[i, j, t] == TRUE & i < max_Size & j == max_Performance & i > 1) {
-            
-            j <- j
-            
-            Population[n, t] <- 1
-            
-          } else if (ForageRule[i, j, t] == FALSE & i < max_Size & j == max_Performance & i > 1) {
-            
-            i <- i + 1
-            
-            Population[n, t] <- 1
-            
-          } # MAX Performance but Size < Max -> You can grow, but not increase your Performance
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j == max_Performance) {
           
+          i <- i
           
-          else if (ForageRule[i, j, t] == TRUE & i == max_Size & j < max_Performance) {
-            
-            j <- j + 1
-            
-            Population[n, t] <- 1
-            
-          } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j < max_Performance) {
-            
-            i <- i
-            
-            Population[n, t] <- 1
-            
-          } # MAX Size but Performance < Max -> You can't grow, but you can improve Performance
+          Population[n, t] <- 1
           
+        } # MAx Performance and MAX Size -> You stay the same
+        
+        
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size & j == max_Performance & i > 1) {
           
-          else if (ForageRule[i, j, t] == TRUE & i < max_Size & j < max_Performance & i > 1) {
-            
-            j <- j + 1
-            
-            Population[n, t] <- 1
-            
-          } else if (ForageRule[i, j, t] == FALSE & i < max_Size & j < max_Performance & i > 1) {
-            
-            i <- i + 1
-            
-            Population[n, t] <- 1
-            
-          } # Normal situation, you can always Grow or improve Performance
+          j <- j
+          
+          Population[n, t] <- 1
+          
+        } else if (ForageRule[i, j, t] == FALSE & i < max_Size & j == max_Performance & i > 1) {
+          
+          i <- i + 1
+          
+          Population[n, t] <- 1
+          
+        } # MAX Performance but Size < Max -> You can grow, but not increase your Performance
+        
+        
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size & j < max_Performance) {
+          
+          j <- j + 1
+          
+          Population[n, t] <- 1
+          
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j < max_Performance) {
+          
+          i <- i
+          
+          Population[n, t] <- 1
+          
+        } # MAX Size but Performance < Max -> You can't grow, but you can improve Performance
+        
+        
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size & j < max_Performance & i > 1) {
+          
+          j <- j + 1
+          
+          Population[n, t] <- 1
+          
+        } else if (ForageRule[i, j, t] == FALSE & i < max_Size & j < max_Performance & i > 1) {
+          
+          i <- i + 1
+          
+          Population[n, t] <- 1
+          
+        } # Normal situation, you can always Grow or improve Performance
         
         
         Alive[t + 1, 2] <- sum(Population[, t])
@@ -155,202 +155,202 @@ Forward <- function(N) {
         Population[n, time_steps + 3] <- Fitness[i, j, t]
         # We write the final Size, Performance and Fitness of each Tadpole at the end 
         # of the Population matrix.
-      
+        
         
         t <- t + 1
         Inner_time <- Inner_time + 1
-          
-      }
         
+      }
+      
       # Good Tº
       
       # Jump
-        
+      
       else if (Prob_Survive < Survival[i, j] & Temperature < prob_good_temp & Inner_time < time_steps){
+        
+        
+        if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance & prob_jump < prob_good_temp) {
           
+          j <- j
           
-          if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance & prob_jump < prob_good_temp) {
-            
-            j <- j
-            
-            Population[n, t] <- 1
-            
-          } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j == max_Performance & prob_jump < prob_good_temp) {
-            
-            i <- i
-            
-            Population[n, t] <- 1
-            
-          } # MAx Performance and MAX Size -> You stay the same
+          Population[n, t] <- 1
           
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j == max_Performance & prob_jump < prob_good_temp) {
           
-          else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j == max_Performance & i > 1 & prob_jump < prob_good_temp) {
-            
-            j <- j
-            
-            Population[n, t] <- 1
-            
-          } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j == max_Performance & i > 1 & prob_jump < prob_good_temp) {
-            
-            i <- i + 2
-            
-            Population[n, t] <- 1
-            
-          } # MAX Performance but Size < Max -> You can grow, but not increase your Performance
+          i <- i
           
+          Population[n, t] <- 1
           
-          else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j == max_Performance & i > 1 & prob_jump < prob_good_temp) {
-            
-            j <- j
-            
-            Population[n, t] <- 1
-            
-          } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & prob_jump < prob_good_temp) {
-            
-            i <- i + 1
-            
-            Population[n, t] <- 1
-            
-          } # MAX Performance but Size = Max - 1 -> You can grow(only 1), but not increase your Performance
+        } # MAx Performance and MAX Size -> You stay the same
+        
+        
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j == max_Performance & i > 1 & prob_jump < prob_good_temp) {
           
+          j <- j
           
-          else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j < max_Performance & i > 1 & prob_jump < prob_good_temp) {
-            
-            j <- j + 1
-            
-            Population[n, t] <- 1
-            
-          } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & prob_jump < prob_good_temp) {
-            
-            i <- i + 1
-            
-            Population[n, t] <- 1
-            
-          } # Performance < Max and Size = Max - 1 -> You can grow (only 1), and increase your Performance
+          Population[n, t] <- 1
           
+        } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j == max_Performance & i > 1 & prob_jump < prob_good_temp) {
           
-          else if (ForageRule[i, j, t] == TRUE & i == max_Size & j < max_Performance & prob_jump < prob_good_temp) {
-            
-            j <- j + 1
-            
-            Population[n, t] <- 1
-            
-          } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j < max_Performance & prob_jump < prob_good_temp) {
-            
-            i <- i
-            
-            Population[n, t] <- 1
-            
-          } # MAX Size but Performance < Max -> You can't grow, but you can improve Performance
+          i <- i + 2
           
+          Population[n, t] <- 1
           
-          else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j < max_Performance & i > 1 & prob_jump < prob_good_temp) {
-            
-            j <- j + 1
-            
-            Population[n, t] <- 1
-            
-          } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j < max_Performance & i > 1 & prob_jump < prob_good_temp) {
-            
-            i <- i + 2
-            
-            Population[n, t] <- 1
-            
-          } # Normal situation, you can always Grow or improve Performance
+        } # MAX Performance but Size < Max -> You can grow, but not increase your Performance
+        
+        
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j == max_Performance & i > 1 & prob_jump < prob_good_temp) {
+          
+          j <- j
+          
+          Population[n, t] <- 1
+          
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & prob_jump < prob_good_temp) {
+          
+          i <- i + 1
+          
+          Population[n, t] <- 1
+          
+        } # MAX Performance but Size = Max - 1 -> You can grow(only 1), but not increase your Performance
+        
+        
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j < max_Performance & i > 1 & prob_jump < prob_good_temp) {
+          
+          j <- j + 1
+          
+          Population[n, t] <- 1
+          
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & prob_jump < prob_good_temp) {
+          
+          i <- i + 1
+          
+          Population[n, t] <- 1
+          
+        } # Performance < Max and Size = Max - 1 -> You can grow (only 1), and increase your Performance
+        
+        
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size & j < max_Performance & prob_jump < prob_good_temp) {
+          
+          j <- j + 1
+          
+          Population[n, t] <- 1
+          
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j < max_Performance & prob_jump < prob_good_temp) {
+          
+          i <- i
+          
+          Population[n, t] <- 1
+          
+        } # MAX Size but Performance < Max -> You can't grow, but you can improve Performance
+        
+        
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j < max_Performance & i > 1 & prob_jump < prob_good_temp) {
+          
+          j <- j + 1
+          
+          Population[n, t] <- 1
+          
+        } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j < max_Performance & i > 1 & prob_jump < prob_good_temp) {
+          
+          i <- i + 2
+          
+          Population[n, t] <- 1
+          
+        } # Normal situation, you can always Grow or improve Performance
         
         
         
         
         # No jump
         
-         else if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance & prob_jump > prob_good_temp) {
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance & prob_jump > prob_good_temp) {
           
-            j <- j
+          j <- j
           
-            Population[n, t] <- 1
+          Population[n, t] <- 1
           
-          } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j == max_Performance & prob_jump > prob_good_temp) {
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j == max_Performance & prob_jump > prob_good_temp) {
           
-            i <- i
+          i <- i
           
-            Population[n, t] <- 1
+          Population[n, t] <- 1
           
-          } # MAx Performance and MAX Size -> You stay the same
+        } # MAx Performance and MAX Size -> You stay the same
         
         
-          else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j == max_Performance & i > 1 & prob_jump > prob_good_temp) {
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j == max_Performance & i > 1 & prob_jump > prob_good_temp) {
           
-            j <- j
+          j <- j
           
-            Population[n, t] <- 1
+          Population[n, t] <- 1
           
-          } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j == max_Performance & i > 1 & prob_jump > prob_good_temp) {
+        } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j == max_Performance & i > 1 & prob_jump > prob_good_temp) {
           
-            i <- i + 1
+          i <- i + 1
           
-            Population[n, t] <- 1
+          Population[n, t] <- 1
           
-          } # MAX Performance but Size < Max -> You can grow, but not increase your Performance
+        } # MAX Performance but Size < Max -> You can grow, but not increase your Performance
         
         
-          else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j == max_Performance & i > 1 & prob_jump > prob_good_temp) {
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j == max_Performance & i > 1 & prob_jump > prob_good_temp) {
           
-            j <- j
+          j <- j
           
-            Population[n, t] <- 1
+          Population[n, t] <- 1
           
-          } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & prob_jump > prob_good_temp) {
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & prob_jump > prob_good_temp) {
           
-            i <- i + 1
+          i <- i + 1
           
-            Population[n, t] <- 1
+          Population[n, t] <- 1
           
-          } # MAX Performance but Size = Max - 1 -> You can grow(only 1), but not increase your Performance
+        } # MAX Performance but Size = Max - 1 -> You can grow(only 1), but not increase your Performance
         
         
-          else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j < max_Performance & i > 1 & prob_jump > prob_good_temp) {
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j < max_Performance & i > 1 & prob_jump > prob_good_temp) {
           
-            j <- j + 1
+          j <- j + 1
           
-            Population[n, t] <- 1
+          Population[n, t] <- 1
           
-          } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & prob_jump > prob_good_temp) {
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & prob_jump > prob_good_temp) {
           
-            i <- i + 1
+          i <- i + 1
           
-            Population[n, t] <- 1
+          Population[n, t] <- 1
           
-          } # Performance < Max and Size = Max - 1 -> You can grow (only 1), and increase your Performance
+        } # Performance < Max and Size = Max - 1 -> You can grow (only 1), and increase your Performance
         
         
-          else if (ForageRule[i, j, t] == TRUE & i == max_Size & j < max_Performance & prob_jump > prob_good_temp) {
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size & j < max_Performance & prob_jump > prob_good_temp) {
           
-            j <- j + 1
+          j <- j + 1
           
-            Population[n, t] <- 1
+          Population[n, t] <- 1
           
-          } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j < max_Performance & prob_jump > prob_good_temp) {
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j < max_Performance & prob_jump > prob_good_temp) {
           
-            i <- i
+          i <- i
           
-            Population[n, t] <- 1
+          Population[n, t] <- 1
           
-          } # MAX Size but Performance < Max -> You can't grow, but you can improve Performance
+        } # MAX Size but Performance < Max -> You can't grow, but you can improve Performance
         
         
-          else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j < max_Performance & i > 1 & prob_jump > prob_good_temp) {
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j < max_Performance & i > 1 & prob_jump > prob_good_temp) {
           
-            j <- j + 1
+          j <- j + 1
           
-            Population[n, t] <- 1
+          Population[n, t] <- 1
           
-          } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j < max_Performance & i > 1 & prob_jump > prob_good_temp) {
+        } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j < max_Performance & i > 1 & prob_jump > prob_good_temp) {
           
-            i <- i + 1
+          i <- i + 1
           
-            Population[n, t] <- 1
+          Population[n, t] <- 1
           
-          }
+        }
         
         
         
@@ -385,7 +385,7 @@ Forward <- function(N) {
         
         
         Inner_time <- min(Inner_time, time_steps)
-          
+        
       }
       
       # Inner_time == time_steps
@@ -412,7 +412,7 @@ Forward <- function(N) {
         
         
         t <- t + 1
-      
+        
       } # if Inner_time == time_steps
       
       else {
