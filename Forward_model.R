@@ -13,6 +13,8 @@ library(Hmisc)
 
 # Forward simulation
 
+
+
 Forward <- function(N) {
   
   Population <- matrix(nrow = N, ncol = time_steps + 3)
@@ -403,7 +405,6 @@ Investment_plot <- function() {
     lines(Tadpole_state[n, 2, ])
     
   } # Performance
-  
   plot(1, type="l", xlab="Time Step", ylab="Fitness", xlim=c(1, time_steps), ylim=c(0, max(Fitness)), xaxt = "n")
   axis(1, at=1:(time_steps + 1), labels = c(0:time_steps))
   
@@ -413,7 +414,6 @@ Investment_plot <- function() {
   } # Fitness
   
 }
-
 
 # Plot that displays the final values of the tadpoles' traits
 # Vertical lines intercept those tadpoles that have all 3 traits maximized
@@ -502,8 +502,7 @@ Histogram_plot <- function(){
 # Initial parameters
 
 
-
-N <- 1000
+N <- 100
 # Number of Tadpoles
 
 
