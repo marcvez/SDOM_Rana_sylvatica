@@ -48,8 +48,6 @@ Forward <- function(N, prob_good_temp) {
     i <- 2 # sample(2:4,1)
     j <- 1 # sample(1:3,1)
     t <- 1
-    Inner_time <- 1
-    # Initial condition, after hatching (This could be a little bit stochastic)
     
     Tadpole_state[n, 1, t] <- Size[i]
     Tadpole_state[n, 2, t] <- Performance[j]
@@ -71,7 +69,7 @@ Forward <- function(N, prob_good_temp) {
       # Probability of jump one time_step ahead if the temperature is good, and it depends on the 
       # temperature itself. The warmer, the higher development rate you have.
       
-      if (Prob_Survive < Survival[i, j] & Temperature > prob_good_temp & Inner_time < time_steps) {
+      if (Prob_Survive < Survival[i, j] & Temperature > prob_good_temp) {
         # If you survive...
         
         # This is how it's going to Work: If at this time step and combination of
@@ -167,7 +165,6 @@ Forward <- function(N, prob_good_temp) {
         # of the Population matrix.
       
         t <- t + 1
-        Inner_time <- Inner_time + 1
         # Both the time to the end of the season and the internal time itself, 
         # which measures how far along you are in the development process, advance equally.
         
@@ -179,7 +176,7 @@ Forward <- function(N, prob_good_temp) {
       
       # Jump
       
-      else if (Prob_Survive < Survival[i, j] & Temperature < prob_good_temp & Inner_time < time_steps){
+      else if (Prob_Survive < Survival[i, j] & Temperature < prob_good_temp){
         
         
         if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance & Jump < prob_jump) {
@@ -386,54 +383,11 @@ Forward <- function(N, prob_good_temp) {
         
         t <- t + 1
         
-        if(Jump < prob_jump) { 
-          
-          Inner_time <- Inner_time + 2
-          
-        } else {
-          
-          Inner_time <- Inner_time + 1
-          
-        } # if/else prob jump
-        
-        Inner_time <- min(Inner_time, time_steps)
-        
         # In this case, the external time (the season of development advances) but 
         # your internal time advances at the same time or is advanced, and depends on a probability.
         
         
       }
-      
-      
-      # Inner_time == time_steps
-      #This block serves to model what to do when the internal time of the organism 
-      # is at its maximum (fully developed). Size and speed remain the same, 
-      # but fitness may continue to increase if it survives until the reproductive period. 
-      
-      else if (Inner_time == time_steps & Prob_Survive < Survival[i, j]) { 
-        
-        Population[n, t] <- 1
-        
-        Alive[t + 1, 2] <- sum(Population[, t])
-        # Store the number of tadpoles that are alive at each time step.
-        # There is a time step 0, and it's the initial population.
-        
-        Tadpole_state[n, 1, t + 1] <- Size[i]
-        Tadpole_state[n, 2, t + 1] <- Performance_forw[j]
-        Tadpole_state[n, 3, t + 1] <- Fitness[i, j, t]
-        # We store the Size and Performance of each tadpole at each time Step
-        
-        
-        Population[n, time_steps + 1] <- Size[i]
-        Population[n, time_steps + 2] <- Performance_forw[j]
-        Population[n, time_steps + 3] <- Fitness[i, j, t]
-        # We write the final Size, Performance and Fitness of each Tadpole at the end 
-        # of the Population matrix.
-        
-        
-        t <- t + 1
-        
-      } # if Inner_time == time_steps
       
       else {
         # On the contrary, if you are dead,
