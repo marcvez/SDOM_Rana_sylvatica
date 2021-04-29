@@ -1,19 +1,20 @@
 
 
+par(mfrow=c(3,1))
 
-
-prob_good_temp <- 0.3
+prob_good_temp <- 0.2
 prob_bad_temp <- 1 - prob_good_temp
 days <- 60
 end_season_percentage <- 0.4  
 end_season_intensity <- 1 
 death_rate_day <- 0.012 
 N <- 100
+development_rate <- 0.8
 
 
-Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day)
+Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day, development_rate)
 
-Forward(N)
+Forward(N, prob_good_temp)
 
 Fitness_bigger_0 <- as.vector(Final_Fitness[Final_Fitness > 0])
 Performance_bigger_0 <- as.vector(Final_Performance[Final_Performance > 0])
@@ -41,12 +42,13 @@ days <- 60
 end_season_percentage <- 0.4  
 end_season_intensity <- 1 
 death_rate_day <- 0.012 
-N <- 1000
+N <- 100
+development_rate <- 0.5
 
 
-Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day)
+Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day, development_rate)
 
-Forward(N)
+Forward(N, prob_good_temp)
 
 Fitness_bigger_0 <- as.vector(Final_Fitness[Final_Fitness > 0])
 Performance_bigger_0 <- as.vector(Final_Performance[Final_Performance > 0])
@@ -67,18 +69,18 @@ minor.tick(nx=10, ny=1)
 
 
 
-prob_good_temp <- 0.7
+prob_good_temp <- 0.8
 prob_bad_temp <- 1 - prob_good_temp
 days <- 60
 end_season_percentage <- 0.4  
 end_season_intensity <- 1 
 death_rate_day <- 0.012 
 N <- 100
+development_rate <- 0.2
 
+Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day, development_rate)
 
-Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day)
-
-Forward(N)
+Forward(N, prob_good_temp)
 
 Fitness_bigger_0 <- as.vector(Final_Fitness[Final_Fitness > 0])
 Performance_bigger_0 <- as.vector(Final_Performance[Final_Performance > 0])
@@ -95,6 +97,12 @@ abline(v = mean(Fitness_bigger_0), col = "blue")
 
 abline(h = 0)
 minor.tick(nx=10, ny=1)
+
+
+
+
+
+
 
 
 for(prob_good_temp in c(0.3,0.5,0.7)){

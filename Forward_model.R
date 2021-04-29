@@ -682,7 +682,7 @@ Comparison_plot()
 
 
 
-
+max(Fitness)
 
 
 
