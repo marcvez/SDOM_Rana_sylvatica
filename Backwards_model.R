@@ -45,7 +45,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   max_Performance <- length(Performance)
   # Performance values (How fast you move cm/s)
   
-  Size <- c(0, seq(1, 5.5, 0.1))
+  Size <- c(0, seq(1, 5.5, 0.2))
   max_Size <- length(Size)
   # Size values. All the values that tadpoles can archive. Also, this is the only 
   # trait that is relevant for the final Fitness (The bigger, the better)
@@ -55,13 +55,24 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   Fitness_values <- Size
   max_Fitness <- length(Fitness_values)
   Fitness_values[Fitness_values < 4] <- 0
-  Fitness_values[Fitness_values >=4] <- seq(2, 4, 2/(length(Fitness_values[Fitness_values >= 4]) - 1))
+  Fitness_values[Fitness_values >=4] <- seq(2, 3, 2/(length(Fitness_values[Fitness_values >= 4]) - 1))
+  
+  
   Fitness_values
   # Sizes under 4 cm don't receive Fitness benefits. This is the benefit that you
   # receive for being in each Size at the final time step.
   
   Fitness <- array(NA, dim = c((max_Size), max_Performance, time_steps + 1))
-  Fitness[,,time_steps + 1] <- Fitness_values
+  Fitness[, 1, time_steps + 1] <- Fitness_values
+  
+  for (j in 2:max_Performance) {
+    
+    Fitness[, j, time_steps + 1] <- Fitness[, j - 1, time_steps + 1] + (1/(max_Performance - 1))
+    
+  }
+  
+  Fitness[Fitness < 2] <- 0
+  
   # Array that stores the Fitness values for every time step. In every time step
   # you multiply your current condition by the expected Fitness value that would get
   # if you invest on this or that trait.
@@ -267,7 +278,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
     
   } # end of while loop
   
-  assign("prob_jump", prob_jump, envir = globalenv())
+  assign("Condition", Condition, envir =  globalenv())
   assign("time_steps", time_steps, envir = globalenv())
   assign("Fitness", Fitness, envir = globalenv())
   assign("ForageRule", ForageRule, envir=globalenv())
@@ -346,7 +357,7 @@ end_season_intensity <- 1
 death_rate_day <- 0.012 
 # Death rate per day (from 0 to 1)
 
-development_rate <- 1
+development_rate <- 1 + ((prob_good_temp - 0.5)*0.5)
 
 
 

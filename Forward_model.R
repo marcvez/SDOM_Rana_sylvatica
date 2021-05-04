@@ -355,7 +355,6 @@ Forward <- function(N) {
 }
 
 
-
 # Survival plot
 Survival_plot <- function() {
   
@@ -443,10 +442,10 @@ Density_plot <- function(){
   plot(density(Final_results[,2], bw = 0.1, from = 4 - 0.5, to = max(Performance) + 0.5), main = "Final Burst Speed (cm/s) (Alive)")
   rug(Final_results[,2], col='red')
   
-  plot(density(Final_results[,3], bw = 0.1, from = -0.5, to = max(Fitness_values) + 0.1), main = "Final Fitness")
+  plot(density(Final_results[,3], bw = 0.1, from = -0.5, to = max(Fitness) + 0.1), main = "Final Fitness")
   rug(Final_results[,3], col='red')
   
-  plot(density(Final_results[,3], bw = 0.1, from = 2 - 0.5, to = max(Fitness_values) + 0.1), main = "Final Fitness (Alive)")
+  plot(density(Final_results[,3], bw = 0.1, from = 2 - 0.5, to = max(Fitness) + 0.1), main = "Final Fitness (Alive)")
   rug(Final_results[,3], col='red')
   
 }
@@ -484,7 +483,7 @@ Comparison_plot <- function(){
     end_season_intensity <- 1 
     death_rate_day <- 0.012 
     N <- 100
-    development_rate <- 1
+    development_rate <- 1 + ((prob_good_temp - 0.5)*0.5)
     
     
     Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day, development_rate)
@@ -501,7 +500,7 @@ Comparison_plot <- function(){
     lines(density(Final_results[,1], bw = 0.1, from = 1, to = max(Size) + 0.1), col = "red")
     abline(v = mean(Size_bigger_0), col = "red")
     
-    lines(density(Final_results[,3], bw = 0.1, from = 1, to = max(Fitness_values) + 0.1), col = "blue")
+    lines(density(Final_results[,3], bw = 0.1, from = 1, to = max(Fitness) + 0.5), col = "blue")
     abline(v = mean(Fitness_bigger_0), col = "blue")
     
     abline(h = 0)
