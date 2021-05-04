@@ -69,7 +69,7 @@ Forward <- function(N, prob_good_temp) {
       # Probability of jump one time_step ahead if the temperature is good, and it depends on the 
       # temperature itself. The warmer, the higher development rate you have.
       
-      if (Prob_Survive < Survival[i, j] & Temperature > prob_good_temp) {
+      if (Prob_Survive < Survival[i, j] & Temperature >= prob_good_temp) {
         # If you survive...
         
         # This is how it's going to Work: If at this time step and combination of
@@ -176,16 +176,16 @@ Forward <- function(N, prob_good_temp) {
       
       # Jump
       
-      else if (Prob_Survive < Survival[i, j] & Temperature < prob_good_temp){
+      else if (Prob_Survive < Survival[i, j] & Temperature <= prob_good_temp){
         
         
-        if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance & Jump < prob_jump) {
+        if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance & Jump <= prob_jump) {
           
           j <- j
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j == max_Performance & Jump < prob_jump) {
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j == max_Performance & Jump <= prob_jump) {
           
           i <- i
           
@@ -194,13 +194,13 @@ Forward <- function(N, prob_good_temp) {
         } # MAx Performance and MAX Size -> You stay the same
         
         
-        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j == max_Performance & i > 1 & Jump < prob_jump) {
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j == max_Performance & i > 1 & Jump <= prob_jump) {
           
           j <- j
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j == max_Performance & i > 1 & Jump < prob_jump) {
+        } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j == max_Performance & i > 1 & Jump <= prob_jump) {
           
           i <- i + 2
           
@@ -209,13 +209,13 @@ Forward <- function(N, prob_good_temp) {
         } # MAX Performance but Size < Max -> You can grow, but not increase your Performance
         
         
-        else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j == max_Performance & i > 1 & Jump < prob_jump) {
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j == max_Performance & i > 1 & Jump <= prob_jump) {
           
           j <- j
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & Jump < prob_jump) {
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & Jump <= prob_jump) {
           
           i <- i + 1
           
@@ -224,13 +224,13 @@ Forward <- function(N, prob_good_temp) {
         } # MAX Performance but Size = Max - 1 -> You can grow(only 1), but not increase your Performance
         
         
-        else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j < max_Performance & i > 1 & Jump < prob_jump) {
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j < max_Performance & i > 1 & Jump <= prob_jump) {
           
           j <- j + 1
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & Jump < prob_jump) {
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & Jump <= prob_jump) {
           
           i <- i + 1
           
@@ -239,13 +239,13 @@ Forward <- function(N, prob_good_temp) {
         } # Performance < Max and Size = Max - 1 -> You can grow (only 1), and increase your Performance
         
         
-        else if (ForageRule[i, j, t] == TRUE & i == max_Size & j < max_Performance & Jump < prob_jump) {
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size & j < max_Performance & Jump <= prob_jump) {
           
           j <- j + 1
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j < max_Performance & Jump < prob_jump) {
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j < max_Performance & Jump <= prob_jump) {
           
           i <- i
           
@@ -254,13 +254,13 @@ Forward <- function(N, prob_good_temp) {
         } # MAX Size but Performance < Max -> You can't grow, but you can improve Performance
         
         
-        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j < max_Performance & i > 1 & Jump < prob_jump) {
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j < max_Performance & i > 1 & Jump <= prob_jump) {
           
           j <- j + 1
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j < max_Performance & i > 1 & Jump < prob_jump) {
+        } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j < max_Performance & i > 1 & Jump <= prob_jump) {
           
           i <- i + 2
           
@@ -273,13 +273,13 @@ Forward <- function(N, prob_good_temp) {
         
         # No jump
         
-        else if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance & Jump > prob_jump) {
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size & j == max_Performance & Jump >= prob_jump) {
           
           j <- j
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j == max_Performance & Jump > prob_jump) {
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j == max_Performance & Jump >= prob_jump) {
           
           i <- i
           
@@ -288,13 +288,13 @@ Forward <- function(N, prob_good_temp) {
         } # MAx Performance and MAX Size -> You stay the same
         
         
-        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j == max_Performance & i > 1 & Jump > prob_jump) {
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j == max_Performance & i > 1 & Jump >= prob_jump) {
           
           j <- j
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j == max_Performance & i > 1 & Jump > prob_jump) {
+        } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j == max_Performance & i > 1 & Jump >= prob_jump) {
           
           i <- i + 1
           
@@ -303,13 +303,13 @@ Forward <- function(N, prob_good_temp) {
         } # MAX Performance but Size < Max -> You can grow, but not increase your Performance
         
         
-        else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j == max_Performance & i > 1 & Jump > prob_jump) {
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j == max_Performance & i > 1 & Jump >= prob_jump) {
           
           j <- j
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & Jump > prob_jump) {
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & Jump >= prob_jump) {
           
           i <- i + 1
           
@@ -318,13 +318,13 @@ Forward <- function(N, prob_good_temp) {
         } # MAX Performance but Size = Max - 1 -> You can grow(only 1), but not increase your Performance
         
         
-        else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j < max_Performance & i > 1 & Jump > prob_jump) {
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size - 1 & j < max_Performance & i > 1 & Jump >= prob_jump) {
           
           j <- j + 1
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & Jump > prob_jump) {
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size - 1 & j == max_Performance & i > 1 & Jump >= prob_jump) {
           
           i <- i + 1
           
@@ -333,13 +333,13 @@ Forward <- function(N, prob_good_temp) {
         } # Performance < Max and Size = Max - 1 -> You can grow (only 1), and increase your Performance
         
         
-        else if (ForageRule[i, j, t] == TRUE & i == max_Size & j < max_Performance & Jump > prob_jump) {
+        else if (ForageRule[i, j, t] == TRUE & i == max_Size & j < max_Performance & Jump >= prob_jump) {
           
           j <- j + 1
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j < max_Performance & Jump > prob_jump) {
+        } else if (ForageRule[i, j, t] == FALSE & i == max_Size & j < max_Performance & Jump >= prob_jump) {
           
           i <- i
           
@@ -348,13 +348,13 @@ Forward <- function(N, prob_good_temp) {
         } # MAX Size but Performance < Max -> You can't grow, but you can improve Performance
         
         
-        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j < max_Performance & i > 1 & Jump > prob_jump) {
+        else if (ForageRule[i, j, t] == TRUE & i < max_Size - 1 & j < max_Performance & i > 1 & Jump >= prob_jump) {
           
           j <- j + 1
           
           Population[n, t] <- 1
           
-        } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j < max_Performance & i > 1 & Jump > prob_jump) {
+        } else if (ForageRule[i, j, t] == FALSE & i < max_Size - 1 & j < max_Performance & i > 1 & Jump >= prob_jump) {
           
           i <- i + 1
           
@@ -640,8 +640,27 @@ max(Fitness)
 
 
 
+
+
+
+
 # Cambiar condition values, intentar poner no_forage condition, modificar de alguna manera
 # el factor prob jump para que no sea tan fuerte cuando hace calor!
+
+# A lo mejor la probabilidad de jump no tiene sentido y simplemente deberia eliminarla de 
+# la forward y la backward simulation, y cambiarla por un factor que multiplique la fitness
+# similar a development_rate, que sea más alto para tadpoles de agua fria y más bajo para
+# tadpoles de agu caliente (por bibliografia). De esta manera la fitness se veria afectada,
+# y solo multiplicaria en Reward if Growth!
+
+# Survival plot no debe funcionar porque a lo mejor hay alguna situación que no esta bien
+# modelada y no existe acción para esa condición concreta, de manera que al no tener ninguna situación 
+# (esta en un limbo) no pone un 1 o 0 en la matriz y da error. Tiene algo que ver con que la 
+# probabilidad sea igual al valor concreto? Revisar todas las acciones y ver que falla en ese plot.
+# Es raro que siempre falle en los mismos numeros... 
+
+# Sigue sin gustarme lo que veo en los plots... como cambiarlo? esta es la versión más 
+# realista pero no tiene sentido :(
 
 
 
