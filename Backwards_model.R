@@ -63,8 +63,9 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # receive for being in each Size at the final time step.
   
   Fitness <- array(NA, dim = c((max_Size), max_Performance, time_steps + 1))
-  Fitness[, 1, time_steps + 1] <- Fitness_values
+  Fitness[, , time_steps + 1] <- Fitness_values
   
+
   for (j in 2:max_Performance) {
     
     Fitness[, j, time_steps + 1] <- Fitness[, j - 1, time_steps + 1] + (1/(max_Performance - 1))
