@@ -478,7 +478,7 @@ Comparison_plot <- function(){
     
     prob_good_temp
     prob_bad_temp <- 1 - prob_good_temp
-    days <- 60
+    days <- 50
     end_season_percentage <- 0.4  
     end_season_intensity <- 1 
     death_rate_day <- 0.012 
@@ -541,12 +541,19 @@ Comparison_plot()
 
 
 
-max(Fitness)
 
 
 
 
 
+
+
+
+
+
+
+
+# Ideas (in Spanish, don't pay attention to this)
 
 
 # Cambiar condition values, intentar poner no_forage condition, modificar de alguna manera
@@ -617,7 +624,7 @@ for(prob_good_temp in c(0.3,0.5,0.7)){
 
 
 
-# Ideas (in Spanish, don't pay attention to this)
+
 
 # Cambiar valores de fitness!! Ya no hay la misma fitness para tallas grandes, sino que siempre augmenta.
 # Esto podria modificar backwards simulation y que casi no se invierta en performance... (HECHO)
