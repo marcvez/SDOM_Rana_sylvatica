@@ -65,7 +65,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   Fitness <- array(NA, dim = c((max_Size), max_Performance, time_steps + 1))
   Fitness[, , time_steps + 1] <- Fitness_values
   
-
+  
   for (j in 2:max_Performance) {
     
     Fitness[, j, time_steps + 1] <- Fitness[, j - 1, time_steps + 1] + (1/(max_Performance - 1))
@@ -107,7 +107,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   }
   Survival[1,] <- 0
   # survival rate per size
-
+  
   ForageRule <- array(NA, dim = c((max_Size), max_Performance, time_steps))
   # Here, the ForageRule array is a 2 state variable matrix with time as the 3rd dimension,
   # and depends has the same dimensions as Performance and Size. 
@@ -132,33 +132,33 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
       for (i in 1:max_Size) {
         
         
-          # The rest of the cells will operate as follows: You multiply your 
-          # current survival rate per your condition, and depending on the temperature,
-          # you receive more or less benefits from your decision. Also there's the chance to 
-          # jump one time step if the temperature is good. This is what happens if the season 
-          # continues on the next time step. If it ends stochastically, you can't 
-          # invest on anything, and you just have to survive until next time step.
-          
-          
-          
-          # This first part models the decision in the final time step, when no 
-          # time jumps can be made due to matrix sizes. The next block is the 
-          # same but with the possibility of jumping.
-          
-          
-          
+        # The rest of the cells will operate as follows: You multiply your 
+        # current survival rate per your condition, and depending on the temperature,
+        # you receive more or less benefits from your decision. Also there's the chance to 
+        # jump one time step if the temperature is good. This is what happens if the season 
+        # continues on the next time step. If it ends stochastically, you can't 
+        # invest on anything, and you just have to survive until next time step.
+        
+        
+        
+        # This first part models the decision in the final time step, when no 
+        # time jumps can be made due to matrix sizes. The next block is the 
+        # same but with the possibility of jumping.
+        
+        
+        
         if(j == max_Performance & i == max_Size & t <= time_steps){
           
           RewardIfPerformance[i,j,t] <- ((Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
-            (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
+                                           (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp +
+                                           (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
+                                           (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
             Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t] 
           
           RewardIfGrowth[i,j,t] <- ((Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
-            (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
+                                      (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp +
+                                      (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
+                                      (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
             Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           # Fitness values that would result if the tadpole is in the best condition.
@@ -167,15 +167,15 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
         } else if (j < max_Performance & i == max_Size & t <= time_steps) {
           
           RewardIfPerformance[i,j,t] <- ((Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp +
-            (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
+                                           (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp +
+                                           (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
+                                           (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
             Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           RewardIfGrowth[i,j,t] <- ((Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
-            (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
+                                      (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp +
+                                      (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
+                                      (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
             Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           # Fitness values that would result if the tadpole has the maximum size,
@@ -185,15 +185,15 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
         } else if (j == max_Performance & i < max_Size  & t <= time_steps) {
           
           RewardIfPerformance[i,j,t] <- ((Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_good_temp +
-            (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
+                                           (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp +
+                                           (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
+                                           (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
             Fitness[i, j, t + 1] * Survival[j] * prob_end_season[t]
           
           RewardIfGrowth[i,j,t] <- ((Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i+1,j,t+1] * prob_good_temp +
-            (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
+                                      (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp +
+                                      (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
+                                      (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
             Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           # Fitness values that would result if the tadpole has the best performance,
@@ -203,15 +203,15 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
         } else {
           
           RewardIfPerformance[i,j,t] <- ((Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j+1,t+1] * prob_good_temp + 
-            (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
+                                           (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j+1,t+1] * prob_bad_temp +
+                                           (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
+                                           (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
             Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           RewardIfGrowth[i,j,t] <- ((Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i+1,j,t+1] * prob_good_temp +
-            (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
-            (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
+                                      (Condition[i, j]) * development_rate * Survival[i, j] * Fitness[i,j,t+1] * prob_bad_temp +
+                                      (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_good_temp +
+                                      (1 - (Condition[i, j])) * development_rate * Survival[i, j] * Fitness[i, j, t+1] * prob_bad_temp) * prob_no_end_season[t] + 
             Fitness[i, j, t + 1] * Survival[i, j] * prob_end_season[t]
           
           # The rest of the cells will operate as follows: You multiply your 
@@ -335,4 +335,3 @@ Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season
 
 
 Backwards_Plot()
-
