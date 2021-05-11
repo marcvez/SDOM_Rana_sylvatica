@@ -165,8 +165,6 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
           # same but with the possibility of jumping.
           
           
-          n <- min((time_steps - (t - 1)), 10)
-          
           if (Metamorphosis[i, j] == 1) {
             
             if (j == max_Performance & i == max_Size & k == max_Stages & t <= time_steps){
@@ -185,7 +183,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * Survival[i, j]
+              RewardIfMetamorphosis[i, j, k, t] <-  Condition[i, j] * Fitness[i, j, k, t + 1] * Survival[i, j] +
+                (1 - Condition[i, j]) * Fitness[i, j, k, t + 1] * Survival[i, j]
               
               
             } else if (j == max_Performance & i == max_Size & k < max_Stages & t <= time_steps){
@@ -204,7 +203,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * Survival[i, j]
+              RewardIfMetamorphosis[i, j, k, t] <-  Condition[i, j] * Fitness[i, j, k + 1, t + 1] * Survival[i, j] +
+                (1 - Condition[i, j]) * Fitness[i, j, k + 1, t + 1] * Survival[i, j]
               
               
             } else if (j == max_Performance & i < max_Size & k == max_Stages & t <= time_steps){
@@ -223,7 +223,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * Survival[i, j]
+              RewardIfMetamorphosis[i, j, k, t] <-  Condition[i, j] * Fitness[i, j, k, t + 1] * Survival[i, j] +
+                (1 - Condition[i, j]) * Fitness[i, j, k, t + 1] * Survival[i, j]
               
               
             } else if (j < max_Performance & i == max_Size & k == max_Stages & t <= time_steps){
@@ -242,7 +243,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * Survival[i, j]
+              RewardIfMetamorphosis[i, j, k, t] <-  Condition[i, j] * Fitness[i, j, k, t + 1] * Survival[i, j] +
+                (1 - Condition[i, j]) * Fitness[i, j, k, t + 1] * Survival[i, j]
               
               
             } else if (j == max_Performance & i < max_Size & k < max_Stages & t <= time_steps){
@@ -261,7 +263,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * Survival[i, j]
+              RewardIfMetamorphosis[i, j, k, t] <- Condition[i, j] * Fitness[i, j, k + 1, t + 1] * Survival[i, j] +
+                (1 - Condition[i, j]) * Fitness[i, j, k + 1, t + 1] * Survival[i, j]
               
               
             } else if (j < max_Performance & i == max_Size & k < max_Stages & t <= time_steps){
@@ -280,7 +283,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * Survival[i, j]
+              RewardIfMetamorphosis[i, j, k, t] <-  Condition[i, j] * Fitness[i, j, k + 1, t + 1] * Survival[i, j] +
+                (1 - Condition[i, j]) * Fitness[i, j, k + 1, t + 1] * Survival[i, j]
               
               
             } else if (j < max_Performance & i < max_Size & k == max_Stages & t <= time_steps){
@@ -299,7 +303,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * Survival[i, j]
+              RewardIfMetamorphosis[i, j, k, t] <-  Condition[i, j] * Fitness[i, j, k, t + 1] * Survival[i, j] +
+                (1 - Condition[i, j]) * Fitness[i, j, k, t + 1] * Survival[i, j]
               
               
             } else {
@@ -318,7 +323,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * Survival[i, j]
+              RewardIfMetamorphosis[i, j, k, t] <-  Condition[i, j] * Fitness[i, j, k + 1, t + 1] * Survival[i, j] +
+                (1 - Condition[i, j]) * Fitness[i, j, k + 1, t + 1] * Survival[i, j]
               
               # The rest of the cells will operate as follows: You multiply your 
               # current survival rate per your condition, and depending on the temperature,
@@ -619,4 +625,7 @@ Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season
 
 
 Backwards_Plot()
+
+
+
 
