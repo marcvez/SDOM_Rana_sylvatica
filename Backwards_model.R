@@ -51,7 +51,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # trait that is relevant for the final Fitness (The bigger, the better)
   # Size 0 is equal to being dead.
   
-  Stages <- c(1:10)
+  Stages <- c(1:5) # 1:10
   max_Stages <- length(Stages)
   # Number of Stages that the tadpole has to go through in order to metamorphose.
   
@@ -59,7 +59,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   Fitness_values <- Size
   max_Fitness <- length(Fitness_values)
   Fitness_values[Fitness_values < 4] <- 0
-  Fitness_values[Fitness_values >=4] <- seq(2, 3, 2/(length(Fitness_values[Fitness_values >= 4]) - 1))
+  Fitness_values[Fitness_values >=4] <- seq(2, 3, 1/(length(Fitness_values[Fitness_values >= 4]) - 1))
   
   
   Fitness_values
@@ -205,7 +205,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <- Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + (0.15 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <- Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
               
               # You are going to look for the fitness that is 10 time steps ahead 
               # of you (if you are in k = 1), and this is going to be multiplied 
@@ -239,7 +239,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, max_Stages, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + (0.15 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
               
               
             } else if (j == max_Performance & i < max_Size & k == max_Stages & t <= time_steps){
@@ -258,7 +258,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + (0.15 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
               
               
             } else if (j < max_Performance & i == max_Size & k == max_Stages & t <= time_steps){
@@ -277,7 +277,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + (0.15 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
               
               
             } else if (j == max_Performance & i < max_Size & k < max_Stages & t <= time_steps){
@@ -296,7 +296,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, max_Stages, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <- Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + (0.15 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <- Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
               
               
             } else if (j < max_Performance & i == max_Size & k < max_Stages & t <= time_steps){
@@ -315,7 +315,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, max_Stages, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + (0.15 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
               
               
             } else if (j < max_Performance & i < max_Size & k == max_Stages & t <= time_steps){
@@ -334,7 +334,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + (0.15 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
               
               
             } else {
@@ -353,7 +353,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, max_Stages, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + (0.15 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
               
             } # end if/else loop
             
@@ -659,7 +659,7 @@ Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season
 
 Backwards_Plot()
 
-# What actually happens with the model: If we look at k=10, the maximum stage of 
+  # What actually happens with the model: If we look at k=10, the maximum stage of 
 # metamorphosis and where the frogs obtain fitness, we see that it behaves more or 
 # less normally, as in the normal model. It is not optimal to take the decision to 
 # invest in metamorphosis because you are already in the last stage, but at the 
