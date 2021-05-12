@@ -96,9 +96,6 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # I had to add extra "time_steps" in order to make some functions work, but
   # their fitness values are 0. 
   
-
-  
-
   Fitness[Fitness < 2] <- 0
   
   # Array that stores the Fitness values for every time step. In every time step
@@ -598,8 +595,8 @@ Backwards_Plot <- function(){
   
   while (t >= 1) {
     
-    ForageRule_rev <- apply(ForageRule[, , 1, t], 2, rev) # At time step "t"
-    ForageRule_B_rev <- apply(ForageRule_B[, , 1, t], 2, rev) # At time step "t"
+    ForageRule_rev <- apply(ForageRule[, , 4, t], 2, rev) # At time step "t"
+    ForageRule_B_rev <- apply(ForageRule_B[, , 4, t], 2, rev) # At time step "t"
     ForageRule_rev[ForageRule_rev == "FALSE"] <- "Growth"
     ForageRule_rev[ForageRule_rev == "TRUE"] <- "Performance"
     ForageRule_rev[ForageRule_B_rev == "TRUE"] <- "Metamorphosis"
@@ -659,7 +656,7 @@ Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season
 
 Backwards_Plot()
 
-  # What actually happens with the model: If we look at k=10, the maximum stage of 
+# What actually happens with the model: If we look at k=10, the maximum stage of 
 # metamorphosis and where the frogs obtain fitness, we see that it behaves more or 
 # less normally, as in the normal model. It is not optimal to take the decision to 
 # invest in metamorphosis because you are already in the last stage, but at the 
@@ -691,7 +688,7 @@ Backwards_Plot()
 
 # Also, in the RewardIfMetamorphosis part, there are some blocks that are a little
 # bit tricky to understand, but the point is that one is 
-# a "diminishing returns" with time (as you go backwards in time, less benefits you recieve from 
+# a "diminishing returns" with time (as you go backwards in time, less benefits you receive from 
 # investing in metamorphosis, but as you approach the end, you get more benefits.) 
 # The second part is used to give an incentive to those frogs that are in a low 
 # metamorphosis stages to invest in metamorphosis.The more Stage you have, the 
@@ -703,7 +700,8 @@ Backwards_Plot()
 # stage is low, you start investing in metamorphosis before,
 # but how the decisions are distributed along the grid is very strange... You 
 # wouldn't expect to have specific sizes to grow, others to invest in metamorphosis... 
-# The patterns are strange.
+# The patterns are strange. 
 
-
-
+RewardIfMetamorphosis[,,1,time_steps]
+RewardIfPerformance[,,1,time_steps]
+RewardIfGrowth[,,1,time_steps]
