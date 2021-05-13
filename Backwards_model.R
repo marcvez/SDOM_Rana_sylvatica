@@ -51,7 +51,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # trait that is relevant for the final Fitness (The bigger, the better)
   # Size 0 is equal to being dead.
   
-  Stages <- c(1:5) # 1:10
+  Stages <- c(1:10) # 1:10
   max_Stages <- length(Stages)
   # Number of Stages that the tadpole has to go through in order to metamorphose.
   
@@ -601,14 +601,29 @@ Backwards_Plot <- function(){
   
   t <- time_steps
   
+  k <- 1 # Which stage would you like to see. (Normally stage nº 1, that is when the
+  # decision to start metamorphosis is made).
+  
+  Dead_state <- time_steps - max_Stages + k
+  # This is used to know if you are dead or not at the current time step and 
+  # stage due that you couldn't reach the minumum size to metamorphose or not. 
+  
   while (t >= 1) {
     
-    ForageRule_rev <- apply(ForageRule[, , 1, t], 2, rev) # At time step "t"
-    ForageRule_B_rev <- apply(ForageRule_B[, , 1, t], 2, rev) # At time step "t"
+    
+    ForageRule_rev <- apply(ForageRule[, , k, t], 2, rev) # At time step "t"
+    ForageRule_B_rev <- apply(ForageRule_B[, , k, t], 2, rev) # At time step "t"
     ForageRule_rev[ForageRule_rev == "FALSE"] <- "Growth"
     ForageRule_rev[ForageRule_rev == "TRUE"] <- "Performance"
     ForageRule_rev[ForageRule_B_rev == "TRUE"] <- "Metamorphosis"
     ForageRule_rev[max_Size, ] <- "Dead"
+    
+    if (t > Dead_state){
+      
+      ForageRule_rev[ForageRule_B_rev == "FALSE"] <- "Dead"
+      
+    }
+    
     
     plot(ForageRule_rev, col=c('#440154FF', '#31688EFF', '#35B779FF', '#FDE725FF'), 
          breaks=c("Dead", "Growth", "Performance", "Metamorphosis"), xlab = "Burst speed (mm/s)", ylab = "Size (cm)",
@@ -641,7 +656,7 @@ prob_good_temp <- 0.5
 prob_bad_temp <- 1 - prob_good_temp 
 # Probability of having a bad Temperature
 
-days <- 50
+days <- 60
 # How many days does the metamorphosis last (normal conditions)?
 
 end_season_percentage <- 0.4 
@@ -709,10 +724,3 @@ Backwards_Plot()
 # but how the decisions are distributed along the grid is very strange... You 
 # wouldn't expect to have specific sizes to grow, others to invest in metamorphosis... 
 # The patterns are strange. 
-
-RewardIfMetamorphosis[,,1,41]
-RewardIfPerformance[,,1,41]
-RewardIfGrowth[,,1,41]
-Size
-
-Fitness[,,max_Stages,time_steps + 1]
