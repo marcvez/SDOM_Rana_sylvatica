@@ -264,6 +264,8 @@ Forward <- function(N) {
       
       else if (Prob_Survive < Survival[i, j] & Forage > Condition[i, j]){
         
+        # If you don't find food
+        
         j <- j
         
         i <- i
