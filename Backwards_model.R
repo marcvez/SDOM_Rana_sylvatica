@@ -96,6 +96,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # I had to add extra "time_steps" in order to make some functions work, but
   # their fitness values are 0. 
   
+  
   Fitness[Fitness < 2] <- 0
   
   # Array that stores the Fitness values for every time step. In every time step
@@ -148,9 +149,9 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # and see if it's better to invest in Performance or in Size.
   
   
-  RewardIfPerformance <-  array(NA, dim = c(max_Size, max_Performance, max_Stages, time_steps))
-  RewardIfGrowth <-  array(NA, dim = c(max_Size, max_Performance, max_Stages, time_steps))
-  RewardIfMetamorphosis <-  array(NA, dim = c(max_Size, max_Performance, max_Stages, time_steps))
+  RewardIfPerformance <-  array(0, dim = c(max_Size, max_Performance, max_Stages, time_steps))
+  RewardIfGrowth <-  array(0, dim = c(max_Size, max_Performance, max_Stages, time_steps))
+  RewardIfMetamorphosis <-  array(0, dim = c(max_Size, max_Performance, max_Stages, time_steps))
   # Arrays that are going to store the fitness values of each decision at 
   # every time step and state.
   
@@ -535,27 +536,29 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
         
       } # end i loop
       
-      ForageRule[, , k, t] <- RewardIfPerformance[, , k, t] > RewardIfGrowth[, , k, t]
-      # TRUE/False matrix depending on which decision is best, and the result
-      # is stored.
-      
-      Fitness[, , k, t] <- ForageRule[, , k, t] * RewardIfPerformance[, , k, t] +
-        as.numeric(!ForageRule[, , k, t]) * RewardIfGrowth[, , k, t]
-      # This matrix stores the reward values obtained for the best decisions, 
-      # and it is going to be used in the next time step.
-      
-      ForageRule_B[, , k, t] <- RewardIfMetamorphosis[, , k, t] > Fitness[, , k, t]
-      # This ForageRule_B is useful to compare if making the decision of
-      # starting the metamorphosis is better than the current fitness.
-      
-      
-      # I should find a way to write the fitness they would obtain by starting 
-      # the metamorphosis in the fitness matrix
-  
-      
     } # end k loop
-        
-        
+    
+    ForageRule[, , , t] <- RewardIfPerformance[, , , t] > RewardIfGrowth[, , , t]
+    # TRUE/False matrix depending on which decision is best, and the result
+    # is stored.
+    
+    Fitness[, , , t] <- ForageRule[, , , t] * RewardIfPerformance[, , , t] +
+      as.numeric(!ForageRule[, , , t]) * RewardIfGrowth[, , , t]
+    # This matrix stores the reward values obtained for the best decisions, 
+    # and it is going to be used in the next time step.
+    
+    ForageRule_B[, , , t] <- RewardIfMetamorphosis[, , , t] > Fitness[, , , t]
+    # This ForageRule_B is useful to compare if making the decision of
+    # starting the metamorphosis is better than the current fitness.
+    
+    #Fitness[, , , t] <- RewardIfMetamorphosis[, , , t] * ForageRule_B[, , , t] + 
+      #as.numeric(!ForageRule_B[, , , t]) * Fitness[, , , t]
+    
+    # WHY IT DOESN'T WOOOORK!!!!!!!! It's the only part left    >:(
+    
+    # I should find a way to write the fitness they would obtain by starting 
+    # the metamorphosis in the fitness matrix
+    
     
     
     RewardIfPerformance[1, , , ] <- 0
@@ -563,8 +566,6 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
     RewardIfMetamorphosis[1, , , ] <- 0
     
     # Fitness values if you are dead.
-    
-    
     
     t <- t - 1
     
@@ -678,6 +679,9 @@ Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season
 
 
 Backwards_Plot()
+
+
+Fitness[, , 1, 59]
 
 # What actually happens with the model: If we look at k=10, the maximum stage of 
 # metamorphosis and where the frogs obtain fitness, we see that it behaves more or 
