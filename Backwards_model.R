@@ -121,22 +121,15 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # We divide by the highest value to create a 0 to 1 Condition matrix.
   
   Survival <- matrix(nrow = max_Size, ncol = max_Performance)
-  Survival[,1] <- c(0, seq(1 - 2*death_rate_day, 1 - death_rate_day, death_rate_day/(max_Size - 2)))
+  Survival[,1] <- c(0, seq(1 - 3*death_rate_day, 1 - 2*death_rate_day, death_rate_day/(max_Size - 2)))
   for (j in 2:max_Performance) {
     
-    Survival[, j] <- Survival[, j - 1] + (death_rate_day/(max_Performance - 1))
+    Survival[, j] <- Survival[, j - 1] + 2*(death_rate_day/(max_Performance - 1))
     
   }
   Survival[1,] <- 0
   # survival rate per size
-  
-  Metamorphosis <- matrix(nrow = max_Size, ncol = max_Performance)
-  Metamorphosis[Size >= 3.4] <- 1
-  Metamorphosis[Size < 3.4] <- 0
-  # Matrix that has a 0 on those sizes that are not able to metamorphose and 1 for
-  # those sizes that can metamorphose. 
-  
-  
+
   ForageRule <- array(NA, dim = c(max_Size, max_Performance, max_Stages, time_steps))
   ForageRule_B <- array(NA, dim = c(max_Size, max_Performance, max_Stages, time_steps))
   # Here, the ForageRule array is a 2 state variable matrix with time as the 3rd dimension,
