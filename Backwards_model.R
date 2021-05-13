@@ -51,7 +51,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # trait that is relevant for the final Fitness (The bigger, the better)
   # Size 0 is equal to being dead.
   
-  Stages <- c(1:5) # 1:10
+  Stages <- c(1:10) # 1:10
   max_Stages <- length(Stages)
   # Number of Stages that the tadpole has to go through in order to metamorphose.
   
@@ -89,7 +89,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   
   for (t in (time_steps + 2):(time_steps + 1 + max_Stages)){
     
-    Fitness[, , , t] <- 0
+    Fitness[, , , t] <- Fitness[, , max_Stages, time_steps + 1]
     
   }
   # This loop fills with 0 all the cells that are after the last time step.
@@ -202,7 +202,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <- Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <- Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + 
+                ((max_Stages/max_Stages - k/max_Stages) * 0.3)
               
               # You are going to look for the fitness that is 10 time steps ahead 
               # of you (if you are in k = 1), and this is going to be multiplied 
@@ -236,7 +237,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, max_Stages, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + 
+                ((max_Stages/max_Stages - k/max_Stages) * 0.3)
               
               
             } else if (j == max_Performance & i < max_Size & k == max_Stages & t <= time_steps){
@@ -255,7 +257,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + 
+                ((max_Stages/max_Stages - k/max_Stages) * 0.3)
               
               
             } else if (j < max_Performance & i == max_Size & k == max_Stages & t <= time_steps){
@@ -274,7 +277,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + 
+                ((max_Stages/max_Stages - k/max_Stages) * 0.3)
               
               
             } else if (j == max_Performance & i < max_Size & k < max_Stages & t <= time_steps){
@@ -293,7 +297,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, max_Stages, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <- Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <- Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + 
+                ((max_Stages/max_Stages - k/max_Stages) * 0.3)
               
               
             } else if (j < max_Performance & i == max_Size & k < max_Stages & t <= time_steps){
@@ -312,7 +317,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, max_Stages, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + 
+                ((max_Stages/max_Stages - k/max_Stages) * 0.3)
               
               
             } else if (j < max_Performance & i < max_Size & k == max_Stages & t <= time_steps){
@@ -331,7 +337,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, k, t + n] * ((Survival[i, j])^n) + 
+                ((max_Stages/max_Stages - k/max_Stages) * 0.3)
               
               
             } else {
@@ -350,7 +357,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
                 Fitness[i, j, max_Stages, t + 1] * Survival[i, j] * prob_end_season[t]
               
               
-              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + (0.11 - (0.1/max_Stages) * (time_steps + 1- t)) + (0.2 - k/(20 * max_Stages))
+              RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, max_Stages, t + n] * ((Survival[i, j])^n) + 
+                ((max_Stages/max_Stages - k/max_Stages) * 0.3)
               
             } # end if/else loop
             
@@ -595,8 +603,8 @@ Backwards_Plot <- function(){
   
   while (t >= 1) {
     
-    ForageRule_rev <- apply(ForageRule[, , 4, t], 2, rev) # At time step "t"
-    ForageRule_B_rev <- apply(ForageRule_B[, , 4, t], 2, rev) # At time step "t"
+    ForageRule_rev <- apply(ForageRule[, , 1, t], 2, rev) # At time step "t"
+    ForageRule_B_rev <- apply(ForageRule_B[, , 1, t], 2, rev) # At time step "t"
     ForageRule_rev[ForageRule_rev == "FALSE"] <- "Growth"
     ForageRule_rev[ForageRule_rev == "TRUE"] <- "Performance"
     ForageRule_rev[ForageRule_B_rev == "TRUE"] <- "Metamorphosis"
@@ -702,6 +710,9 @@ Backwards_Plot()
 # wouldn't expect to have specific sizes to grow, others to invest in metamorphosis... 
 # The patterns are strange. 
 
-RewardIfMetamorphosis[,,1,time_steps]
-RewardIfPerformance[,,1,time_steps]
-RewardIfGrowth[,,1,time_steps]
+RewardIfMetamorphosis[,,1,41]
+RewardIfPerformance[,,1,41]
+RewardIfGrowth[,,1,41]
+Size
+
+Fitness[,,max_Stages,time_steps + 1]
