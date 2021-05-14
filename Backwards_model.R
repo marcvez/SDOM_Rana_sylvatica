@@ -31,7 +31,7 @@
 library(plot.matrix)
 
 
-Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day, development_rate) {
+Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day) {
   
   time_steps <- days + ((prob_bad_temp - 0.5)*30)
   # An environment with higher temperatures is also more likely to dry out
@@ -559,14 +559,9 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
     }
     
     
-    
-    
-    
-    
-    
-    
-    # I should find a way to write the fitness they would obtain by starting 
-    # the metamorphosis in the fitness matrix
+    # I don't know why but in k = 10, there are some NA that I don't know from
+    # where do they come, and this thing doesn't allow me to do the function
+    # for the whole k spectrum.
     
     
     
@@ -579,6 +574,9 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
     t <- t - 1
     
   } # end of while loop
+  
+  Fitness[, , max_Stages, ] <- Fitness[, , max_Stages - 1, ]
+  # This is because of the NA in k = 10. I would like to solve this.
   
   assign("Condition", Condition, envir =  globalenv())
   assign("time_steps", time_steps, envir = globalenv())
@@ -594,6 +592,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   assign("RewardIfPerformance", RewardIfPerformance, envir = globalenv())
   assign("RewardIfGrowth", RewardIfGrowth, envir = globalenv())
   assign("RewardIfMetamorphosis", RewardIfMetamorphosis, envir = globalenv())
+  assign("max_Stages", max_Stages, envir = globalenv())
   
   # This line extracts Fitness, ForageRule and other objects from inside the function to 
   # the global environment, so we can use it in the plot function or the Forward simulation.
@@ -684,7 +683,7 @@ death_rate_day <- 0.012
 
 # Plot
 
-Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day, development_rate)
+Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day)
 
 
 Backwards_Plot()
