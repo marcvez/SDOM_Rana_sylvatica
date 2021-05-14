@@ -121,10 +121,10 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # We divide by the highest value to create a 0 to 1 Condition matrix.
   
   Survival <- matrix(nrow = max_Size, ncol = max_Performance)
-  Survival[,1] <- c(0, seq(1 - 2*death_rate_day, 1 - death_rate_day, death_rate_day/(max_Size - 2)))
+  Survival[,1] <- c(0, seq(1 - 3*death_rate_day, 1 - 2*death_rate_day, death_rate_day/(max_Size - 2)))
   for (j in 2:max_Performance) {
     
-    Survival[, j] <- Survival[, j - 1] + (death_rate_day/(max_Performance - 1))
+    Survival[, j] <- Survival[, j - 1] + 2*(death_rate_day/(max_Performance - 1))
     
   }
   Survival[1,] <- 0
