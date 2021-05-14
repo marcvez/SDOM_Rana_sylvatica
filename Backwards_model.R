@@ -99,8 +99,6 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   
   Fitness[Fitness < 2] <- 0
   
-  
-  
   # Array that stores the Fitness values for every time step. In every time step
   # you multiply your current condition by the expected Fitness value that would get
   # if you invest on this or that trait.
