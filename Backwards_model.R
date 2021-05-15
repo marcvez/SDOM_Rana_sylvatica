@@ -558,6 +558,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
       
     }
     
+    ForageRule_B[, , 10, ] <- ForageRule_B[, , 9 , ]
     
     # I don't know why but in k = 10, there are some NA that I don't know from
     # where do they come, and this thing doesn't allow me to do the function
@@ -575,7 +576,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
     
   } # end of while loop
   
-  Fitness[, , max_Stages, ] <- Fitness[, , max_Stages - 1, ]
+  # Fitness[, , max_Stages, ] <- Fitness[, , max_Stages - 1, ]
   # This is because of the NA in k = 10. I would like to solve this.
   
   assign("Condition", Condition, envir =  globalenv())
@@ -655,7 +656,6 @@ Backwards_Plot <- function(){
 
 
 
-
 # Initial Parameters
 
 
@@ -678,6 +678,7 @@ end_season_intensity <- 1
 
 death_rate_day <- 0.012 
 # Death rate per day (from 0 to 1)
+
 
 
 
