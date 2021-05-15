@@ -59,7 +59,7 @@ Forward <- function(N) {
     Performance_forw[j] <- Performance[j]
     # This line exists because it was the only way I've found to not mess up the Performance array
     
-    while (t <= time_steps) {
+    while (t < time_steps) {
       
       Prob_Survive <- runif(1)
       # Random value that determines if you live or you die.
@@ -445,6 +445,32 @@ Forward <- function(N) {
       # of the Population matrix.
       
       
+    } else if (t == time_steps & k == 10){
+      
+      i <- i
+      j <- j
+      k <- k
+      
+      Population[n, t] <- 1
+      # A 0 in the Population matrix symbolizes that you are dead
+      
+      
+      Alive[t + 1, 2] <- sum(Population[, t])
+      # Store the number of tadpoles that are alive at each time step.
+      # There is a time step 0, and it's the initial population.
+      
+      Tadpole_state[n, 1, t + 1] <- Size[i]
+      Tadpole_state[n, 2, t + 1] <- Performance_forw[j]
+      Tadpole_state[n, 3, t + 1] <- Fitness[i, j, k, t]
+      # We store the Size and Performance of each tadpole at each time Step
+      
+      
+      Population[n, time_steps + 1] <- Size[i]
+      Population[n, time_steps + 2] <- Performance_forw[j]
+      Population[n, time_steps + 3] <- Fitness[i, j, k, t]
+      # We write the final Size, Performance and Fitness of each Tadpole at the end 
+      # of the Population matrix.
+      
     }
     
     
@@ -661,10 +687,6 @@ Comparison_plot()
 
 
 
-Fitness[, , 10, 60]
-
-
-
 
 
 
@@ -738,6 +760,7 @@ for(prob_good_temp in c(0.3,0.5,0.7)){
   
   
 }
+
 
 
 
