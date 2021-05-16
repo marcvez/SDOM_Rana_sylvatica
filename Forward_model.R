@@ -47,7 +47,7 @@ Forward <- function(N) {
   for (n in 1:N) {
     
     i <- 2 # sample(2:4,1)
-    j <- 1 # sample(1:3,1)
+    j <- 1 + prob_bad_temp * 10 # sample(1:3,1)
     k <- 1
     t <- 1
     
@@ -624,7 +624,7 @@ Comparison_plot <- function(){
     
     prob_good_temp
     prob_bad_temp <- 1 - prob_good_temp
-    days <- 60
+    days <- 50
     end_season_percentage <- 0.4  
     end_season_intensity <- 1 
     death_rate_day <- 0.012 
@@ -686,6 +686,8 @@ Comparison_plot()
 
 
 
+# Solucionar counter-gradient performance, mirar performance inicial al salir del huevo?
+# Augmento progresivo de la temperatura a medida que avanza el tiempo?
 
 
 
@@ -694,7 +696,7 @@ Comparison_plot()
 
 
 
-# Ideas (in Spanish, don't pay attention to this)
+  # Ideas (in Spanish, don't pay attention to this)
 
 
 # Cambiar condition values, intentar poner no_forage condition, modificar de alguna manera
