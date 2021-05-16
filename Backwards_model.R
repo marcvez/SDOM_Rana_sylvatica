@@ -41,7 +41,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # The probability of skipping a time_step (equivalent to development speeding 
   # up due to temperature) depends directly on the temperature.
   
-  Performance <- seq(1.0, 7.5, 0.25) 
+  Performance <- seq(4.0, 7.5, 0.2) 
   max_Performance <- length(Performance)
   # Performance values (How fast you move cm/s)
   
