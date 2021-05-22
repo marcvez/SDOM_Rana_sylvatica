@@ -294,7 +294,7 @@ prob_good_temp <- 0.5
 prob_bad_temp <- 1 - prob_good_temp 
 # Probability of having a bad Temperature
 
-days <- 50
+days <- 60
 # How many days does the metamorphosis last (normal conditions)?
 
 end_season_percentage <- 0.4 
