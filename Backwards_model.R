@@ -37,9 +37,6 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # An environment with higher temperatures is also more likely to dry out
   # earlier and to have a shorter growing season.
   
-  # prob_jump <- prob_good_temp
-  # The probability of skipping a time_step (equivalent to development speeding 
-  # up due to temperature) depends directly on the temperature.
   
   Performance <- seq(4.0, 7.5, 0.2) 
   max_Performance <- length(Performance)
@@ -59,7 +56,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   Fitness_values <- Size
   max_Fitness <- length(Fitness_values)
   Fitness_values[Fitness_values < 4] <- 0
-  Fitness_values[Fitness_values >=4] <- seq(2, 3.7, 1.7/(length(Fitness_values[Fitness_values >= 4]) - 1))
+  Fitness_values[Fitness_values >=4] <- seq(2, 4, 2/(length(Fitness_values[Fitness_values >= 4]) - 1))
   
   
   Fitness_values
@@ -89,7 +86,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   
   for (t in (time_steps + 2):(time_steps + 1 + max_Stages)){
     
-    Fitness[, , , t] <- Fitness[, , max_Stages, time_steps + 1]
+    Fitness[, , , t] <- 0
     
   }
   # This loop fills with 0 all the cells that are after the last time step.
@@ -177,7 +174,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
           
           
           
-          n <- max_Stages - k
+          n <- max_Stages - k + 1
           # We are always going to look for the fitness that we are going to 
           # receive in max_Stage time steps ahead. If you are in time_step 46, 
           # you are going to look for the fitness that is 4 time steps ahead 
@@ -557,14 +554,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
         as.numeric(!ForageRule_B[, , k, t]) * Fitness[, , k, t]
       
     }
-    
-    ForageRule_B[, , 10, ] <- ForageRule_B[, , 9 , ]
-    
-    # I don't know why but in k = 10, there are some NA that I don't know from
-    # where do they come, and this thing doesn't allow me to do the function
-    # for the whole k spectrum.
-    
-    
+
     
     RewardIfPerformance[1, , , ] <- 0
     RewardIfGrowth[1, , , ] <- 0
