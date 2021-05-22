@@ -434,13 +434,13 @@ Forward <- function(N) {
       
       Tadpole_state[n, 1, t + 1] <- Size[i]
       Tadpole_state[n, 2, t + 1] <- Performance_forw[j]
-      Tadpole_state[n, 3, t + 1] <- Fitness[i, j, k, t]
+      Tadpole_state[n, 3, t + 1] <- 0
       # We store the Size and Performance of each tadpole at each time Step
       
       
       Population[n, time_steps + 1] <- Size[i]
       Population[n, time_steps + 2] <- Performance_forw[j]
-      Population[n, time_steps + 3] <- Fitness[i, j, k, t]
+      Population[n, time_steps + 3] <- 0
       # We write the final Size, Performance and Fitness of each Tadpole at the end 
       # of the Population matrix.
       
@@ -479,7 +479,7 @@ Forward <- function(N) {
   
   
   print("How many tadpoles are still alive?")
-  print(Alive[time_steps, 2])
+  print(Alive[time_steps + 1, 2])
   
   assign("Alive", Alive, envir = globalenv())
   assign("Tadpole_state", Tadpole_state, envir = globalenv())
@@ -618,13 +618,13 @@ Histogram_plot <- function(){
 # temperature respect the previous one. 
 Comparison_plot <- function(){
   
-  par(mfrow=c(3,1))
+  par(mfrow=c(6,1))
   
-  for(prob_good_temp in c(0.3, 0.5, 0.7)){
+  for(prob_good_temp in c(0.3, 0.4, 0.5, 0.6, 0.7, 0.8)){
     
     prob_good_temp
     prob_bad_temp <- 1 - prob_good_temp
-    days <- 50
+    days <- 60
     end_season_percentage <- 0.4  
     end_season_intensity <- 1 
     death_rate_day <- 0.012 
