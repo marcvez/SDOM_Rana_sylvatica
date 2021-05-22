@@ -37,19 +37,17 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # An environment with higher temperatures is also more likely to dry out
   # earlier and to have a shorter growing season.
   
-  # prob_jump <- prob_good_temp
-  # The probability of skipping a time_step (equivalent to development speeding 
-  # up due to temperature) depends directly on the temperature.
-  
   Performance <- seq(4.0, 7.5, 0.2) 
   max_Performance <- length(Performance)
   # Performance values (How fast you move cm/s)
+  
   
   Size <- c(0, seq(1, 5.5, 0.2))
   max_Size <- length(Size)
   # Size values. All the values that tadpoles can archive. Also, this is the only 
   # trait that is relevant for the final Fitness (The bigger, the better)
   # Size 0 is equal to being dead.
+  
   
   Stages <- c(1:10) # 1:10
   max_Stages <- length(Stages)
@@ -60,7 +58,6 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   max_Fitness <- length(Fitness_values)
   Fitness_values[Fitness_values < 4] <- 0
   Fitness_values[Fitness_values >=4] <- seq(2, 3.7, 1.7/(length(Fitness_values[Fitness_values >= 4]) - 1))
-  
   
   Fitness_values
   # Sizes under 4 cm don't receive Fitness benefits. This is the benefit that you
@@ -96,7 +93,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # I had to add extra "time_steps" in order to make some functions work, but
   # their fitness values are 0. 
   
-  
+
   Fitness[Fitness < 2] <- 0
   
   # Array that stores the Fitness values for every time step. In every time step
