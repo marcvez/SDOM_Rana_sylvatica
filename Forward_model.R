@@ -516,6 +516,7 @@ Survival_plot <- function() {
 }
 
 
+
 # Investment and fitness plot
 Investment_plot <- function() {
   
@@ -536,7 +537,7 @@ Investment_plot <- function() {
     lines(Tadpole_state[n, 2, ])
     
   } # Performance
-  plot(1, type="l", xlab="Time Step", ylab="Fitness", xlim=c(1, time_steps), ylim=c(0, max(Fitness)), xaxt = "n")
+  plot(1, type="l", xlab="Time Step", ylab="Fitness", xlim=c(1, time_steps), ylim=c(0, max(Fitness[, , max_Stages, time_steps + 1])), xaxt = "n")
   axis(1, at=1:(time_steps + 1), labels = c(0:time_steps))
   
   for (n in 1:N) {
@@ -588,10 +589,10 @@ Density_plot <- function(){
   plot(density(Final_results[,2], bw = 0.1, from = 4 - 0.5, to = max(Performance) + 0.5), main = "Final Burst Speed (cm/s) (Alive)")
   rug(Final_results[,2], col='red')
   
-  plot(density(Final_results[,3], bw = 0.1, from = -0.5, to = max(Fitness) + 0.1), main = "Final Fitness")
+  plot(density(Final_results[,3], bw = 0.1, from = -0.5, to = max(Fitness[, , 10, time_steps + 1]) + 0.1), main = "Final Fitness")
   rug(Final_results[,3], col='red')
   
-  plot(density(Final_results[,3], bw = 0.1, from = 2 - 0.5, to = max(Fitness) + 0.1), main = "Final Fitness (Alive)")
+  plot(density(Final_results[,3], bw = 0.1, from = 2 - 0.5, to = max(Fitness[, , 10, time_steps + 1]) + 0.1), main = "Final Fitness (Alive)")
   rug(Final_results[,3], col='red')
   
 }
@@ -618,9 +619,9 @@ Histogram_plot <- function(){
 # temperature respect the previous one. 
 Comparison_plot <- function(){
   
-  par(mfrow=c(6,1))
+  par(mfrow=c(5,1))
   
-  for(prob_good_temp in c(0.3, 0.4, 0.5, 0.6, 0.7, 0.8)){
+  for(prob_good_temp in c(0.3, 0.4, 0.5, 0.6, 0.7)){
     
     prob_good_temp
     prob_bad_temp <- 1 - prob_good_temp
@@ -645,7 +646,7 @@ Comparison_plot <- function(){
     lines(density(Final_results[,1], bw = 0.1, from = 1, to = max(Size) + 0.1), col = "red")
     abline(v = mean(Size_bigger_0), col = "red")
     
-    lines(density(Final_results[,3], bw = 0.1, from = 1, to = max(Fitness) + 0.5), col = "blue")
+    lines(density(Final_results[,3], bw = 0.1, from = 1, to = max(Fitness[, , 10, time_steps + 1]) + 0.5), col = "blue")
     abline(v = mean(Fitness_bigger_0), col = "blue")
     
     abline(h = 0)
@@ -684,6 +685,8 @@ Histogram_plot()
 
 Comparison_plot()
 
+
+Fitness[, , 1, 50]
 
 
 # Solucionar counter-gradient performance, mirar performance inicial al salir del huevo?
