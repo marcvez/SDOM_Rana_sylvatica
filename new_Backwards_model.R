@@ -13,7 +13,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   max_Performance <- length(Performance)
   # Performance values (How fast you move cm/s)
   
-  Size <- c(0, seq(1, 5.5, 0.2))
+  Size <- c(0, seq(1, 5.5, 0.1))
   max_Size <- length(Size)
   # Size values. All the values that tadpoles can archive. Also, this is the only 
   # trait that is relevant for the final Fitness (The bigger, the better)
