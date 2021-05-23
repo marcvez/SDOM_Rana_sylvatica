@@ -9,7 +9,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # earlier and to have a shorter growing season.
   
   
-  Performance <- seq(4.0, 7.5, 0.2) 
+  Performance <- seq(1.0, 7.5, 0.2) 
   max_Performance <- length(Performance)
   # Performance values (How fast you move cm/s)
   
@@ -91,6 +91,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   Survival[1,] <- 0
   # survival rate per size
   
+  
+  
   Metamorphosis <- matrix(nrow = max_Size, ncol = max_Performance)
   Metamorphosis[Size >= 4] <- 1
   Metamorphosis[Size < 4] <- 0
@@ -143,7 +145,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
             
           
           if(Metamorphosis[i, j] == 1){
-            RewardIfPerformance[i, j, k, t] <- (Condition[i, j] * Survival[i, j] * Fitness[i, min(j + 1, max_Performance), k, t + 1] * prob_good_temp +
+            RewardIfPerformance[i, j, k, t] <- (Condition[i, j] * Survival[i, j] * Fitness[i, min(j + 2, max_Performance), k, t + 1] * prob_good_temp +
                                                   Condition[i, j] * Survival[i, j] * Fitness[i, min(j + 1, max_Performance), k, t + 1] * prob_bad_temp +
                                                   (1 - Condition[i, j]) * Survival[i, j] * Fitness[i, j, k, t + 1] * prob_good_temp +
                                                   (1 - Condition[i, j]) * Survival[i, j] * Fitness[i, j, k, t + 1] * prob_bad_temp) * prob_no_end_season[t] + 
@@ -163,15 +165,15 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
           } else {
             
             
-            RewardIfPerformance[i, j, k, t] <- (Condition[i, j] * Survival[i, j] * Fitness[i, min(j + 1, max_Performance), k, t + 1] * prob_good_temp +
+            RewardIfPerformance[i, j, k, t] <- (Condition[i, j] * Survival[i, j] * Fitness[i, min(j + 2, max_Performance), k, t + 1] * prob_good_temp +
                                                   Condition[i, j] * Survival[i, j] * Fitness[i, min(j + 1, max_Performance), k, t + 1] * prob_bad_temp +
                                                   (1 - Condition[i, j]) * Survival[i, j] * Fitness[i, j, k, t + 1] * prob_good_temp +
                                                   (1 - Condition[i, j]) * Survival[i, j] * Fitness[i, j, k, t + 1] * prob_bad_temp) * prob_no_end_season[t] + 
               Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t] 
             
             
-            RewardIfGrowth[i, j, k, t] <- (Condition[i, j] * Survival[i, j] * Fitness[min(i + 1, max_Size), j, k, t + 1] * prob_good_temp +
-                                             Condition[i, j] * Survival[i, j] * Fitness[min(i , max_Size), j, k, t + 1] * prob_bad_temp +
+            RewardIfGrowth[i, j, k, t] <- (Condition[i, j] * Survival[i, j] * Fitness[min(i + 2, max_Size), j, k, t + 1] * prob_good_temp +
+                                             Condition[i, j] * Survival[i, j] * Fitness[min(i + 1, max_Size), j, k, t + 1] * prob_bad_temp +
                                              (1 - Condition[i, j]) * Survival[i, j] * Fitness[i, j, k, t + 1] * prob_good_temp +
                                              (1 - Condition[i, j]) * Survival[i, j] * Fitness[i, j, k, t + 1] * prob_bad_temp) * prob_no_end_season[t] + 
               Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
@@ -306,6 +308,7 @@ Backwards_Plot <- function(){
 
 
 prob_good_temp <- 0.5
+
 # Probability of having a good Temperature
 
 prob_bad_temp <- 1 - prob_good_temp 
@@ -314,7 +317,7 @@ prob_bad_temp <- 1 - prob_good_temp
 days <- 60
 # How many days does the metamorphosis last (normal conditions)?
 
-end_season_percentage <- 0.4 
+end_season_percentage <- 0.2
 # How many days (% of the normal growing season), 
 # beginning from the back, are susceptible to be the end of season (due stochasticity)?
 
@@ -332,6 +335,15 @@ Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season
 
 
 Backwards_Plot()
+
+
+
+
+# Poner performance valores de muy pequeños hasta el maximo, hacer el maximo de cortes
+# Seguramente eso hará que al principio inviertan en superviviencia y después
+# en crecimiento. Si ponemos supervivencia dependiente de la talla
+# la talla tendrá más importancia? Hay que hacer la prueba. 
+
 
 
 
