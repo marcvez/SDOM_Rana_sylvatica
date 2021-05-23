@@ -39,7 +39,7 @@ Forward <- function(N) {
   
   for (n in 1:N) {
     
-    i <- 2 # sample(2:4,1)
+    i <- sample(2:4,1)
     j <- 1 # + prob_bad_temp * 30 # sample(1:3,1)
     k <- 1
     t <- 1
@@ -241,8 +241,6 @@ Forward <- function(N) {
   assign("Alive", Alive, envir = globalenv())
   assign("Tadpole_state", Tadpole_state, envir = globalenv())
   assign("Population", Population, envir = globalenv())
-  
-  
   Final_Fitness <- (Tadpole_state[, 3, time_steps + 1])
   Final_Size <- (Tadpole_state[, 1, time_steps + 1])
   Final_Performance <- (Tadpole_state[, 2, time_steps + 1])
@@ -427,7 +425,7 @@ Comparison_plot_little <- function(){
     prob_good_temp
     prob_bad_temp <- 1 - prob_good_temp
     days <- 60
-    end_season_percentage <- 0.2  
+    end_season_percentage <- 0.2 
     end_season_intensity <- 1 
     death_rate_day <- 0.012 
     N <- 100
@@ -488,31 +486,3 @@ Comparison_plot()
 
 Comparison_plot_little()
 
-
-
-
-B <- runif(1)
-
-for(a in 1:10){
-  
-  if(B < 0.99){
-    
-    print("si")
-    
-    B <- runif(1)
-    
-    a <- a + 1
-    
-  } else {
-    
-    print("no")
-    
-    B <- 1
-    
-    a <- a + 1
-    
-  }
-}
-
-
-Adult[1, , ]
