@@ -68,9 +68,9 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   
   
   #for (j in 2:max_Performance) {
-    
-    #Fitness[, j, max_Stages, time_steps + 1] <- Fitness[, j - 1, max_Stages, time_steps + 1] + (1/(max_Performance - 1))
-    
+  
+  #Fitness[, j, max_Stages, time_steps + 1] <- Fitness[, j - 1, max_Stages, time_steps + 1] + (1/(max_Performance - 1))
+  
   #}
   # This loop fills the cells of the last time step and the last Stage with fitness values
   
@@ -93,7 +93,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # I had to add extra "time_steps" in order to make some functions work, but
   # their fitness values are 0. 
   
-
+  
   Fitness[Fitness < 2] <- 0
   
   # Array that stores the Fitness values for every time step. In every time step
@@ -217,7 +217,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
               # This is a problem in terms of time, as if you are in 
               # time step 47 (out of 50) and you are in k = 1, you are going to look for time
               # step 57, and it doesn't exist. I have to solve this...
-                
+              
               
             } else if (j == max_Performance & i == max_Size & k < max_Stages & t <= time_steps){
               
@@ -732,6 +732,3 @@ Backwards_Plot()
 # but how the decisions are distributed along the grid is very strange... You 
 # wouldn't expect to have specific sizes to grow, others to invest in metamorphosis... 
 # The patterns are strange. 
-
-=======
->>>>>>> d61745a6e42352caf7a14f5dd95a474c9847794f
