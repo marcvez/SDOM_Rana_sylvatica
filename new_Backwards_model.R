@@ -9,7 +9,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # earlier and to have a shorter growing season.
   
   
-  Performance <- seq(5.0, 7.5, 0.1) 
+  Performance <- seq(4.0, 7.5, 0.1) 
   max_Performance <- length(Performance)
   # Performance values (How fast you move cm/s)
   
@@ -156,7 +156,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
               Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
             
             
-            RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, min(k + 1, max_Stages), t + 1] * (Survival[i, j]) * prob_no_end_season[t] +
+            RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, min(k + 1, max_Stages), t + 1] * (Survival[i, j]) * Condition[i, j] * prob_no_end_season[t] +
               Fitness[i, j, k,  t + 1] * Survival[i, j] * prob_end_season[t]
             
           } else {
@@ -329,6 +329,9 @@ Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season
 
 
 Backwards_Plot()
+
+
+# SOLO PUEDES METAMORFOSEAR SI ENCUENTRAS COMIDA???? PROBAR
 
 
 
