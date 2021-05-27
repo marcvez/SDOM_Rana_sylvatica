@@ -30,17 +30,15 @@ Forward <- function(N) {
   Performance_forw <- Performance
   # This line exists because it was the only way I've found to not mess up the Performance array
   
-  Adult <- matrix(nrow = N, ncol = 4)
-  rownames(Adult) <- c(1:N)
-  colnames(Adult) <- c("i", "j", "Fitness", "t")
-  
-  Adult <- array(NA, dim = c(N, 3, time_steps))
+  Adult <- array(NA, dim = c(N, 6, time_steps + 1))
+  # matrix that is going to store when do the tadpoles start the metamorphosis
+  # and when do they finish it.
   
   
   for (n in 1:N) {
     
     i <- sample(2:4,1)
-    j <- 1 # + prob_bad_temp * 30 # sample(1:3,1)
+    j <- 1  + prob_bad_temp * 10 # sample(1:3,1)
     k <- 1
     t <- 1
     
@@ -126,7 +124,7 @@ Forward <- function(N) {
           Tadpole_state[n, 1, t + 1] <- Size[i]
           Tadpole_state[n, 2, t + 1] <- Performance_forw[j]
           Tadpole_state[n, 3, t + 1] <- Fitness[i, j, k, t]
-          Tadpole_state[n, 4, t] <- k
+          Tadpole_state[n, 4, t + 1] <- k
           
           Population[n, time_steps + 1] <- Size[i]
           Population[n, time_steps + 2] <- Performance_forw[j]
@@ -144,7 +142,18 @@ Forward <- function(N) {
               
               # you survive and metamorphosis continues
               
-              k <- min(k + 1, max_Stages)
+              if(Forage < Condition[i, j]){
+                
+                # Survive, metamorfosis and food
+                
+                k <- min(k + 1, max_Stages)
+                
+                
+              } else {
+                
+                #Survive, metamorfosis but no food
+                
+              }
               
               Population[n, t] <- 1
               
@@ -153,7 +162,7 @@ Forward <- function(N) {
               Tadpole_state[n, 1, t + 1] <- Size[i]
               Tadpole_state[n, 2, t + 1] <- Performance_forw[j]
               Tadpole_state[n, 3, t + 1] <- Fitness[i, j, k, t]
-              Tadpole_state[n, 4, t] <- k
+              Tadpole_state[n, 4, t + 1] <- k
               
               Population[n, time_steps + 1] <- Size[i]
               Population[n, time_steps + 2] <- Performance_forw[j]
@@ -161,11 +170,21 @@ Forward <- function(N) {
               
               Prob_Survive <- runif(1)
               
-              if (Tadpole_state[n, 4, t - 1] == 9 & Tadpole_state[n, 4, t] == 10) {
+              Forage <- runif(1)
+              
+              if (Tadpole_state[n, 4, t] == 1 & Tadpole_state[n, 4, t + 1] == 2) {
                 
                 Adult[n, 1, t] <- Size[i]
                 Adult[n, 2, t] <- Performance_forw[j]
                 Adult[n, 3, t] <- Fitness[i, j, k, t]
+                
+              }
+              
+              if (Tadpole_state[n, 4, t] == 9 & Tadpole_state[n, 4, t + 1] == 10) {
+                
+                Adult[n, 4, t + 1] <- Size[i]
+                Adult[n, 5, t + 1] <- Performance_forw[j]
+                Adult[n, 6, t + 1] <- Fitness[i, j, k, t]
                 
               }
               
@@ -187,7 +206,7 @@ Forward <- function(N) {
               Tadpole_state[n, 1, t + 1] <- Size[i]
               Tadpole_state[n, 2, t + 1] <- Performance_forw[j]
               Tadpole_state[n, 3, t + 1] <- Fitness[i, j, k, t]
-              Tadpole_state[n, 4, t] <- k
+              Tadpole_state[n, 4, t + 1] <- k
               
               Population[n, time_steps + 1] <- Size[i]
               Population[n, time_steps + 2] <- Performance_forw[j]
@@ -282,7 +301,8 @@ Investment_plot <- function() {
   axis(1, at=1:(time_steps + 1), labels = c(0:time_steps))
   for (n in 1:N) {
     lines(Tadpole_state[n, 1, ])
-    points(Adult[n, 1, ])
+    points(Adult[n, 1, ], pch = 19)
+    points(Adult[n, 4, ])
   
   } # Size
   
@@ -291,7 +311,8 @@ Investment_plot <- function() {
   
   for (n in 1:N) {
     lines(Tadpole_state[n, 2, ])
-    points(Adult[n, 2, ])
+    points(Adult[n, 2, ], pch = 19)
+    points(Adult[n, 5, ])
     
   } # Performance
   plot(1, type="l", xlab="Time Step", ylab="Fitness", xlim=c(1, time_steps), ylim=c(0, max(Fitness[, , max_Stages, time_steps + 1])), xaxt = "n")
@@ -299,7 +320,8 @@ Investment_plot <- function() {
   
   for (n in 1:N) {
     lines(Tadpole_state[n, 3, ])
-    points(Adult[n, 3, ])
+    points(Adult[n, 3, ], pch = 19)
+    points(Adult[n, 6, ])
     
   } # Fitness
   
