@@ -1,38 +1,60 @@
+
+
+#--------------------------- Forward simulation --------------------------------
+
+# This simulation simulates a tadpole population that behave the optimum way,
+# thanks to the Backwards simulation.
+
+# Whatever happens in the Backwards simulation, has to happen in this one
+# the same way. There is no calculation in this simulation, it only replicates
+# the optimum behaviour. The probability of the stochastic events are 
+# calculated for each time step. 
+
+# There are some useful plots that show the evolution of the decisions, and
+# also the final traits and conclusions could be extracted from these plots.
+
+
 library(ggplot2)
 library(Hmisc)
 
-# Forward simulation
+
 Forward <- function(N) {
   
   Population <- matrix(nrow = N, ncol = time_steps + 3)
-  rownames(Population) <- c(1:N) # Tadpole number xx
-  colnames(Population) <- c((1:time_steps), "Size", "Performance", "Fitness") # Time step xx
+  rownames(Population) <- c(1:N)
+  colnames(Population) <- c((1:time_steps), "Size", "Performance", "Fitness") 
   # This matrix is going to store the state of each tadpole during the whole
   # period, being 1 the value of being alive and 0, being dead. 
   # It is going to be read by the "Alive" matrix, to determine how many 
-  # individuals are still alive at each time step. The last columns store the Size,
-  # Performance and Fitness that tadpoles have at the last time step.
+  # individuals are still alive at each time step. The last columns store 
+  # the Size, Performance and Fitness that tadpoles have at the last time step.
   
   
   Alive <- as.data.frame(matrix(nrow = time_steps + 1, ncol = 2))
   colnames(Alive) <- c("time_step", "N_alive")
   Alive[, 1] <- c(0:time_steps)
   Alive[1, 2] <- N
-  # We are going to sum the number of dead or alive individuals at each time step.
-  # For plotting.
+  # It sums the number of dead or alive individuals at each time step.
+  
   
   Tadpole <- c(1:N)
   State <- c("Size", "Performance", "Fitness", "Stage")
   Time <- c(0:time_steps)
-  Tadpole_state <- array(NA, dim = c(N, 4, time_steps + 1), dimnames=list (Tadpole, State, Time))
-  # This array stores the Size, Performance and Expected Fitness values of each tadpole at each time step.
+  Tadpole_state <- array(NA, dim = c(N, 4, time_steps + 1), dimnames = 
+                           list (Tadpole, State, Time))
+  # This array stores the Size, Performance and Expected Fitness values for 
+  # each tadpole at each time step.
+  
   
   Performance_forw <- Performance
-  # This line exists because it was the only way I've found to not mess up the Performance array
+  # This object is the same as Performance, going to be modified 
+  # during the simulation instead of the original one.
+  
   
   Adult <- array(NA, dim = c(N, 6, time_steps + 1))
-  # matrix that is going to store when do the tadpoles start the metamorphosis
-  # and when do they finish it.
+  # Matrix that is going to store when do the tadpoles start the metamorphosis
+  # (1, 2, 3), and when do they finish it (4, 5, 6).
+  # It stores the Size (1, 4), the Performance (2, 5) and Fitness (3, 6).
   
   
   for (n in 1:N) {
@@ -41,15 +63,17 @@ Forward <- function(N) {
     j <- 1  + prob_bad_temp * 10 # sample(1:3,1)
     k <- 1
     t <- 1
+    # Initial conditions for each tadpole
     
     Tadpole_state[n, 1, t] <- Size[i]
     Tadpole_state[n, 2, t] <- Performance[j]
     Tadpole_state[n, 3, t] <- Fitness[i,j,k,t]
     Tadpole_state[n, 4, t] <- k
-    # We fix the initial condition in the Tadpole_state array
+    # We fix the initial condition in the Tadpole_state array.
     
     Performance_forw[j] <- Performance[j]
-    # This line exists because it was the only way I've found to not mess up the Performance array
+    # This object is the same as Performance, going to be modified 
+    # during the simulation instead of the original one.
     
     while (t <= time_steps) {
       
@@ -57,12 +81,11 @@ Forward <- function(N) {
       # Random value that determines if you live or you die.
       
       Temperature <- runif(1)
-      # Random value that is going to determine if the day is good or bad, in terms of temperature
+      # Random value that is going to determine if the day is good or bad, 
+      # in terms of temperature.
       
       Forage <- runif(1)
-      # Probability of jump one time_step ahead if the temperature is good, and it depends on the 
-      # temperature itself. The warmer, the higher development rate you have.
-      
+      # Probability of finding food.
       
         
       if (Prob_Survive < Survival[i, j]) {
@@ -73,7 +96,7 @@ Forward <- function(N) {
             
             if (Temperature < prob_good_temp) {
               
-              # alive, no metamorphosis, food, good tº
+              # Alive, no Metamorphosis, Food, Food Tº
               
               if (ForageRule[i, j, k, t] == FALSE) {
                 
@@ -87,35 +110,37 @@ Forward <- function(N) {
                 
                 j <- min(j + 2, max_Performance)
         
-              }
+              } # if / else G/P
               
             } else {
               
-              # alive, no metamorphosis, food, bad tº
+              # Alive, no Metamorphosis, Food, Bad Tº
               
               if (ForageRule[i, j, k, t] == FALSE){
+                
+                # Invest in Growth
                 
                 i <- min(i + 1, max_Size)
                 
               } else if (ForageRule[i, j, k, t] == TRUE){
                 
+                # Invest in Performance
+                
                 j <- min(j + 1, max_Performance)
                 
-              }
+              } # if / else G/P
               
-              
-            } # if / else temperature
+            } # if / else Temperature
             
           } else {
             
-            # alive, no metamorphosis, no food
+            # Alive, no Metamorphosis, no Food
             
             i <- i
             
             j <- j
             
-            
-          } # if / else food
+          } # if / else Food
           
           Population[n, t] <- 1
           
@@ -134,26 +159,23 @@ Forward <- function(N) {
           
         } else {
           
-          # alive, metamorphosis
+          # Alive, Metamorphosis
           
           for (t in t:time_steps){
             
             if (Prob_Survive < Survival[i, j]){
               
-              # you survive and metamorphosis continues
-              
               if(Forage < Condition[i, j]){
                 
-                # Survive, metamorfosis and food
+                # Alive, Metamorphosis, Food
                 
                 k <- min(k + 1, max_Stages)
                 
-                
               } else {
                 
-                #Survive, metamorfosis but no food
+                # Alive, Metamorphosis, No food
                 
-              }
+              } # if / else Food/NoFood 
               
               Population[n, t] <- 1
               
@@ -172,28 +194,30 @@ Forward <- function(N) {
               
               Forage <- runif(1)
               
-              if (Tadpole_state[n, 4, t] == 1 & Tadpole_state[n, 4, t + 1] == 2) {
+              if (Tadpole_state[n, 4, t] == 1 & 
+                  Tadpole_state[n, 4, t + 1] == 2) {
                 
                 Adult[n, 1, t] <- Size[i]
                 Adult[n, 2, t] <- Performance_forw[j]
                 Adult[n, 3, t] <- Fitness[i, j, k, t]
                 
-              }
+              } # Stores the state and time step where metamorphosis starts.
               
-              if (Tadpole_state[n, 4, t] == 9 & Tadpole_state[n, 4, t + 1] == 10) {
+              if (Tadpole_state[n, 4, t] == 9 & 
+                  Tadpole_state[n, 4, t + 1] == 10) {
                 
                 Adult[n, 4, t + 1] <- Size[i]
                 Adult[n, 5, t + 1] <- Performance_forw[j]
                 Adult[n, 6, t + 1] <- Fitness[i, j, k, t]
                 
-              }
+              } # Stores the state and time step where metamorphosis ends.
               
               t <- t + 1
               
               
             } else {
               
-              # you die while doing metamorphosis
+              # Dead while doing Metamorphosis
               
               i <- 1
               j <- 1
@@ -216,15 +240,15 @@ Forward <- function(N) {
               
               t <- t + 1
               
-            } # if / else dead /alive metamorphosis
+            } # if / else Dead/Alive metamorphosis
             
-          } # for loop metamorphosis
+          } #  Metamorphosis "for" loop
           
-        } # if / else metamorphosis yes or no
+        } # if / else Metamorphosis
           
       } else {
         
-        # dead
+        # Dead
         
         i <- 1
         j <- 1
@@ -247,7 +271,7 @@ Forward <- function(N) {
         
         t <- t + 1
         
-      } # if / else survival
+      } # if / else Survival
       
     } # while loop
     
@@ -264,19 +288,18 @@ Forward <- function(N) {
   Final_Size <- (Tadpole_state[, 1, time_steps + 1])
   Final_Performance <- (Tadpole_state[, 2, time_steps + 1])
   Final_results <- cbind(Final_Size, Final_Performance, Final_Fitness)
-  Max_Condition <- as.vector(which(Final_results[, 3] == max(Final_results[, 3])))
+  Max_Condition <- as.vector(which(Final_results[, 3] == 
+                                     max(Final_results[, 3])))
   assign("Final_Fitness", Final_Fitness, envir = globalenv())
   assign("Final_Size", Final_Size, envir = globalenv())
   assign("Final_Performance", Final_Performance, envir = globalenv())
   assign("Final_results", Final_results, envir = globalenv())
   assign("Max_Condition", Max_Condition, envir = globalenv())
   assign("Adult", Adult, envir = globalenv())
-  # This is useful for other plots
   
-}
+} # End Forward simulation
 
 
-# Survival plot
 Survival_plot <- function() {
   
   par(mfrow=c(1,1))
@@ -288,16 +311,17 @@ Survival_plot <- function() {
     scale_x_continuous(name="Time Steps", limits=c(0, time_steps)) +
     scale_y_continuous(name="Nº tadpoles alive", limits=c(0, N))
   
-}
+} 
+# Survival plot.
 
 
-# Investment and fitness plot
 Investment_plot <- function() {
   
   par(mfrow=c(3,1))
   par(mar=c(5.1, 4.5, 1, 4.5))
   
-  plot(1, type="l", xlab="Time Step", ylab="Size (cm)", xlim=c(1, time_steps), ylim=c(0, Size[max_Size]), xaxt = "n")
+  plot(1, type="l", xlab="Time Step", ylab="Size (cm)", xlim=c(1, time_steps), 
+       ylim=c(0, Size[max_Size]), xaxt = "n")
   axis(1, at=1:(time_steps + 1), labels = c(0:time_steps))
   for (n in 1:N) {
     lines(Tadpole_state[n, 1, ])
@@ -306,7 +330,9 @@ Investment_plot <- function() {
   
   } # Size
   
-  plot(1, type="l", xlab="Time Step", ylab="Burst speed (cm/s)", xlim=c(1, time_steps), ylim=c(0, Performance[max_Performance]), xaxt = "n")
+  plot(1, type="l", xlab="Time Step", ylab="Burst speed (cm/s)", 
+       xlim=c(1, time_steps), ylim=c(0, Performance[max_Performance]), 
+       xaxt = "n")
   axis(1, at=1:(time_steps + 1), labels = c(0:time_steps))
   
   for (n in 1:N) {
@@ -315,7 +341,8 @@ Investment_plot <- function() {
     points(Adult[n, 5, ])
     
   } # Performance
-  plot(1, type="l", xlab="Time Step", ylab="Fitness", xlim=c(1, time_steps), ylim=c(0, max(Fitness[, , max_Stages, time_steps + 1])), xaxt = "n")
+  plot(1, type="l", xlab="Time Step", ylab="Fitness", xlim=c(1, time_steps), 
+       ylim=c(0, max(Fitness[, , max_Stages, time_steps + 1])), xaxt = "n")
   axis(1, at=1:(time_steps + 1), labels = c(0:time_steps))
   
   for (n in 1:N) {
@@ -326,9 +353,9 @@ Investment_plot <- function() {
   } # Fitness
   
 }
+# Investment and fitness plot.
 
-# Plot that displays the final values of the tadpoles' traits
-# Vertical lines intercept those tadpoles that have the better fitness
+
 Final_traits_plot <- function(){
   
   par(mfrow=c(1,1))
@@ -345,40 +372,53 @@ Final_traits_plot <- function(){
   abline(h = max(Final_results[, 3]), lty = 2)
   abline(v = c(Max_Condition), lty = 2)
   legend("bottomright", legend=c("Burst speed", "Size", "Fitness"),
-         pch = c(19, 19, 19), col = c('#440154FF', '#21908CFF', '#FDE725FF'), lty=2, cex=0.8)
+         pch = c(19, 19, 19), col = c('#440154FF', '#21908CFF', '#FDE725FF'), 
+         lty=2, cex=0.8)
   
+  
+  # Plot that displays the final values of the tadpoles' traits.
+  # Vertical lines intercept those tadpoles that have the better fitness.
   
 }
+# Final traits plot
 
 
-# Density plots of the final values of the traits
 Density_plot <- function(){
   
   par(mfrow=c(3,2))
   par(mar=c(5.1, 4.5, 3, 4.5))
   
-  plot(density(Final_results[,1], bw = 0.1, from = -0.5, to = max(Size) + 0.1), main = "Final Size (cm)")
+  plot(density(Final_results[,1], bw = 0.1, from = -0.5, 
+               to = max(Size) + 0.1), main = "Final Size (cm)")
   rug(Final_results[,1], col='red')
   
-  plot(density(Final_results[,1], bw = 0.1, from = 3 - 0.5, to = max(Size) + 0.1), main = "Final Size (cm) (Alive)")
+  plot(density(Final_results[,1], bw = 0.1, from = 3 - 0.5, 
+               to = max(Size) + 0.1), main = "Final Size (cm) (Alive)")
   rug(Final_results[,1], col='red')
   
-  plot(density(Final_results[,2], bw = 0.1, from = -0.5, to = max(Performance) + 0.4), main = "Final Burst Speed (cm/s)")
+  plot(density(Final_results[,2], bw = 0.1, from = -0.5, 
+               to = max(Performance) + 0.4), main = "Final Burst Speed (cm/s)")
   rug(Final_results[,2], col='red')
   
-  plot(density(Final_results[,2], bw = 0.1, from = 4 - 0.5, to = max(Performance) + 0.5), main = "Final Burst Speed (cm/s) (Alive)")
+  plot(density(Final_results[,2], bw = 0.1, from = 4 - 0.5, 
+               to = max(Performance) + 0.5), 
+       main = "Final Burst Speed (cm/s) (Alive)")
   rug(Final_results[,2], col='red')
   
-  plot(density(Final_results[,3], bw = 0.1, from = -0.5, to = max(Fitness[, , 10, time_steps + 1]) + 0.1), main = "Final Fitness")
+  plot(density(Final_results[,3], bw = 0.1, from = -0.5, 
+               to = max(Fitness[, , 10, time_steps + 1]) + 0.1), 
+       main = "Final Fitness")
   rug(Final_results[,3], col='red')
   
-  plot(density(Final_results[,3], bw = 0.1, from = 2 - 0.5, to = max(Fitness[, , 10, time_steps + 1]) + 0.1), main = "Final Fitness (Alive)")
+  plot(density(Final_results[,3], bw = 0.1, from = 2 - 0.5, 
+               to = max(Fitness[, , 10, time_steps + 1]) + 0.1), 
+       main = "Final Fitness (Alive)")
   rug(Final_results[,3], col='red')
   
 }
+# Density plots of the final values of the traits.
 
 
-# Histogram showing the number of tadpoles in each Fitness value
 Histogram_plot <- function(){
   
   par(mfrow=c(1,1))
@@ -394,9 +434,9 @@ Histogram_plot <- function(){
   abline(h = length(Max_Condition), lty = 2)
   
 }
+# Histogram showing the number of tadpoles in each Fitness value.
 
-# Comparison of three different situations, each one increasing the 
-# temperature respect the previous one. 
+
 Comparison_plot <- function(){
   
   par(mfrow=c(5,1))
@@ -412,7 +452,8 @@ Comparison_plot <- function(){
     N <- 100
     
     
-    Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day)
+    Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, 
+              end_season_intensity, death_rate_day)
     
     Forward(N)
     
@@ -420,13 +461,20 @@ Comparison_plot <- function(){
     Performance_bigger_0 <- as.vector(Final_Performance[Final_Performance > 0])
     Size_bigger_0 <- as.vector(Final_Size[Final_Size > 0])
     
-    plot(density(Final_results[,2], bw = 0.1, from = -0.5, to = max(Performance) + 0.4), col = "black", main = paste("Final Traits (blue = F, red = S, black = P) prob good temp = ", prob_good_temp))
+    plot(density(Final_results[,2], bw = 0.1, from = -0.5, 
+                 to = max(Performance) + 0.4), col = "black", 
+         main = paste(
+           "Final Traits (blue = F, red = S, black = P) prob good temp = ", 
+                   prob_good_temp))
     abline(v = mean(Performance_bigger_0))
     
-    lines(density(Final_results[,1], bw = 0.1, from = 1, to = max(Size) + 0.5), col = "red")
+    lines(density(Final_results[,1], bw = 0.1, from = 1, 
+                  to = max(Size) + 0.5), col = "red")
     abline(v = mean(Size_bigger_0), col = "red")
     
-    lines(density(Final_results[,3], bw = 0.1, from = 1, to = max(Fitness[, , 10, time_steps + 1]) + 0.5), col = "blue")
+    lines(density(Final_results[,3], bw = 0.1, from = 1, 
+                  to = max(Fitness[, , 10, time_steps + 1]) + 0.5), 
+          col = "blue")
     abline(v = mean(Fitness_bigger_0), col = "blue")
     
     abline(h = 0)
@@ -437,6 +485,9 @@ Comparison_plot <- function(){
   }
   
 }
+# Comparison of 5 different situations, each one increasing the 
+# temperature respect the previous one. 
+
 
 Comparison_plot_little <- function(){
   
@@ -453,7 +504,8 @@ Comparison_plot_little <- function(){
     N <- 100
     
     
-    Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day)
+    Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, 
+              end_season_intensity, death_rate_day)
     
     Forward(N)
     
@@ -461,13 +513,20 @@ Comparison_plot_little <- function(){
     Performance_bigger_0 <- as.vector(Final_Performance[Final_Performance > 0])
     Size_bigger_0 <- as.vector(Final_Size[Final_Size > 0])
     
-    plot(density(Final_results[,2], bw = 0.1, from = -0.5, to = max(Performance) + 0.4), col = "black", main = paste("Final Traits (blue = F, red = S, black = P) prob good temp = ", prob_good_temp))
+    plot(density(Final_results[,2], bw = 0.1, from = -0.5, 
+                 to = max(Performance) + 0.4), col = "black", 
+         main = paste(
+           "Final Traits (blue = F, red = S, black = P) prob good temp = ", 
+           prob_good_temp))
     abline(v = mean(Performance_bigger_0))
     
-    lines(density(Final_results[,1], bw = 0.1, from = 1, to = max(Size) + 0.5), col = "red")
+    lines(density(Final_results[,1], bw = 0.1, from = 1, 
+                  to = max(Size) + 0.5), col = "red")
     abline(v = mean(Size_bigger_0), col = "red")
     
-    lines(density(Final_results[,3], bw = 0.1, from = 1, to = max(Fitness[, , 10, time_steps + 1]) + 0.5), col = "blue")
+    lines(density(Final_results[,3], bw = 0.1, from = 1, 
+                  to = max(Fitness[, , 10, time_steps + 1]) + 0.5), 
+          col = "blue")
     abline(v = mean(Fitness_bigger_0), col = "blue")
     
     abline(h = 0)
@@ -478,10 +537,12 @@ Comparison_plot_little <- function(){
   }
   
 }
+# The same but with 3 different Temperatures (easier to plot)
+
+
 
 
 # Initial parameters
-
 
 N <- 100
 # Number of Tadpoles
@@ -489,8 +550,7 @@ N <- 100
 
 
 
-
-# Plot
+# Plots
 
 Forward(N)
 
