@@ -36,7 +36,9 @@
 library(plot.matrix)
 
 
-Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day) {
+Decisions <- function (prob_good_temp, prob_bad_temp, days, 
+                       end_season_percentage, end_season_intensity, 
+                       death_rate_day) {
   
   time_steps <- days + ((prob_bad_temp - 0.5)*50)
   # An environment with higher temperatures is also more likely to dry out
@@ -65,10 +67,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   Fitness_values <- Size
   max_Fitness <- length(Fitness_values)
   Fitness_values[Fitness_values < 4] <- 0
-  Fitness_values[Fitness_values >=4] <- seq(2, 4, 2/(length(Fitness_values[Fitness_values >= 4]) - 1))
+  Fitness_values[Fitness_values >=4] <- 
+    seq(2, 4, 2/(length(Fitness_values[Fitness_values >= 4]) - 1))
     Fitness_values
   
-  Fitness <- array(NA, dim = c((max_Size), max_Performance, max_Stages, time_steps + 1 + max_Stages))
+  Fitness <- array(NA, dim = c((max_Size), max_Performance, max_Stages, 
+                               time_steps + 1 + max_Stages))
   Fitness[, , max_Stages, time_steps + 1] <- Fitness_values
  
   for (k in 1:max_Stages - 1) {
@@ -84,8 +88,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   
   
   
-  prob_end_season <- c(rep(0, round(time_steps - (end_season_percentage * time_steps))),
-                       seq(0, end_season_intensity, (end_season_intensity/ (round(end_season_percentage * time_steps) - 1))))
+  prob_end_season <- c(rep(0, round(time_steps - 
+                                      (end_season_percentage * time_steps))),
+                       seq(0, end_season_intensity, 
+                           (end_season_intensity / (round(end_season_percentage 
+                                                          * time_steps) - 1))))
   prob_no_end_season <- 1 - prob_end_season
   # end_season_percentage is the percentage of days in the standard 
   # metamorphosis period that are likely to be the end of the season due to
@@ -108,10 +115,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   
   
   Survival <- matrix(nrow = max_Size, ncol = max_Performance)
-  Survival[,1] <- c(0, seq(1 - 3*death_rate_day, 1 - 2*death_rate_day, death_rate_day/(max_Size - 2)))
+  Survival[,1] <- c(0, seq(1 - (3 * death_rate_day), 1 - (2 * death_rate_day), 
+                           death_rate_day/(max_Size - 2)))
   for (j in 2:max_Performance) {
     
-    Survival[, j] <- Survival[, j - 1] + 2*(death_rate_day/(max_Performance - 1))
+    Survival[, j] <- Survival[, j - 1] + 
+      (2 * (death_rate_day/(max_Performance - 1)))
     
   }
   Survival[1,] <- 0
@@ -126,8 +135,10 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # and 1 for those sizes that can metamorphose. 
   
   
-  ForageRule <- array(NA, dim = c(max_Size, max_Performance, max_Stages, time_steps))
-  ForageRule_B <- array(NA, dim = c(max_Size, max_Performance, max_Stages, time_steps))
+  ForageRule <- array(NA, dim = c(max_Size, max_Performance, 
+                                  max_Stages, time_steps))
+  ForageRule_B <- array(NA, dim = c(max_Size, max_Performance, 
+                                    max_Stages, time_steps))
   # Here, the ForageRule array is a 2 state variable matrix with time as a 
   # 3rd dimension. 
   # It stores the optimal decision as TRUE/FALSE (Performance/Growth).
@@ -136,9 +147,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   # the decision made and stored in the ForageRule array.
   
   
-  RewardIfPerformance <-  array(0, dim = c(max_Size, max_Performance, max_Stages, time_steps))
-  RewardIfGrowth <-  array(0, dim = c(max_Size, max_Performance, max_Stages, time_steps))
-  RewardIfMetamorphosis <-  array(0, dim = c(max_Size, max_Performance, max_Stages, time_steps))
+  RewardIfPerformance <-  array(0, dim = c(max_Size, max_Performance, 
+                                           max_Stages, time_steps))
+  RewardIfGrowth <-  array(0, dim = c(max_Size, max_Performance, 
+                                      max_Stages, time_steps))
+  RewardIfMetamorphosis <-  array(0, dim = c(max_Size, max_Performance, 
+                                             max_Stages, time_steps))
   # Arrays that are going to store the fitness values of each decision at 
   # every time step and state.
   
@@ -164,42 +178,73 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
             
           
           if(Metamorphosis[i, j] == 1){
-            RewardIfPerformance[i, j, k, t] <- (Condition[i, j] * Survival[i, j] * Fitness[i, min(j + 2, max_Performance), k, t + 1] * prob_good_temp +
-                                                  Condition[i, j] * Survival[i, j] * Fitness[i, min(j + 1, max_Performance), k, t + 1] * prob_bad_temp +
-                                                  (1 - Condition[i, j]) * Survival[i, j] * Fitness[i, j, k, t + 1] * prob_good_temp +
-                                                  (1 - Condition[i, j]) * Survival[i, j] * Fitness[i, j, k, t + 1] * prob_bad_temp) * prob_no_end_season[t] + 
+            
+            RewardIfPerformance[i, j, k, t] <-
+              
+              (Condition[i, j] * Survival[i, j] * 
+                 Fitness[i, min(j + 2, max_Performance), k, t + 1] * 
+                 prob_good_temp + Condition[i, j] * Survival[i, j] * 
+                 Fitness[i, min(j + 1, max_Performance), k, t + 1] * 
+                 prob_bad_temp + (1 - Condition[i, j]) * Survival[i, j] * 
+                 Fitness[i, j, k, t + 1] * prob_good_temp + 
+                 (1 - Condition[i, j]) * Survival[i, j] * 
+                 Fitness[i, j, k, t + 1] * prob_bad_temp) * 
+              prob_no_end_season[t] + 
               Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t] 
             
             
-            RewardIfGrowth[i, j, k, t] <- (Condition[i, j] * Survival[i, j] * Fitness[min(i + 2, max_Size), j, k, t + 1] * prob_good_temp +
-                                             Condition[i, j] * Survival[i, j] * Fitness[min(i + 1, max_Size), j, k, t + 1] * prob_bad_temp +
-                                             (1 - Condition[i, j]) * Survival[i, j] * Fitness[i, j, k, t + 1] * prob_good_temp +
-                                             (1 - Condition[i, j]) * Survival[i, j] * Fitness[i, j, k, t + 1] * prob_bad_temp) * prob_no_end_season[t] + 
+            RewardIfGrowth[i, j, k, t] <- 
+              
+              (Condition[i, j] * Survival[i, j] * 
+                 Fitness[min(i + 2, max_Size), j, k, t + 1] * prob_good_temp + 
+                 Condition[i, j] * Survival[i, j] * 
+                 Fitness[min(i + 1, max_Size), j, k, t + 1] * prob_bad_temp + 
+                 (1 - Condition[i, j]) * Survival[i, j] * 
+                 Fitness[i, j, k, t + 1] * prob_good_temp + 
+                 (1 - Condition[i, j]) * Survival[i, j] * 
+                 Fitness[i, j, k, t + 1] * prob_bad_temp) * 
+              prob_no_end_season[t] + 
               Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
             
             
-            RewardIfMetamorphosis[i, j, k, t] <-  Fitness[i, j, min(k + 1, max_Stages), t + 1] * (Survival[i, j]) * Condition[i, j] * prob_no_end_season[t] +
+            RewardIfMetamorphosis[i, j, k, t] <-  
+              
+              Fitness[i, j, min(k + 1, max_Stages), t + 1] * 
+              (Survival[i, j]) * Condition[i, j] * prob_no_end_season[t] +
               Fitness[i, j, k,  t + 1] * Survival[i, j] * prob_end_season[t]
             
           } else {
             
             
-            RewardIfPerformance[i, j, k, t] <- (Condition[i, j] * Survival[i, j] * Fitness[i, min(j + 2, max_Performance), k, t + 1] * prob_good_temp +
-                                                  Condition[i, j] * Survival[i, j] * Fitness[i, min(j + 1, max_Performance), k, t + 1] * prob_bad_temp +
-                                                  (1 - Condition[i, j]) * Survival[i, j] * Fitness[i, j, k, t + 1] * prob_good_temp +
-                                                  (1 - Condition[i, j]) * Survival[i, j] * Fitness[i, j, k, t + 1] * prob_bad_temp) * prob_no_end_season[t] + 
+            RewardIfPerformance[i, j, k, t] <- 
+              
+              (Condition[i, j] * Survival[i, j] * 
+                 Fitness[i, min(j + 2, max_Performance), k, t + 1] * 
+                 prob_good_temp + Condition[i, j] * Survival[i, j] *
+                 Fitness[i, min(j + 1, max_Performance), k, t + 1] *
+                 prob_bad_temp + (1 - Condition[i, j]) * Survival[i, j] * 
+                 Fitness[i, j, k, t + 1] * prob_good_temp + 
+                 (1 - Condition[i, j]) * Survival[i, j] * 
+                 Fitness[i, j, k, t + 1] * prob_bad_temp) * 
+              prob_no_end_season[t] + 
               Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t] 
             
             
-            RewardIfGrowth[i, j, k, t] <- (Condition[i, j] * Survival[i, j] * Fitness[min(i + 2, max_Size), j, k, t + 1] * prob_good_temp +
-                                             Condition[i, j] * Survival[i, j] * Fitness[min(i + 1, max_Size), j, k, t + 1] * prob_bad_temp +
-                                             (1 - Condition[i, j]) * Survival[i, j] * Fitness[i, j, k, t + 1] * prob_good_temp +
-                                             (1 - Condition[i, j]) * Survival[i, j] * Fitness[i, j, k, t + 1] * prob_bad_temp) * prob_no_end_season[t] + 
+            RewardIfGrowth[i, j, k, t] <- 
+              
+              (Condition[i, j] * Survival[i, j] * 
+                 Fitness[min(i + 2, max_Size), j, k, t + 1] * prob_good_temp +
+                 Condition[i, j] * Survival[i, j] * 
+                 Fitness[min(i + 1, max_Size), j, k, t + 1] * prob_bad_temp + 
+                 (1 - Condition[i, j]) * Survival[i, j] * 
+                 Fitness[i, j, k, t + 1] * prob_good_temp + 
+                 (1 - Condition[i, j]) * Survival[i, j] * 
+                 Fitness[i, j, k, t + 1] * prob_bad_temp) * 
+              prob_no_end_season[t] + 
               Fitness[i, j, k, t + 1] * Survival[i, j] * prob_end_season[t]
             
             
             RewardIfMetamorphosis[i, j, k, t] <-  0
-            
             
             
           } #if/else loop
@@ -210,22 +255,30 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
       
     } # end k loop
     
-    ForageRule[, , , t] <- RewardIfPerformance[, , , t] > RewardIfGrowth[, , , t]
+    ForageRule[, , , t] <- 
+      
+      RewardIfPerformance[, , , t] > RewardIfGrowth[, , , t]
     # TRUE/False matrix that stores if investing in Performance is better 
     # than in Growth.
     
-    Fitness[, , , t] <- ForageRule[, , , t] * RewardIfPerformance[, , , t] +
+    Fitness[, , , t] <- 
+      
+      ForageRule[, , , t] * RewardIfPerformance[, , , t] +
       as.numeric(!ForageRule[, , , t]) * RewardIfGrowth[, , , t]
     # Matrix that stores the reward values of the best decision. 
     # It is going to be used in the next time step as a terminal Fitness
     # matrix. 
     
-    ForageRule_B[, , , t] <- RewardIfMetamorphosis[, , , t] > Fitness[, , , t]
+    ForageRule_B[, , , t] <- 
+      
+      RewardIfMetamorphosis[, , , t] > Fitness[, , , t]
     # This ForageRule_B is used to decide if the decision of
     # starting the metamorphosis is better than the current fitness.
     
       
-    Fitness[, , , t] <- ForageRule_B[, , , t] * RewardIfMetamorphosis[, , , t] + 
+    Fitness[, , , t] <- 
+      
+      ForageRule_B[, , , t] * RewardIfMetamorphosis[, , , t] + 
         as.numeric(!ForageRule_B[, , , t]) * Fitness[, , , t]
     # Update of the Fitness matrix with the ForageRule_B results.
     
@@ -300,9 +353,12 @@ Backwards_Plot <- function(){
     }
     
     
-    plot(ForageRule_rev, col=c('#440154FF', '#31688EFF', '#35B779FF', '#FDE725FF'), 
-         breaks=c("Dead", "Growth", "Performance", "Metamorphosis"), xlab = "Burst speed (mm/s)", ylab = "Size (cm)",
-         main = paste('Decision at time step ', t ), axis.col = NULL, axis.row = NULL)
+    plot(ForageRule_rev, col=c('#440154FF', '#31688EFF', 
+                               '#35B779FF', '#FDE725FF'), 
+         breaks=c("Dead", "Growth", "Performance", "Metamorphosis"), 
+         xlab = "Burst speed (mm/s)", ylab = "Size (cm)",
+         main = paste('Decision at time step ', t ), 
+         axis.col = NULL, axis.row = NULL)
     axis(1, at = 1:max_Performance, labels = Performance * 10)
     axis(2, at = 1:(max_Size), labels = c(Size), las = 1)
     # This function takes the time step you are in from the ForageRule array and 
@@ -346,7 +402,8 @@ death_rate_day <- 0.012
 
 # Plot
 
-Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, end_season_intensity, death_rate_day)
+Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, 
+          end_season_intensity, death_rate_day)
 
 
 Backwards_Plot()
