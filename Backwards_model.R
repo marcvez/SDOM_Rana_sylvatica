@@ -3,30 +3,35 @@
 #------------------------- Backwards model ---------------------------------
 
 # This script contains the backward simulation of the model. 
-# Different object values will be generated, which will contain different variables.
+# Different object values will be generated, which will contain different 
+# variables.
+
 # Performance -> How fast you move.
 # Size -> Your size.
+# Stages -> Developmental state.
 # Fitness -> Terminal fitness values.
-# Condition -> Combination of performance and size, and ranks your aptitude in 
-# relation to the maximum possible.
-# Survival -> Probability of survival depending on your current size and performance
+# Condition -> Combination of performance and size, and determines the Forage 
+# success.
+# Survival -> Probability of survival depending on your current Size and 
+# Performance.
 
 
 # From this point, the model creates a loop in which at each time step the 
-# organism can decide whether to invest in Performance or Growth. 
-# It compares which of the two options is better and stores the decision in an array (ForageRule). 
-# The fitness values obtained from each of the decisions are also stored (array Fitness).
+# organism can decide whether to invest and increase its Performance, Growth 
+# or Developmental stage. 
+# It compares which of the options is better (in terms of fitness) and stores 
+# the decision in an array (ForageRule). The fitness values obtained from each 
+# of the decisions are also stored (array Fitness).
 
-# Finally, a plot of each time step is made and it is seen which decision is the 
-# optimal one starting from the last time step, where the terminal fitness of each size is known. 
+# Finally, a plot for each time step is made and in it, we can see which 
+# decision is the optimal one starting from the last time step (t = t) towards
+# the first one (t = 1). 
 
-# In this script, temperature plays an important role, because if the temperature 
-# is bad, investing in growth does not bring benefits and you stay the same, 
-# while if you invest in moving better, it does not matter what temperature you are at.
-# A good temperature brings benefits to both decisions, and influences the rate of 
-# internal development of the organisms (the higher the temperature, the more accelerated, 
-# and this is measured by the Inner_time factor and the probability of skipping 
-# time_step due to accelerated development).
+# In this script, temperature plays an important role: Good temperature brings 
+# better benefits than bad temperature. 
+
+# The maximum developmental state has to be reached in order to survive and 
+# reproduce. 
 
 library(plot.matrix)
 
@@ -36,22 +41,24 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   time_steps <- days + ((prob_bad_temp - 0.5)*30)
   # An environment with higher temperatures is also more likely to dry out
   # earlier and to have a shorter growing season.
+  # It works as the developmental rate.
   
   Performance <- seq(4.0, 7.5, 0.2) 
   max_Performance <- length(Performance)
-  # Performance values (How fast you move cm/s)
+  # Performance values (How fast you move cm/s).
   
   
   Size <- c(0, seq(1, 5.5, 0.2))
   max_Size <- length(Size)
-  # Size values. All the values that tadpoles can archive. Also, this is the only 
-  # trait that is relevant for the final Fitness (The bigger, the better)
+  # Size values. All the values that tadpoles can archive. Also, this is the 
+  # only trait that is relevant for the final Fitness (The bigger, the better).
   # Size 0 is equal to being dead.
   
   
   Stages <- c(1:10) # 1:10
   max_Stages <- length(Stages)
-  # Number of Stages that the tadpole has to go through in order to metamorphose.
+  # Number of Stages that the tadpole has to go through in order to 
+  # complete the metamorphosis.
   
   
   Fitness_values <- Size
@@ -59,7 +66,6 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days, end_season_percentag
   Fitness_values[Fitness_values < 4] <- 0
   Fitness_values[Fitness_values >=4] <- seq(2, 3.7, 1.7/(length(Fitness_values[Fitness_values >= 4]) - 1))
   
-  Fitness_values
   # Sizes under 4 cm don't receive Fitness benefits. This is the benefit that you
   # receive for being in each Size at the final time step.
   
