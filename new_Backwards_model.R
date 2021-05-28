@@ -1,6 +1,6 @@
 
 
-#------------------------- Backwards model ---------------------------------
+#---------------------------- Backwards model ----------------------------------
 
 # This script contains the backward simulation of the model. 
 # Different object values will be generated, which will contain different 
