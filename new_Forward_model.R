@@ -165,17 +165,31 @@ Forward <- function(N) {
             
             if (Prob_Survive < Survival[i, j]){
               
-              if(Forage < Condition[i, j]){
+              if (k < max_Stages) {
                 
-                # Alive, Metamorphosis, Food
+                if (Forage < Condition[i, j]) {
+                  
+                  # Food
+                  
+                  k <- min(k + 1, max_Stages)
+                  
+                } else {
+                  
+                  # No food, no investment
+                  
+                } # if/else k lower than max_Stages
                 
-                k <- min(k + 1, max_Stages)
+                Prob_Survive <- runif(1)
+                
+                Forage <- runif(1)
                 
               } else {
                 
-                # Alive, Metamorphosis, No food
+                # k = max_Stages -> frog, it doesn't die
                 
-              } # if / else Food/NoFood 
+                Prob_Survive <- 0
+                
+              }
               
               Population[n, t] <- 1
               
@@ -189,10 +203,6 @@ Forward <- function(N) {
               Population[n, time_steps + 1] <- Size[i]
               Population[n, time_steps + 2] <- Performance_forw[j]
               Population[n, time_steps + 3] <- Fitness[i, j, k, t]
-              
-              Prob_Survive <- runif(1)
-              
-              Forage <- runif(1)
               
               if (Tadpole_state[n, 4, t] == 1 & 
                   Tadpole_state[n, 4, t + 1] == 2) {
@@ -213,7 +223,6 @@ Forward <- function(N) {
               } # Stores the state and time step where metamorphosis ends.
               
               t <- t + 1
-              
               
             } else {
               
@@ -240,10 +249,10 @@ Forward <- function(N) {
               
               t <- t + 1
               
-            } # if / else Dead/Alive metamorphosis
+            }
             
-          } #  Metamorphosis "for" loop
-          
+          } 
+            
         } # if / else Metamorphosis
           
       } else {
@@ -261,7 +270,7 @@ Forward <- function(N) {
         Tadpole_state[n, 1, t + 1] <- Size[i]
         Tadpole_state[n, 2, t + 1] <- Performance_forw[j]
         Tadpole_state[n, 3, t + 1] <- Fitness[i, j, k, t]
-        Tadpole_state[n, 4, t] <- k
+        Tadpole_state[n, 4, t + 1] <- k
         
         Population[n, time_steps + 1] <- Size[i]
         Population[n, time_steps + 2] <- Performance_forw[j]
@@ -537,7 +546,7 @@ Comparison_plot_little <- function(){
   }
   
 }
-# The same but with 3 different Temperatures (easier to plot)
+# The same but with 3 different Temperatures (easier to plot).
 
 
 

@@ -69,12 +69,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   Fitness_values[Fitness_values < 4] <- 0
   Fitness_values[Fitness_values >=4] <- 
     seq(2, 4, 2/(length(Fitness_values[Fitness_values >= 4]) - 1))
-    Fitness_values
+  Fitness_values
   
   Fitness <- array(NA, dim = c((max_Size), max_Performance, max_Stages, 
                                time_steps + 1 + max_Stages))
   Fitness[, , max_Stages, time_steps + 1] <- Fitness_values
- 
+  
   for (k in 1:max_Stages - 1) {
     
     
@@ -106,7 +106,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   Condition <- Condition / max(Condition)
   Condition <- t(t(Condition) + Performance)
   Condition <- Condition / max(Condition)
-    Condition <- Condition / (max(Condition) * 10) + 0.8
+  Condition <- Condition / (max(Condition) * 10) + 0.8
   # Condition is the result of the interaction between Size and Performance 
   # and it's different for every combination of each trait.
   # We divide by the highest value to create a 0 to 1 Condition matrix.
@@ -175,9 +175,25 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
           # metamorphosis process. 
           # The results are going to be stored in different arrays and they 
           # are going to be used in the Forward simulation.
-            
           
-          if(Metamorphosis[i, j] == 1){
+          if (k == max_Stages) {
+            
+            RewardIfPerformance[i, j, k, t] <- 0
+              
+              
+            
+            RewardIfGrowth[i, j, k, t] <- 0
+              
+              
+            
+            RewardIfMetamorphosis[i, j, k, t] <-  
+              
+              Fitness[i, j, min(k + 1, max_Stages), t + 1]
+            
+          }
+          
+          
+          else if (Metamorphosis[i, j] == 1){
             
             RewardIfPerformance[i, j, k, t] <-
               
@@ -248,7 +264,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
             
             
           } #if/else loop
-           
+          
         } # end j loop
         
       } # end i loop
@@ -275,11 +291,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
     # This ForageRule_B is used to decide if the decision of
     # starting the metamorphosis is better than the current fitness.
     
-      
+    
     Fitness[, , , t] <- 
       
       ForageRule_B[, , , t] * RewardIfMetamorphosis[, , , t] + 
-        as.numeric(!ForageRule_B[, , , t]) * Fitness[, , , t]
+      as.numeric(!ForageRule_B[, , , t]) * Fitness[, , , t]
     # Update of the Fitness matrix with the ForageRule_B results.
     
     
@@ -407,3 +423,4 @@ Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage,
 
 
 Backwards_Plot()
+
