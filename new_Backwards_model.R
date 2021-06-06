@@ -45,6 +45,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   # earlier and to have a shorter growing season.
   # It works as the developmental rate.
   
+  tradeoff_advantage <- prob_bad_temp
+  # To simulate trade-off effect of development on performance.
   
   Performance <- seq(4.0, 7.5, 0.1) 
   max_Performance <- length(Performance)
