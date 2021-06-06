@@ -40,7 +40,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
                        end_season_percentage, end_season_intensity, 
                        death_rate_day) {
   
-  time_steps <- days + ((prob_bad_temp - 0.5)*50)
+  time_steps <- days + ((prob_bad_temp - 0.5)*30)
   # An environment with higher temperatures is also more likely to dry out
   # earlier and to have a shorter growing season.
   # It works as the developmental rate.
@@ -190,7 +190,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
               
               Fitness[i, j, min(k + 1, max_Stages), t + 1]
             
-          }
+          } # k = max_Stages -> tadpoles become frogs and can't die. 
           
           
           else if (Metamorphosis[i, j] == 1){

@@ -398,11 +398,11 @@ Density_plot <- function(){
   par(mar=c(5.1, 4.5, 3, 4.5))
   
   plot(density(Final_results[,1], bw = 0.1, from = -0.5, 
-               to = max(Size) + 0.1), main = "Final Size (cm)")
+               to = max(Size) + 0.3), main = "Final Size (cm)")
   rug(Final_results[,1], col='red')
   
   plot(density(Final_results[,1], bw = 0.1, from = 3 - 0.5, 
-               to = max(Size) + 0.1), main = "Final Size (cm) (Alive)")
+               to = max(Size) + 0.3), main = "Final Size (cm) (Alive)")
   rug(Final_results[,1], col='red')
   
   plot(density(Final_results[,2], bw = 0.1, from = -0.5, 
@@ -415,12 +415,12 @@ Density_plot <- function(){
   rug(Final_results[,2], col='red')
   
   plot(density(Final_results[,3], bw = 0.1, from = -0.5, 
-               to = max(Fitness[, , 10, time_steps + 1]) + 0.1), 
+               to = max(Fitness[, , 10, time_steps + 1]) + 0.3), 
        main = "Final Fitness")
   rug(Final_results[,3], col='red')
   
   plot(density(Final_results[,3], bw = 0.1, from = 2 - 0.5, 
-               to = max(Fitness[, , 10, time_steps + 1]) + 0.1), 
+               to = max(Fitness[, , 10, time_steps + 1]) + 0.3), 
        main = "Final Fitness (Alive)")
   rug(Final_results[,3], col='red')
   
