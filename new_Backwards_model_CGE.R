@@ -1,5 +1,6 @@
 
 
+
 #------------------------- Backwards simulation --------------------------------
 
 # This script contains the backward simulation of the model. 
@@ -33,6 +34,12 @@
 # The maximum developmental state has to be reached in order to survive and 
 # reproduce. 
 
+# First experiment: I have changed the total days of development of each of 
+# the tadpole types (depending on what temperature they are acclimatised to), 
+# so that the development times now resemble those observed in a Common Garden 
+# Experiment (CGE). I then set common fixed temperatures for all experimental 
+# situations, as in a CGE.
+
 library(plot.matrix)
 
 
@@ -49,11 +56,11 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   # common garden experiment.
   
   tradeoff_advantage <- prob_bad_temp
-  # EXP1: This object is useful in the Forward simulation
-  
+  # To simulate trade-off effect of development on performance.
   
   prob_good_temp <- 0.5
   prob_bad_temp <- 1 - prob_good_temp
+  
   # EXP1: This is a new line added to simulate common garden experiment.
   # prob_good_temp only influences time_steps, but the rest of events 
   # stay the same.
@@ -192,12 +199,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
           if (k == max_Stages) {
             
             RewardIfPerformance[i, j, k, t] <- 0
-              
-              
+            
+            
             
             RewardIfGrowth[i, j, k, t] <- 0
-              
-              
+            
+            
             
             RewardIfMetamorphosis[i, j, k, t] <-  
               
@@ -437,4 +444,3 @@ Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage,
 
 
 Backwards_Plot()
-

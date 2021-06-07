@@ -13,6 +13,12 @@
 # There are some useful plots that show the evolution of the decisions, and
 # also the final traits and conclusions could be extracted from these plots.
 
+# First experiment: I have changed the total days of development of each of 
+# the tadpole types (depending on what temperature they are acclimatised to), 
+# so that the development times now resemble those observed in a Common Garden 
+# Experiment (CGE). I then set common fixed temperatures for all experimental 
+# situations, as in a CGE.
+
 
 library(ggplot2)
 library(Hmisc)
@@ -60,12 +66,10 @@ Forward <- function(N) {
   for (n in 1:N) {
     
     i <- sample(2:4,1)
-    j <- 1 + 15 + ((tradeoff_advantage - 0.5) * 40)
+    j <- 1 + 10 + ((tradeoff_advantage - 0.5) * 40)
     k <- 1
     t <- 1
     # Initial conditions for each tadpole
-    # EXP1: "prob_bad_temp" changed to "tradeoff_advantage" in order 
-    # to simulate common garden experiment
     
     Tadpole_state[n, 1, t] <- Size[i]
     Tadpole_state[n, 2, t] <- Performance[j]
@@ -89,9 +93,9 @@ Forward <- function(N) {
       Forage <- runif(1)
       # Probability of finding food.
       
-        
+      
       if (Prob_Survive < Survival[i, j]) {
-          
+        
         if (ForageRule_B[i, j, k, t] == FALSE){
           
           if (Forage < Condition[i, j]){
@@ -111,7 +115,7 @@ Forward <- function(N) {
                 # Invest in Performance
                 
                 j <- min(j + 2, max_Performance)
-        
+                
               } # if / else G/P
               
             } else {
@@ -156,7 +160,7 @@ Forward <- function(N) {
           Population[n, time_steps + 1] <- Size[i]
           Population[n, time_steps + 2] <- Performance_forw[j]
           Population[n, time_steps + 3] <- Fitness[i, j, k, t]
-        
+          
           t <- t + 1
           
         } else {
@@ -254,9 +258,9 @@ Forward <- function(N) {
             }
             
           } 
-            
-        } # if / else Metamorphosis
           
+        } # if / else Metamorphosis
+        
       } else {
         
         # Dead
@@ -338,7 +342,7 @@ Investment_plot <- function() {
     lines(Tadpole_state[n, 1, ])
     points(Adult[n, 1, ], pch = 19)
     points(Adult[n, 4, ])
-  
+    
   } # Size
   
   plot(1, type="l", xlab="Time Step", ylab="Burst speed (cm/s)", 
@@ -476,7 +480,7 @@ Comparison_plot <- function(){
                  to = max(Performance) + 0.4), col = "black", 
          main = paste(
            "Final Traits (blue = F, red = S, black = P) prob good temp = ", 
-                   prob_good_temp))
+           prob_good_temp))
     abline(v = mean(Performance_bigger_0))
     
     lines(density(Final_results[,1], bw = 0.1, from = 1, 
@@ -578,4 +582,3 @@ Histogram_plot()
 Comparison_plot()
 
 Comparison_plot_little()
-
