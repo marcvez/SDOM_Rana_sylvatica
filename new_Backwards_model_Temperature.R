@@ -1,6 +1,5 @@
 
 
-
 #------------------------- Backwards simulation --------------------------------
 
 # This script contains the backward simulation of the model. 
@@ -34,11 +33,9 @@
 # The maximum developmental state has to be reached in order to survive and 
 # reproduce. 
 
-# First experiment: I have changed the total days of development of each of 
-# the tadpole types (depending on what temperature they are acclimatised to), 
-# so that the development times now resemble those observed in a Common Garden 
-# Experiment (CGE). I then set common fixed temperatures for all experimental 
-# situations, as in a CGE.
+# Second experiment: General increase of temperature, now all development 
+# cycles last less days, they are accelerated. The probability of good 
+# temperature increases, and the probability of bad temperature decreases. 
 
 library(plot.matrix)
 
@@ -47,24 +44,16 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
                        end_season_percentage, end_season_intensity, 
                        death_rate_day) {
   
-  time_steps <- days - ((prob_bad_temp - 0.5)*30)
+  prob_good_temp <- prob_good_temp + 0.2
+  prob_bad_temp <- 1 - prob_good_temp
+  
+  time_steps <- days + ((prob_bad_temp - 0.5)*30)
   # An environment with higher temperatures is also more likely to dry out
   # earlier and to have a shorter growing season.
   # It works as the developmental rate.
   
-  # EXP1: Change days "+" xxxx to days "-" xxxx in order to simulate 
-  # common garden experiment.
-  
-  tradeoff_advantage <- prob_bad_temp
+  tradeoff_advantage <- prob_bad_temp + 0.2
   # To simulate trade-off effect of development on performance.
-  
-  prob_good_temp <- 0.5
-  prob_bad_temp <- 1 - prob_good_temp
-  
-  # EXP1: This is a new line added to simulate common garden experiment.
-  # prob_good_temp only influences time_steps, but the rest of events 
-  # stay the same.
-  
   
   Performance <- seq(4.0, 7.5, 0.1) 
   max_Performance <- length(Performance)
@@ -426,7 +415,7 @@ prob_bad_temp <- 1 - prob_good_temp
 days <- 60
 # How many days does the metamorphosis last in normal conditions.
 
-end_season_percentage <- 0.2
+end_season_percentage <- 0.3
 # How many days (% of the normal growing season), 
 # beginning from the back, are susceptible to be the end of season 
 # due environmental stochasticity.
