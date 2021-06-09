@@ -328,6 +328,8 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   assign("RewardIfMetamorphosis", RewardIfMetamorphosis, envir = globalenv())
   assign("max_Stages", max_Stages, envir = globalenv())
   assign("tradeoff_advantage", tradeoff_advantage, envir = globalenv())
+  assign("prob_good_temp", prob_good_temp, envir = globalenv())
+  assign("prob_bad_temp", prob_bad_temp, envir = globalenv())
   
   # These lines extract Fitness, ForageRule and other objects from inside the 
   # function to the global environment, so they can be used it in other plots 
@@ -426,3 +428,4 @@ Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage,
 
 
 Backwards_Plot()
+

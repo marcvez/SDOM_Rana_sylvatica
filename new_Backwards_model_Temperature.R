@@ -415,7 +415,7 @@ prob_bad_temp <- 1 - prob_good_temp
 days <- 60
 # How many days does the metamorphosis last in normal conditions.
 
-end_season_percentage <- 0.3
+end_season_percentage <- 0.4
 # How many days (% of the normal growing season), 
 # beginning from the back, are susceptible to be the end of season 
 # due environmental stochasticity.
