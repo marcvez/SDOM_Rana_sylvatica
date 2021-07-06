@@ -1,4 +1,3 @@
-
 prob_good_temp <- 0.5
 prob_good_temp
 prob_bad_temp <- 1 - prob_good_temp
