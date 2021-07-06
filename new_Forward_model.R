@@ -305,6 +305,8 @@ Forward <- function(N) {
   assign("Final_results", Final_results, envir = globalenv())
   assign("Max_Condition", Max_Condition, envir = globalenv())
   assign("Adult", Adult, envir = globalenv())
+  assign("time_steps", time_steps, envir = globalenv())
+  
   
 } # End Forward simulation
 
@@ -547,6 +549,11 @@ Comparison_plot_little <- function(){
   
 }
 # The same but with 3 different Temperatures (easier to plot).
+
+
+
+  
+  
 
 
 

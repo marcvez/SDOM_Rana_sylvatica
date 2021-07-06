@@ -1,4 +1,3 @@
-
 prob_good_temp <- 0.5
 prob_good_temp
 prob_bad_temp <- 1 - prob_good_temp
@@ -6,7 +5,9 @@ days <- 60
 end_season_percentage <- 0.2
 end_season_intensity <- 1 
 death_rate_day <- 0.012 
-N <- 10000
+N <- 1000
+
+par(mfrow=c(3,1))
 
 
 Decisions <- function (prob_good_temp, prob_bad_temp, days, 
@@ -311,6 +312,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   
   
 } # end of Decision function
+
 
 Forward_1 <- function(N) {
   
@@ -1238,260 +1240,252 @@ Forward_3 <- function(N) {
   
 } # End Forward simulation 3
 
+Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, 
+          end_season_intensity, death_rate_day)
 
 
-Mortality_plot <- function(){
+Forward_1(N)
+
+
+dev_vs_perf_1 <- function(){
   
-  par(mfrow=c(3,1))
-  par(mar=c(5.1, 4.5, 1, 4.5))
+  # Development rate = When do you finish metamorphosis / total length
+  
+  # Gosner stages: 0 - 46 (21 (25) - 46 tadpole)     46 - 21 = 25 (21) 
   
   
-  # --------------------------------------------------------------------------
+  plot(1, type="l", xlab="Development rate (stage/day)", ylab="Burst speed (cm/s)", xlim=c(0.35, 0.50), 
+       ylim=c(4, Performance[max_Performance]))
+  minor.tick(nx=10)
   
-  prob_good_temp <- 0.4
-  prob_good_temp
+  
+  
+  prob_good_temp <- 0.6
   prob_bad_temp <- 1 - prob_good_temp
   days <- 60
   end_season_percentage <- 0.2
   end_season_intensity <- 1 
   death_rate_day <- 0.012 
-  N <- 10000
+  N <- 1000
+  
   
   Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, 
-              end_season_intensity, death_rate_day)
+            end_season_intensity, death_rate_day)
+  
+  
+  Forward_1(N)
+  
+  for (n in 1:N){
+    
+    NonNAindex <- which(!is.na(Adult[n, 5,]))
+    NonNAindex
+    Adult[n, 5, NonNAindex]
+    time_steps
+    dev_rate <- 25/(NonNAindex + 7)
+    dev_rate
+    
+    
+    points(dev_rate, Adult[n, 5, NonNAindex], pch = 19, col = "red")
+    
+  }
+  
+  
+  
+  prob_good_temp <- 0.4
+  prob_bad_temp <- 1 - prob_good_temp
+  days <- 60
+  end_season_percentage <- 0.2
+  end_season_intensity <- 1 
+  death_rate_day <- 0.012 
+  N <- 1000
+  
+  
+  Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, 
+            end_season_intensity, death_rate_day)
   
   
   Forward_1(N)
   
   
-  plot(1, type="l", xlab="Time Step", ylab="Survival", xlim=c(1, 70), 
-       ylim=c(0, N), xaxt = "n")
-  axis(1, at=1:(70 + 1), labels = c(0:70))
+  for (n in 1:N){
+    
+    NonNAindex <- which(!is.na(Adult[n, 5,]))
+    NonNAindex
+    Adult[n, 5, NonNAindex]
+    time_steps
+    dev_rate <- 25/(NonNAindex + 10)
+    dev_rate
+    
+    
+    points(dev_rate, Adult[n, 5, NonNAindex], pch = 19, col = "blue")
+    
+  }
   
-  lines(Alive[, 2], col = "blue")
-  abline(v = time_steps + 1, lty = 2, col = "blue")
-  abline(h = Alive[time_steps, 2], lty = 2, col = "blue")
+ 
+  
+}
+
+dev_vs_perf_2 <- function(){
+  
+  # Development rate = When do you finish metamorphosis / total length
+  
+  # Gosner stages: 0 - 46 (21 (25) - 46 tadpole)     46 - 21 = 25 (21) 
   
   
-  
-  
+  plot(1, type="l", xlab="Development rate (stage/day)", ylab="Burst speed (cm/s)", xlim=c(0.35, 0.50), 
+       ylim=c(4, Performance[max_Performance]))
+  minor.tick(nx=10)
   
   
   
   prob_good_temp <- 0.6
-  prob_good_temp
   prob_bad_temp <- 1 - prob_good_temp
   days <- 60
   end_season_percentage <- 0.2
   end_season_intensity <- 1 
   death_rate_day <- 0.012 
-  N <- 10000
+  N <- 1000
+  
   
   Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, 
-              end_season_intensity, death_rate_day)
-  
-  
-  Forward_1(N)
-  
-  lines(Alive[, 2], col = "red")
-  abline(v = time_steps + 1, lty = 2, col = "red")
-  abline(h = Alive[time_steps, 2], lty = 2, col = "red")
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  prob_good_temp <- 0.5
-  prob_good_temp
-  prob_bad_temp <- 1 - prob_good_temp
-  days <- 60
-  end_season_percentage <- 0.2
-  end_season_intensity <- 1 
-  death_rate_day <- 0.012 
-  N <- 10000
-  
-  Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, 
-              end_season_intensity, death_rate_day)
-  
-  
-  Forward_1(N)
-  
-  lines(Alive[, 2], col = "black")
-  abline(v = time_steps + 1, lty = 2, col = "black")
-  abline(h = Alive[time_steps, 2], lty = 2, col = "black")
-  
-  
-  
-  # -------------------------------------------------------------------------
-  
-  prob_good_temp <- 0.6
-  prob_good_temp
-  prob_bad_temp <- 1 - prob_good_temp
-  days <- 60
-  end_season_percentage <- 0.2
-  end_season_intensity <- 1 
-  death_rate_day <- 0.012 
-  N <- 10000
-  
-  Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, 
-              end_season_intensity, death_rate_day)
+            end_season_intensity, death_rate_day)
   
   
   Forward_2(N)
   
   
-  plot(1, type="l", xlab="Time Step", ylab="Survival", xlim=c(1, 70), 
-       ylim=c(0, N), xaxt = "n")
-  axis(1, at=1:(70 + 1), labels = c(0:70))
   
-  lines(Alive[, 2], col = "red")
-  abline(v = time_steps + 1, lty = 2, col = "red")
-  abline(h = Alive[time_steps, 2], lty = 2, col = "red")
-  
-  
-  
-  
-  
+  for (n in 1:N){
+    
+    NonNAindex <- which(!is.na(Adult[n, 5,]))
+    NonNAindex
+    Adult[n, 5, NonNAindex]
+    time_steps
+    dev_rate <- 25/(NonNAindex + 13)
+    dev_rate
+    
+    
+    points(dev_rate, Adult[n, 5, NonNAindex], pch = 19, col = "red")
+    
+  }
   
   
   prob_good_temp <- 0.4
-  prob_good_temp
   prob_bad_temp <- 1 - prob_good_temp
   days <- 60
   end_season_percentage <- 0.2
   end_season_intensity <- 1 
   death_rate_day <- 0.012 
-  N <- 10000
+  N <- 1000
+  
   
   Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, 
-              end_season_intensity, death_rate_day)
+            end_season_intensity, death_rate_day)
   
   
   Forward_2(N)
   
-  lines(Alive[, 2], col = "blue")
-  abline(v = time_steps + 1, lty = 2, col = "blue")
-  abline(h = Alive[time_steps, 2], lty = 2, col = "blue")
+  
+  for (n in 1:N){
+    
+    NonNAindex <- which(!is.na(Adult[n, 5,]))
+    NonNAindex
+    Adult[n, 5, NonNAindex]
+    time_steps
+    dev_rate <- 25/(NonNAindex + 4)
+    dev_rate
+    
+    
+    points(dev_rate, Adult[n, 5, NonNAindex], pch = 19, col = "blue")
+    
+  }
   
   
   
+}
+
+dev_vs_perf_3 <- function(){
+  
+  # Development rate = When do you finish metamorphosis / total length
+  
+  # Gosner stages: 0 - 46 (21 (25) - 46 tadpole)     46 - 21 = 25 (21) 
   
   
-  
-  
-  
-  
-  prob_good_temp <- 0.5
-  prob_good_temp
-  prob_bad_temp <- 1 - prob_good_temp
-  days <- 60
-  end_season_percentage <- 0.2
-  end_season_intensity <- 1 
-  death_rate_day <- 0.012 
-  N <- 10000
-  
-  Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, 
-              end_season_intensity, death_rate_day)
-  
-  
-  Forward_2(N)
-  
-  lines(Alive[, 2], col = "black")
-  abline(v = time_steps + 1, lty = 2, col = "black")
-  abline(h = Alive[time_steps, 2], lty = 2, col = "black")
-  
-  
-  # ----------------------------------------------------------------------------
-  
-  
-  prob_good_temp <- 0.4
-  prob_good_temp
-  prob_bad_temp <- 1 - prob_good_temp
-  days <- 60
-  end_season_percentage <- 0.4
-  end_season_intensity <- 1 
-  death_rate_day <- 0.012 
-  N <- 10000
-  
-  Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, 
-              end_season_intensity, death_rate_day)
-  
-  
-  Forward_3(N)
-  
-  
-  plot(1, type="l", xlab="Time Step", ylab="Survival", xlim=c(1, 70), 
-       ylim=c(0, N), xaxt = "n")
-  axis(1, at=1:(70 + 1), labels = c(0:70))
-  
-  lines(Alive[, 2], col = "blue")
-  abline(v = time_steps + 1, lty = 2, col = "blue")
-  abline(h = Alive[time_steps, 2], lty = 2, col = "blue")
-  
-  
-  
-  
+  plot(1, type="l", xlab="Development rate (stage/day)", ylab="Burst speed (cm/s)", xlim=c(0.35, 0.50), 
+       ylim=c(4, Performance[max_Performance]))
+  minor.tick(nx=10)
   
   
   prob_good_temp <- 0.6
-  prob_good_temp
   prob_bad_temp <- 1 - prob_good_temp
   days <- 60
   end_season_percentage <- 0.4
   end_season_intensity <- 1 
   death_rate_day <- 0.012 
-  N <- 10000
+  N <- 1000
+  
   
   Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, 
-              end_season_intensity, death_rate_day)
+            end_season_intensity, death_rate_day)
   
   
   Forward_3(N)
   
-  lines(Alive[, 2], col = "red")
-  abline(v = time_steps + 1, lty = 2, col = "red")
-  abline(h = Alive[time_steps, 2], lty = 2, col = "red")
   
   
+  for (n in 1:N){
+    
+    NonNAindex <- which(!is.na(Adult[n, 5,]))
+    NonNAindex
+    Adult[n, 5, NonNAindex]
+    time_steps
+    dev_rate <- 25/(NonNAindex + 9)
+    dev_rate
+    
+    
+    points(dev_rate, Adult[n, 5, NonNAindex], pch = 19, col = "red")
+    
+  }
   
   
-  
-  
-  
-  
-  
-  prob_good_temp <- 0.5
-  prob_good_temp
+  prob_good_temp <- 0.4
   prob_bad_temp <- 1 - prob_good_temp
   days <- 60
   end_season_percentage <- 0.4
   end_season_intensity <- 1 
   death_rate_day <- 0.012 
-  N <- 10000
+  N <- 1000
+  
   
   Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage, 
-              end_season_intensity, death_rate_day)
+            end_season_intensity, death_rate_day)
   
   
   Forward_3(N)
   
-  lines(Alive[, 2], col = "black")
-  abline(v = time_steps + 1, lty = 2, col = "black")
-  abline(h = Alive[time_steps, 2], lty = 2, col = "black")
+  
+  for (n in 1:N){
+    
+    NonNAindex <- which(!is.na(Adult[n, 5,]))
+    NonNAindex
+    Adult[n, 5, NonNAindex]
+    time_steps
+    dev_rate <- 25/(NonNAindex + 10)
+    dev_rate
+    
+    
+    points(dev_rate, Adult[n, 5, NonNAindex], pch = 19, col = "blue")
+    
+  }
+  
   
   
 }
 
 
-Mortality_plot()
+dev_vs_perf_1()
 
+dev_vs_perf_2()
 
-
-
-
-
+dev_vs_perf_3()
 

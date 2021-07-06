@@ -74,7 +74,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   Fitness_values
   
   Fitness <- array(NA, dim = c((max_Size), max_Performance, max_Stages, 
-                               time_steps + 1 + max_Stages))
+                               time_steps + 1 + max_Stages + 20))
   Fitness[, , max_Stages, time_steps + 1] <- Fitness_values
   
   for (k in 1:max_Stages - 1) {
@@ -138,9 +138,9 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   
   
   ForageRule <- array(NA, dim = c(max_Size, max_Performance, 
-                                  max_Stages, time_steps))
+                                  max_Stages, time_steps + 20))
   ForageRule_B <- array(NA, dim = c(max_Size, max_Performance, 
-                                    max_Stages, time_steps))
+                                    max_Stages, time_steps + 20))
   # Here, the ForageRule array is a 2 state variable matrix with time as a 
   # 3rd dimension. 
   # It stores the optimal decision as TRUE/FALSE (Performance/Growth).
@@ -336,6 +336,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   # or in the Forward simulation.
   
   
+
 } # end of Decision function
 
 
