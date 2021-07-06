@@ -6,7 +6,7 @@ end_season_percentage <- 0.2
 end_season_intensity <- 1 
 death_rate_day <- 0.012 
 N <- 1000
-
+ 
 par(mfrow=c(3,1))
 
 

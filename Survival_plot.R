@@ -7,7 +7,7 @@ end_season_percentage <- 0.2
 end_season_intensity <- 1 
 death_rate_day <- 0.012 
 N <- 10000
-
+ 
 
 Decisions <- function (prob_good_temp, prob_bad_temp, days, 
                        end_season_percentage, end_season_intensity, 
