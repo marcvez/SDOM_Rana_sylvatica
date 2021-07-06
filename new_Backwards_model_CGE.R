@@ -1,5 +1,6 @@
 
 
+
 #------------------------- Backwards simulation --------------------------------
 
 # This script contains the backward simulation of the model. 
@@ -33,6 +34,12 @@
 # The maximum developmental state has to be reached in order to survive and 
 # reproduce. 
 
+# First experiment: I have changed the total days of development of each of 
+# the tadpole types (depending on what temperature they are acclimatised to), 
+# so that the development times now resemble those observed in a Common Garden 
+# Experiment (CGE). I then set common fixed temperatures for all experimental 
+# situations, as in a CGE.
+
 library(plot.matrix)
 
 
@@ -40,13 +47,24 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
                        end_season_percentage, end_season_intensity, 
                        death_rate_day) {
   
-  time_steps <- days + ((prob_bad_temp - 0.5)*30)
+  time_steps <- days - ((prob_bad_temp - 0.5)*30)
   # An environment with higher temperatures is also more likely to dry out
   # earlier and to have a shorter growing season.
   # It works as the developmental rate.
   
+  # EXP1: Change days "+" xxxx to days "-" xxxx in order to simulate 
+  # common garden experiment.
+  
   tradeoff_advantage <- prob_bad_temp
   # To simulate trade-off effect of development on performance.
+  
+  prob_good_temp <- 0.5
+  prob_bad_temp <- 1 - prob_good_temp
+  
+  # EXP1: This is a new line added to simulate common garden experiment.
+  # prob_good_temp only influences time_steps, but the rest of events 
+  # stay the same.
+  
   
   Performance <- seq(4.0, 7.5, 0.1) 
   max_Performance <- length(Performance)
@@ -74,7 +92,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   Fitness_values
   
   Fitness <- array(NA, dim = c((max_Size), max_Performance, max_Stages, 
-                               time_steps + 1 + max_Stages + 20))
+                               time_steps + 1 + max_Stages))
   Fitness[, , max_Stages, time_steps + 1] <- Fitness_values
   
   for (k in 1:max_Stages - 1) {
@@ -138,9 +156,9 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   
   
   ForageRule <- array(NA, dim = c(max_Size, max_Performance, 
-                                  max_Stages, time_steps + 20))
+                                  max_Stages, time_steps))
   ForageRule_B <- array(NA, dim = c(max_Size, max_Performance, 
-                                    max_Stages, time_steps + 20))
+                                    max_Stages, time_steps))
   # Here, the ForageRule array is a 2 state variable matrix with time as a 
   # 3rd dimension. 
   # It stores the optimal decision as TRUE/FALSE (Performance/Growth).
@@ -336,7 +354,6 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   # or in the Forward simulation.
   
   
-
 } # end of Decision function
 
 
@@ -429,4 +446,3 @@ Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage,
 
 
 Backwards_Plot()
-

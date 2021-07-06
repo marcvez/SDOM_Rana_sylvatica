@@ -13,12 +13,42 @@
 # There are some useful plots that show the evolution of the decisions, and
 # also the final traits and conclusions could be extracted from these plots.
 
+# Second experiment: General increase of temperature, now all development 
+# cycles last less days, they are accelerated. The probability of good
+# temperature increases, and the probability of bad temperature decreases. 
+
 
 library(ggplot2)
 library(Hmisc)
 
 
 Forward <- function(N) {
+  
+  prob_good_temp_forw <- prob_good_temp + 0.1
+  
+  development <- prob_good_temp_forw - prob_good_temp
+  
+  time_steps_forw <- time_steps - ((development * 30) * 2)
+  
+  if (time_steps < time_steps_forw) {
+    
+    for (t in time_steps:time_steps_forw){
+      
+      ForageRule[, , , t] <- ForageRule[, , , time_steps]
+      
+      ForageRule_B[, , , t] <- ForageRule_B[, , , time_steps]
+      
+      Fitness[, , , t] <- Fitness[, , , time_steps]
+      
+    }
+    
+  }
+  
+  prob_good_temp <- prob_good_temp_forw
+  
+  prob_bad_temp <- 1- prob_good_temp
+  
+  time_steps <- time_steps_forw
   
   Population <- matrix(nrow = N, ncol = time_steps + 3)
   rownames(Population) <- c(1:N)
@@ -60,9 +90,7 @@ Forward <- function(N) {
   for (n in 1:N) {
     
     i <- sample(2:4,1)
-
     j <- 1  + 10 + ((tradeoff_advantage - 0.5) * 40) # sample(1:3,1)
-
     k <- 1
     t <- 1
     # Initial conditions for each tadpole
@@ -283,7 +311,7 @@ Forward <- function(N) {
         t <- t + 1
         
       } # if / else Survival
-      
+    
     } # while loop
     
   } # for loop
@@ -308,7 +336,6 @@ Forward <- function(N) {
   assign("Max_Condition", Max_Condition, envir = globalenv())
   assign("Adult", Adult, envir = globalenv())
   assign("time_steps", time_steps, envir = globalenv())
-  
   
 } # End Forward simulation
 
@@ -355,7 +382,7 @@ Investment_plot <- function() {
     
   } # Performance
   plot(1, type="l", xlab="Time Step", ylab="Fitness", xlim=c(1, time_steps), 
-       ylim=c(0, max(Fitness[, , max_Stages, time_steps + 1])), xaxt = "n")
+       ylim=c(0, max(Fitness_values)), xaxt = "n")
   axis(1, at=1:(time_steps + 1), labels = c(0:time_steps))
   
   for (n in 1:N) {
@@ -419,12 +446,12 @@ Density_plot <- function(){
   rug(Final_results[,2], col='red')
   
   plot(density(Final_results[,3], bw = 0.1, from = -0.5, 
-               to = max(Fitness[, , 10, time_steps + 1]) + 0.3), 
+               to = max(Fitness_values) + 0.3), 
        main = "Final Fitness")
   rug(Final_results[,3], col='red')
   
   plot(density(Final_results[,3], bw = 0.1, from = 2 - 0.5, 
-               to = max(Fitness[, , 10, time_steps + 1]) + 0.3), 
+               to = max(Fitness_values) + 0.3), 
        main = "Final Fitness (Alive)")
   rug(Final_results[,3], col='red')
   
@@ -459,7 +486,7 @@ Comparison_plot <- function(){
     prob_good_temp
     prob_bad_temp <- 1 - prob_good_temp
     days <- 60
-    end_season_percentage <- 0.2
+    end_season_percentage <- 0.4
     end_season_intensity <- 1 
     death_rate_day <- 0.012 
     N <- 100
@@ -486,7 +513,7 @@ Comparison_plot <- function(){
     abline(v = mean(Size_bigger_0), col = "red")
     
     lines(density(Final_results[,3], bw = 0.1, from = 1, 
-                  to = max(Fitness[, , 10, time_steps + 1]) + 0.5), 
+                  to = max(Fitness_values) + 0.5), 
           col = "blue")
     abline(v = mean(Fitness_bigger_0), col = "blue")
     
@@ -511,7 +538,7 @@ Comparison_plot_little <- function(){
     prob_good_temp
     prob_bad_temp <- 1 - prob_good_temp
     days <- 60
-    end_season_percentage <- 0.2 
+    end_season_percentage <- 0.4
     end_season_intensity <- 1 
     death_rate_day <- 0.012 
     N <- 100
@@ -538,7 +565,7 @@ Comparison_plot_little <- function(){
     abline(v = mean(Size_bigger_0), col = "red")
     
     lines(density(Final_results[,3], bw = 0.1, from = 1, 
-                  to = max(Fitness[, , 10, time_steps + 1]) + 0.5), 
+                  to = max(Fitness_values) + 0.5), 
           col = "blue")
     abline(v = mean(Fitness_bigger_0), col = "blue")
     
@@ -551,11 +578,6 @@ Comparison_plot_little <- function(){
   
 }
 # The same but with 3 different Temperatures (easier to plot).
-
-
-
-  
-  
 
 
 
