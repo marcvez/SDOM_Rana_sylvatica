@@ -13,7 +13,7 @@
 # Fitness -> Terminal fitness values.
 # Condition -> Combination of performance and size, and determines the Forage 
 # success.
-# Survival -> Probability of survival depending on your current Size and 
+# Survival -> Probability oxf survival depending on your current Size and 
 # Performance.
 
 
