@@ -74,7 +74,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   Fitness_values
   
   Fitness <- array(NA, dim = c((max_Size), max_Performance, max_Stages, 
-                               time_steps + 1 + max_Stages + 20))
+                               time_steps + 1 + max_Stages))
   Fitness[, , max_Stages, time_steps + 1] <- Fitness_values
   
   for (k in 1:max_Stages - 1) {
@@ -138,9 +138,9 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   
   
   ForageRule <- array(NA, dim = c(max_Size, max_Performance, 
-                                  max_Stages, time_steps + 20))
+                                  max_Stages, time_steps))
   ForageRule_B <- array(NA, dim = c(max_Size, max_Performance, 
-                                    max_Stages, time_steps + 20))
+                                    max_Stages, time_steps))
   # Here, the ForageRule array is a 2 state variable matrix with time as a 
   # 3rd dimension. 
   # It stores the optimal decision as TRUE/FALSE (Performance/Growth).
@@ -181,12 +181,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
           if (k == max_Stages) {
             
             RewardIfPerformance[i, j, k, t] <- 0
-            
-            
+              
+              
             
             RewardIfGrowth[i, j, k, t] <- 0
-            
-            
+              
+              
             
             RewardIfMetamorphosis[i, j, k, t] <-  
               
@@ -327,16 +327,12 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   assign("RewardIfGrowth", RewardIfGrowth, envir = globalenv())
   assign("RewardIfMetamorphosis", RewardIfMetamorphosis, envir = globalenv())
   assign("max_Stages", max_Stages, envir = globalenv())
-  assign("tradeoff_advantage", tradeoff_advantage, envir = globalenv())
-  assign("prob_good_temp", prob_good_temp, envir = globalenv())
-  assign("prob_bad_temp", prob_bad_temp, envir = globalenv())
   
   # These lines extract Fitness, ForageRule and other objects from inside the 
   # function to the global environment, so they can be used it in other plots 
   # or in the Forward simulation.
   
   
-
 } # end of Decision function
 
 
