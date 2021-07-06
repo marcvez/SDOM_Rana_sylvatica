@@ -60,7 +60,9 @@ Forward <- function(N) {
   for (n in 1:N) {
     
     i <- sample(2:4,1)
+
     j <- 1  + 10 + ((tradeoff_advantage - 0.5) * 40) # sample(1:3,1)
+
     k <- 1
     t <- 1
     # Initial conditions for each tadpole
