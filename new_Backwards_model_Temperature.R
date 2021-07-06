@@ -33,6 +33,10 @@
 # The maximum developmental state has to be reached in order to survive and 
 # reproduce. 
 
+# Second experiment: General increase of temperature, now all development 
+# cycles last less days, they are accelerated. The probability of good 
+# temperature increases, and the probability of bad temperature decreases. 
+
 library(plot.matrix)
 
 
@@ -40,12 +44,15 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
                        end_season_percentage, end_season_intensity, 
                        death_rate_day) {
   
+  prob_good_temp <- prob_good_temp + 0.2
+  prob_bad_temp <- 1 - prob_good_temp
+  
   time_steps <- days + ((prob_bad_temp - 0.5)*30)
   # An environment with higher temperatures is also more likely to dry out
   # earlier and to have a shorter growing season.
   # It works as the developmental rate.
   
-  tradeoff_advantage <- prob_bad_temp
+  tradeoff_advantage <- prob_bad_temp + 0.2
   # To simulate trade-off effect of development on performance.
   
   Performance <- seq(4.0, 7.5, 0.1) 
@@ -74,7 +81,7 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   Fitness_values
   
   Fitness <- array(NA, dim = c((max_Size), max_Performance, max_Stages, 
-                               time_steps + 1 + max_Stages + 20))
+                               time_steps + 1 + max_Stages))
   Fitness[, , max_Stages, time_steps + 1] <- Fitness_values
   
   for (k in 1:max_Stages - 1) {
@@ -138,9 +145,9 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   
   
   ForageRule <- array(NA, dim = c(max_Size, max_Performance, 
-                                  max_Stages, time_steps + 20))
+                                  max_Stages, time_steps))
   ForageRule_B <- array(NA, dim = c(max_Size, max_Performance, 
-                                    max_Stages, time_steps + 20))
+                                    max_Stages, time_steps))
   # Here, the ForageRule array is a 2 state variable matrix with time as a 
   # 3rd dimension. 
   # It stores the optimal decision as TRUE/FALSE (Performance/Growth).
@@ -336,7 +343,6 @@ Decisions <- function (prob_good_temp, prob_bad_temp, days,
   # or in the Forward simulation.
   
   
-
 } # end of Decision function
 
 
@@ -409,7 +415,7 @@ prob_bad_temp <- 1 - prob_good_temp
 days <- 60
 # How many days does the metamorphosis last in normal conditions.
 
-end_season_percentage <- 0.2
+end_season_percentage <- 0.4
 # How many days (% of the normal growing season), 
 # beginning from the back, are susceptible to be the end of season 
 # due environmental stochasticity.
@@ -429,4 +435,3 @@ Decisions(prob_good_temp, prob_bad_temp, days, end_season_percentage,
 
 
 Backwards_Plot()
-
