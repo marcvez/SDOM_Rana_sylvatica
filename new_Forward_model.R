@@ -60,9 +60,7 @@ Forward <- function(N) {
   for (n in 1:N) {
     
     i <- sample(2:4,1)
-
-    j <- 1  + 10 + ((tradeoff_advantage - 0.5) * 40) # sample(1:3,1)
-
+    j <- 1 + 15 + ((tradeoff_advantage - 0.5) * 40)
     k <- 1
     t <- 1
     # Initial conditions for each tadpole
@@ -89,9 +87,9 @@ Forward <- function(N) {
       Forage <- runif(1)
       # Probability of finding food.
       
-      
-      if (Prob_Survive < Survival[i, j]) {
         
+      if (Prob_Survive < Survival[i, j]) {
+          
         if (ForageRule_B[i, j, k, t] == FALSE){
           
           if (Forage < Condition[i, j]){
@@ -111,7 +109,7 @@ Forward <- function(N) {
                 # Invest in Performance
                 
                 j <- min(j + 2, max_Performance)
-                
+        
               } # if / else G/P
               
             } else {
@@ -156,7 +154,7 @@ Forward <- function(N) {
           Population[n, time_steps + 1] <- Size[i]
           Population[n, time_steps + 2] <- Performance_forw[j]
           Population[n, time_steps + 3] <- Fitness[i, j, k, t]
-          
+        
           t <- t + 1
           
         } else {
@@ -254,9 +252,9 @@ Forward <- function(N) {
             }
             
           } 
-          
+            
         } # if / else Metamorphosis
-        
+          
       } else {
         
         # Dead
@@ -307,8 +305,6 @@ Forward <- function(N) {
   assign("Final_results", Final_results, envir = globalenv())
   assign("Max_Condition", Max_Condition, envir = globalenv())
   assign("Adult", Adult, envir = globalenv())
-  assign("time_steps", time_steps, envir = globalenv())
-  
   
 } # End Forward simulation
 
@@ -340,7 +336,7 @@ Investment_plot <- function() {
     lines(Tadpole_state[n, 1, ])
     points(Adult[n, 1, ], pch = 19)
     points(Adult[n, 4, ])
-    
+  
   } # Size
   
   plot(1, type="l", xlab="Time Step", ylab="Burst speed (cm/s)", 
@@ -478,7 +474,7 @@ Comparison_plot <- function(){
                  to = max(Performance) + 0.4), col = "black", 
          main = paste(
            "Final Traits (blue = F, red = S, black = P) prob good temp = ", 
-           prob_good_temp))
+                   prob_good_temp))
     abline(v = mean(Performance_bigger_0))
     
     lines(density(Final_results[,1], bw = 0.1, from = 1, 
@@ -554,11 +550,6 @@ Comparison_plot_little <- function(){
 
 
 
-  
-  
-
-
-
 
 # Initial parameters
 
@@ -585,3 +576,4 @@ Histogram_plot()
 Comparison_plot()
 
 Comparison_plot_little()
+
